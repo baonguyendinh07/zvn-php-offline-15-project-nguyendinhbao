@@ -1,19 +1,35 @@
 <?php
 $xhtml = '';
-//$token = Helper::randomString(10);
-//Session::set('token', $token);
+$token = Helper::randomString(10);
+Session::set('token', $token);
+$indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], $this->params['action']);
+$formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
+$btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
+
+if(!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))){
+	$notification = Form::showMessege('success', 'Thông báo', [Session::get('notificationElement') ?? '' => Session::get('notification')]);
+	Session::unset('notificationElement');
+	Session::unset('notification');
+}
+
 if (!empty($this->items)) {
 	foreach ($this->items as $key => $value) {
-		$id        	  = $value['id'];
-		$linkGroupAcp = $this->pathchangeGroupAcp . '&id=' . $id . '&status=' . $value['group_acp'];
-		$linkStatus   = $this->pathchangeStatus . '&id=' . $id . '&status=' . $value['status'];
+		$id        	  = Helper::highlight($this->params['search-key'] ?? '', $value['id']);
+		$name 		  = Helper::highlight($this->params['search-key'] ?? '', $value['name']);
+		$pathDelete   = URL::createLink($this->params['module'], $this->params['controller'], 'delete', ['id' => $id]);
+		$linkGroupAcp = URL::createLink($this->params['module'], $this->params['controller'], 'changeGroupAcp', ['id' => $id, 'status' => $value['group_acp'], 'token' => $token]);
+		$linkStatus   = URL::createLink($this->params['module'], $this->params['controller'], 'changeStatus', ['id' => $id, 'status' => $value['status'], 'token' => $token]);
 		$showGroupAcp = Helper::showStatus($value['group_acp'], $linkGroupAcp);
 		$showStatus   = Helper::showStatus($value['status'], $linkStatus);
+
+		$editLink = URL::createLink($this->params['module'], $this->params['controller'], 'form', ['id' => $value['id']]);
+		$btnEdit 	  = Helper::createButtonLink($editLink, '<i class="fas fa-pen"></i>', 'info', true, true);
+		$btnDelete 	  = Helper::createButtonLink($pathDelete, '<i class="fas fa-trash "></i>', 'danger', true, true);
 
 		$xhtml .= '<tr>
 					<td><input type="checkbox"></td>
 					<td>' . $id . '</td>
-					<td>' . $value['name'] . '</td>
+					<td>' . $name . '</td>
 					<td>' . $showGroupAcp . '</td>
 					<td>' . $showStatus . '</td>
 					<td>
@@ -25,8 +41,7 @@ if (!empty($this->items)) {
 						<p class="mb-0"><i class="far fa-clock"></i>' . $value['modified'] . '</p>
 					</td>
 					<td>
-						<a href="#" class="btn btn-info btn-sm rounded-circle"><i class="fas fa-pen"></i></a>
-						<a href="' . $this->pathDelete . '&id=' . $value['id'] . '" class="btn btn-danger btn-sm rounded-circle"><i class="fas fa-trash "></i></a>
+						' . $btnEdit . $btnDelete . '
 					</td>
 				</tr>';
 	}
@@ -49,9 +64,7 @@ if (!empty($this->items)) {
 				<div class="container-fluid">
 					<div class="row justify-content-between align-items-center">
 						<div class="area-filter-status mb-2">
-							<a href="#" class="btn btn-info">All <span class="badge badge-pill badge-light">8</span></a>
-							<a href="#" class="btn btn-secondary">Active <span class="badge badge-pill badge-light">3</span></a>
-							<a href="#" class="btn btn-secondary">Inactive <span class="badge badge-pill badge-light">5</span></a>
+							<?= Form::areaFilterStatus($indexActionLink, $this->arrCountItems, $this->params['filterStatus'] ?? 'all') ?>
 						</div>
 						<div class="area-search mb-2">
 							<form action="" method="GET">
@@ -59,10 +72,10 @@ if (!empty($this->items)) {
 								<?php echo Form::input('hidden', 'controller', 'group') ?>
 								<?php echo Form::input('hidden', 'action', 'index') ?>
 								<div class="input-group">
-									<input type="text" class="form-control" name="search-key">
+									<input type="text" class="form-control" name="search-key" value="<?= $this->params['search-key'] ?? '' ?>">
 									<span class="input-group-append">
 										<button type="submit" class="btn btn-info">Search</button>
-										<a href="index.php?module=backend&controller=group&action=index" class="btn btn-danger">Clear</a>
+										<a href="<?= $indexActionLink ?>" class="btn btn-danger">Clear</a>
 									</span>
 								</div>
 							</form>
@@ -77,7 +90,7 @@ if (!empty($this->items)) {
 			<div class="card-header">
 				<h3 class="card-title">List</h3>
 				<div class="card-tools">
-					<a href="#" class="btn btn-tool" data-card-widget="refresh">
+					<a href="<?= $indexActionLink ?>" class="btn btn-tool" data-card-widget="refresh">
 						<i class="fas fa-sync-alt"></i>
 					</a>
 					<button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -85,8 +98,8 @@ if (!empty($this->items)) {
 					</button>
 				</div>
 			</div>
-			<div><p class="btn-success"><?= Session::get('notification'); Session::unset('notification'); ?></p></div>
 			<div class="card-body">
+				<?= $notification ?? '' ?>
 				<div class="container-fluid">
 					<div class="row align-items-center justify-content-between mb-2">
 						<div>
@@ -102,9 +115,7 @@ if (!empty($this->items)) {
 								</span>
 							</div>
 						</div>
-						<div>
-							<a href="group-form.php" class="btn btn-info"><i class="fas fa-plus"></i> Add New</a>
-						</div>
+						<div><?= $btnAddNew ?></div>
 					</div>
 				</div>
 				<div class="table-responsive">

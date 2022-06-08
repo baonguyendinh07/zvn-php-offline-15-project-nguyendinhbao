@@ -34,7 +34,7 @@ class Validate{
 		if(array_key_exists($element, $this->errors)){
 			$this->errors[$element] .= ' - ' . $message;
 		}else{
-			$this->errors[$element] = '<b>' . ucfirst($element) . ':</b> ' . $message;
+			$this->errors[$element] = $message;
 		}
 	}
 	
