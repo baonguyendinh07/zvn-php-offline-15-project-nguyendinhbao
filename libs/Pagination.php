@@ -9,7 +9,7 @@ class Pagination
 	private $currentPage			= 1;	// Trang hiện tại
 	private $path;							// URL của trang
 
-	public function __construct($totalItems, $totalItemsPerPage = 1, $pageRange = 3, $currentPage = 1, $path = '')
+	public function __construct($totalItems, $totalItemsPerPage = 3, $pageRange = 3, $currentPage = 1, $path = '')
 	{
 		$this->totalItems			= $totalItems;
 		$this->totalItemsPerPage	= $totalItemsPerPage;
@@ -32,18 +32,20 @@ class Pagination
 		// Pagination
 		$paginationHTML = '';
 		if ($this->totalPage > 1) {
-			$start 	= '<li class="page-item disabled"><a class="page-link">Start</a></li>';
-			$prev 	= '<li class="page-item disabled"><a class="page-link">Previous</a></li>';
+			$start 	= '<li class="page-item disabled"><a class="page-link"><i class="fas fa-angle-double-left"></i></a></li>';
+			$prev 	= '<li class="page-item disabled"><a class="page-link"><i class="fas fa-angle-left"></i></a></li>';
+
 			if ($this->currentPage > 1) {
-				$start 	= '<li class="page-item"><a class="page-link" href="' . $this->path . 'page=1">Start</a></li>';
-				$prev 	= '<li class="page-item"><a class="page-link" href="' . $this->path . 'page=' . ($this->currentPage - 1) . '">Previous</a></li>';
+				$start 	= '<li class="page-item"><a class="page-link" href="' . $this->path . 'page=1"><i class="fas fa-angle-double-left"></i></a></li>';
+				$prev 	= '<li class="page-item"><a class="page-link" href="' . $this->path . 'page=' . ($this->currentPage - 1) . '"><i class="fas fa-angle-left"></i></a></li>';
 			}
 
-			$next     = '<li class="page-item disabled"><a class="page-link">Next</a></li></li>';
-			$end     = '<li class="page-item disabled"><a class="page-link">End</a></li>';
+			$next = '<li class="page-item disabled"><a class="page-link"><i class="fas fa-angle-right"></i></a></li></li>';
+			$end  = '<li class="page-item disabled"><a class="page-link"><i class="fas fa-angle-double-right"></i></a></li>';
+
 			if ($this->currentPage < $this->totalPage) {
-				$next     = '<li class="page-item"><a class="page-link" href="' . $this->path . 'page=' . ($this->currentPage + 1) . '">Next</a></li>';
-				$end     = '<li class="page-item"><a class="page-link" href="' . $this->path . 'page=' . $this->totalPage . '">End</a></li>';
+				$next     = '<li class="page-item"><a class="page-link" href="' . $this->path . 'page=' . ($this->currentPage + 1) . '"><i class="fas fa-angle-right"></i></a></li>';
+				$end     = '<li class="page-item"><a class="page-link" href="' . $this->path . 'page=' . $this->totalPage . '"><i class="fas fa-angle-double-right"></i></a></li>';
 			}
 
 			if ($this->pageRange < $this->totalPage) {
@@ -81,7 +83,7 @@ class Pagination
 				}
 			}
 
-			$paginationHTML = '<ul class="pagination mb-0">' . $start . $prev . $listPages . $next . $end . '</ul>';
+			$paginationHTML = '<ul class="pagination m-0 float-right">' . $start . $prev . $listPages . $next . $end . '</ul>';
 		}
 		return $paginationHTML;
 	}

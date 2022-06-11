@@ -1,5 +1,5 @@
 <?php
-class GroupModel extends Model
+class UserModel extends Model
 {
 	private $where = '';
 	private $arrSearch;
@@ -7,7 +7,7 @@ class GroupModel extends Model
 	public function __construct()
 	{
 		parent::__construct();
-		$this->setTable('group');
+		$this->setTable('user');
 	}
 
 	public function createWhereSearch($params)
@@ -20,7 +20,7 @@ class GroupModel extends Model
 				$operator = "$p AND";
 				$p = '';
 			} else $operator = 'OR';
-			$where .= " $operator $value[0] LIKE '$value[1]'";
+			$where .= " $operator $this->table.$value[0] LIKE '$value[1]'";
 		}
 		$where = '(' . substr($where, 4) . $p;
 		return $this->where = "WHERE $where";
@@ -31,7 +31,9 @@ class GroupModel extends Model
 		$query[] = "SELECT COUNT(`status`) as `all`, SUM(`status` = 'active') as `active`, SUM(`status` = 'inactive') as `inactive` FROM `$this->table`";
 		if (isset($params['search-key']) && !empty(trim($params['search-key']))) {
 			$this->arrSearch[] = ['id', '%' . $params['search-key'] . '%'];
-			$this->arrSearch[] = ['name', '%' . $params['search-key'] . '%'];
+			$this->arrSearch[] = ['username', '%' . $params['search-key'] . '%'];
+			$this->arrSearch[] = ['email', '%' . $params['search-key'] . '%'];
+			$this->arrSearch[] = ['fullname', '%' . $params['search-key'] . '%'];
 			$query[] = $this->createWhereSearch($this->arrSearch);
 		}
 		$query = implode(' ', $query);
@@ -40,18 +42,21 @@ class GroupModel extends Model
 
 	public function listItems($params, $totalItems, $totalItemsPerPage)
 	{
-		$query[] = 'SELECT * FROM `group`';
+		$query[] = "SELECT `user`.`id`, `user`.`username`, `user`.`email`, `user`.`fullname`, `user`.`password`, `user`.`created`, `user`.`created_by`, `user`.`modified`, `user`.`modified_by`, `user`.`register_date`, `user`.`register_ip`, `user`.`status`, `user`.`ordering`, `user`.`group_id`, `group`.`name` as `group_name`";
+		$query[] = "FROM `$this->table`, `group`";
+		$query[] = "WHERE `user`.`group_id`=`group`.`id`";
+
 		if (isset($params['filterStatus']) || !empty($params['filterStatus'])) {
 			$this->arrSearch[]	 = ['status', $params['filterStatus']];
 			$this->createWhereSearch($this->arrSearch);
 		}
-		$query[] = $this->where;
+		$query[] = (!empty($this->where)) ? 'AND' . substr($this->where, 5) : '';
 
 		$totalPage			= ceil($totalItems / $totalItemsPerPage);
 		if ($params['page'] >= 1 && $params['page'] <= $totalPage) $currentPage = $params['page'];
 		else 													   $currentPage = $totalPage;
 
-		$query[] = ' LIMIT ' . ($currentPage - 1) * $totalItemsPerPage . ', ' . $totalItemsPerPage;
+		$query[] = 'LIMIT ' . ($currentPage - 1) * $totalItemsPerPage . ', ' . $totalItemsPerPage;
 		$query = implode(' ', $query);
 		return $this->listRecord($query);
 	}

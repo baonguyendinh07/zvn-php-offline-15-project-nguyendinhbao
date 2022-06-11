@@ -1,5 +1,5 @@
 <?php
-class GroupController extends Controller
+class UserController extends Controller
 {
 	public function __construct($arrParams)
 	{
@@ -56,7 +56,7 @@ class GroupController extends Controller
 			$stringOptions = ['min' => 3, 'max' => 100];
 
 			$validate->addRule('name', 'string', $stringOptions)
-				->addRule('group_acp', 'status', [0, 1])
+				->addRule('group_id', 'status', [0, 1])
 				->addRule('status', 'status', ['active', 'inactive']);
 
 			$validate->run();

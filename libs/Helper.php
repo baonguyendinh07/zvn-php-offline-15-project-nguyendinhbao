@@ -18,20 +18,16 @@ class Helper
 
         return sprintf('<a href="%s" class="btn btn-%s %s %s">%s</a>', $link, $color, $circle, $small, $content);
     }
-
+    
     public static function highlight($searchKey, $subject)
     {
         if (!empty(trim($searchKey))) {
-            $searchKey = trim($searchKey);
-            preg_match_all("#$searchKey#i", $subject, $matches);
-            $matches = array_unique($matches[0]);
-            foreach($matches as $value){
-                $subject = str_replace($value, "<mark>$value</mark>", $subject);
-            }
+            $searchKey = preg_quote(trim($searchKey));
+            $subject = preg_replace("#$searchKey#i", "<mark>\\0</mark>", $subject);
         }
         return $subject;
     }
-
+    
     public static function randomString($length = 5)
     {
         $arrCharacter = array_merge(range('A', 'Z'), range('a', 'z'), range(0, 9));
@@ -40,5 +36,43 @@ class Helper
 
         $result        = substr($arrCharacter, 0, $length);
         return $result;
+    }
+
+/*     public static function showMessege($class, $notification)
+    {
+        $xhtml = '';
+        if(!empty(Session::get('notification'))){
+            $xhtml = sprintf('
+            <div class="alert alert-%s alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h5><i class="icon fas fa-exclamation-triangle"></i> %s!</h5>
+                %s
+            </div>', $class, $notification, Session::get('notification'));
+            Session::unset('notification');
+        }
+        
+        return $xhtml;
+    } */
+
+    public static function showMessege($class, $notification, $arrElements){
+        $xhtml= '<div class="alert alert-'.$class.' alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h5><i class="icon fas fa-exclamation-triangle"></i> '.$notification.'!</h5>
+                    <ul class="list-unstyled mb-0">';
+        foreach($arrElements as $key =>$value){
+            $xhtml .= '<li class="text-white"><b>'.ucfirst($key).'</b> '.$value.'!</li>';
+        }
+        $xhtml .= '</ul></div>';
+        return $xhtml;
+    }
+
+    public static function areaFilterStatus($link, $options, $status){
+        $xhtml = '';
+        foreach($options as $option => $countItems){
+            $aClass = $option == $status ? 'btn-info' : 'btn-secondary';
+            $url    = ($option != 'all') ? "$link&filterStatus=$option" : $link;
+            $xhtml .= sprintf('<a href="%s" class="btn %s">%s<span class="badge badge-pill badge-light">%s</span></a> ', $url, $aClass, ucfirst($option), $countItems);
+        }
+        return $xhtml;
     }
 }

@@ -1,17 +1,17 @@
 <?php
-$xhtml = '';
-$token = Helper::randomString(10);
+$token = time();
 Session::set('token', $token);
 $indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], $this->params['action']);
+$filterLink = (isset($this->params['search-key']) && !empty(trim($this->params['search-key']))) ? "$indexActionLink&search-key=" . $this->params['search-key'] : $indexActionLink;
 $formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
 $btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
 
-if(!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))){
-	$notification = Form::showMessege('success', 'Thông báo', [Session::get('notificationElement') ?? '' => Session::get('notification')]);
+if (!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))) {
+	$notification = Helper::showMessege('success', 'Thông báo', [Session::get('notificationElement') ?? 'Thông tin thành viên' => Session::get('notification')]);
 	Session::unset('notificationElement');
 	Session::unset('notification');
 }
-
+$xhtml = '';
 if (!empty($this->items)) {
 	foreach ($this->items as $key => $value) {
 		$id        	  = Helper::highlight($this->params['search-key'] ?? '', $value['id']);
@@ -64,13 +64,13 @@ if (!empty($this->items)) {
 				<div class="container-fluid">
 					<div class="row justify-content-between align-items-center">
 						<div class="area-filter-status mb-2">
-							<?= Form::areaFilterStatus($indexActionLink, $this->arrCountItems, $this->params['filterStatus'] ?? 'all') ?>
+							<?= Helper::areaFilterStatus($filterLink, $this->arrCountItems, $this->params['filterStatus'] ?? 'all') ?>
 						</div>
 						<div class="area-search mb-2">
 							<form action="" method="GET">
-								<?php echo Form::input('hidden', 'module', 'backend') ?>
-								<?php echo Form::input('hidden', 'controller', 'group') ?>
-								<?php echo Form::input('hidden', 'action', 'index') ?>
+								<?= Form::input('hidden', 'module', 'backend') ?>
+								<?= Form::input('hidden', 'controller', 'group') ?>
+								<?= Form::input('hidden', 'action', 'index') ?>
 								<div class="input-group">
 									<input type="text" class="form-control" name="search-key" value="<?= $this->params['search-key'] ?? '' ?>">
 									<span class="input-group-append">
@@ -140,15 +140,7 @@ if (!empty($this->items)) {
 				</div>
 			</div>
 			<div class="card-footer clearfix">
-				<ul class="pagination m-0 float-right">
-					<li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-angle-double-left"></i></a></li>
-					<li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-angle-left"></i></a></li>
-					<li class="page-item active"><a class="page-link" href="#">1</a></li>
-					<li class="page-item"><a class="page-link" href="#">2</a></li>
-					<li class="page-item"><a class="page-link" href="#">3</a></li>
-					<li class="page-item"><a class="page-link" href="#"><i class="fas fa-angle-right"></i></a></li>
-					<li class="page-item"><a class="page-link" href="#"><i class="fas fa-angle-double-right"></i></a></li>
-				</ul>
+				<?= $this->pagination ?? '' ?>
 			</div>
 		</div>
 	</div>
