@@ -12,4 +12,10 @@ class URL
 		$link = sprintf('index.php?module=%s&controller=%s&action=%s%s', $module, $controller, $action, $extend);
 		return $link;
 	}
+
+	public function redirect($location)
+	{
+		header("location: $location");
+		exit();
+	}
 }

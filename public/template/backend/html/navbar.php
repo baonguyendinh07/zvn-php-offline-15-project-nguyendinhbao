@@ -10,29 +10,29 @@
     <ul class="navbar-nav ml-auto">
 
         <li class="nav-item">
-            <a class="nav-link" href="#" role="button">
+            <a class="nav-link" href="index.php?module=frontend&controller=index&action=index" role="button">
                 <i class="fas fa-eye"></i> View Site
             </a>
         </li>
         <li class="nav-item dropdown user-menu">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <img src="<?= $this->_pathImg; ?>avatar.jpg" class="user-image img-circle elevation-2" alt="User Image">
-                <span class="d-none d-md-inline">ZendVN</span>
+                <img src="<?= $this->_pathImg . 'avatar/' . $this->_userInfoParams['userInfo']['username'] ?>.jpg" class="user-image img-circle elevation-2" alt="User Image">
+                <span class="d-none d-md-inline"><?= $this->_userInfoParams['userInfo']['fullname'] ?></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="left: inherit; right: 0px;">
                 <!-- User image -->
                 <li class="user-header bg-info">
-                    <img src="<?= $this->_pathImg; ?>avatar.jpg" class="img-circle elevation-2" alt="User Image">
+                    <img src="<?= $this->_pathImg . 'avatar/' . $this->_userInfoParams['userInfo']['username'] ?>.jpg" class="img-circle elevation-2" alt="User Image">
 
                     <p>
-                        ZendVN - Web Developer
-                        <small>admin</small>
+                    <?= $this->_userInfoParams['userInfo']['fullname'] ?>
+                        <small><?= $this->_userInfoParams['userInfo']['name'] ?></small>
                     </p>
                 </li>
                 <!-- Menu Footer-->
                 <li class="user-footer">
                     <a href="#" class="btn btn-default btn-flat">Profile</a>
-                    <a href="#" class="btn btn-default btn-flat float-right">Sign out</a>
+                    <a href="index.php?module=backend&controller=login&action=logout" class="btn btn-default btn-flat float-right">Sign out</a>
                 </li>
             </ul>
         </li>

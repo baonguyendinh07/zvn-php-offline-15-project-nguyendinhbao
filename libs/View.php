@@ -15,7 +15,7 @@ class View{
 		$this->_moduleName = $moduleName;
 	}
 	
-	public function render( $fileInclude, $loadFull = true){
+	public function render($fileInclude, $loadFull = true){
 		$path = APPLICATION_PATH. $this->_moduleName . DS . 'views' . DS . $fileInclude . '.php';
 		if(file_exists($path)){
 			if($loadFull == true){
@@ -50,7 +50,6 @@ class View{
 		return $xhtml;
 	}
 	
-	
 	// CREATE META (NAME - HTTP)
 	public function createMeta($arrMeta, $typeMeta = 'name'){
 		$xhtml = '';
@@ -65,12 +64,25 @@ class View{
 	
 	// CREATE TITLE
 	public function createTitle($value){
-		return '<title>'.$value.'</title>';
+		return $value;
 	}
 	
 	// SET TITLE
 	public function setTitle($value){
 		$this->_title = '<title>'.$value.'</title>';
+	}
+
+	public function createTitlePageHeader($value){
+		return $value;
+	}
+	
+	// SET TITLE
+	public function setTitlePageHeader($value){
+		$this->_titlePageHeader = $value;
+	}
+
+	public function setUserInfo($userInfoParams){
+		$this->_userInfoParams = $userInfoParams;
 	}
 	
 	// SET CSS

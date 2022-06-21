@@ -13,40 +13,35 @@ class GroupController extends Controller
 	public function indexAction()
 	{
 		$this->_view->setTitle('Index');
-
-		$totalItemsPerPage = 3;
-		$pageRange = 3;
-
+		$this->_view->setTitlePageHeader(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
+		$this->_view->setUserInfo(Session::get('user'));
 		$this->_view->arrCountItems = $this->_model->countItems($this->_arrParam);
 		$this->_view->params = $this->_arrParam;
-		if ($this->_view->arrCountItems['all'] > 0) {
-			$searchURL = '';
-			$this->_arrParam['search-key'] = $_GET['search-key'] ?? '';
-			if (isset($this->_arrParam['search-key']) && !empty(trim($this->_arrParam['search-key']))) {
-				$searchURL = 'search-key=' . $this->_arrParam['search-key'] . '&';
-			}
 
-			$this->_arrParam['page'] = $this->_arrParam['page'] ?? 1;
-			$filterStatusURL = '';
-			if (isset($this->_arrParam['filterStatus']) && !empty(trim($this->_arrParam['filterStatus']))) {
-				$filterStatusURL = 'filterStatus=' . $this->_arrParam['filterStatus'] . '&';
-			}
+		$this->_arrParam['page'] = $this->_arrParam['page'] ?? 1;
 
-			$path = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'index') . '&' . $searchURL . $filterStatusURL;
-			$filterStatus = $this->_arrParam['filterStatus'] ?? 'all';
-			$totalItems = $this->_view->arrCountItems[$filterStatus];
+		$filterStatus = $this->_arrParam['filterStatus'] ?? 'all';
+		$totalItems = $this->_view->arrCountItems[$filterStatus];
+		$configPagination = [
+			'totalItemsPerPage' => 3,
+			'pageRange' => 3
+		];
+		$path = '';
+		$this->setPagination($configPagination);
+		$pagination = new Pagination($totalItems, $this->_pagination, $path);
+		$this->_view->pagination = $pagination->showPagination();
 
-			$pagination = new Pagination($totalItems, $totalItemsPerPage, $pageRange, $this->_arrParam['page'], $path);
-			$this->_view->pagination = $pagination->showPagination();
+		$this->_view->items = $this->_model->listItems($this->_arrParam, $totalItems, $this->_pagination['totalItemsPerPage']);
 
-			$this->_view->items = $this->_model->listItems($this->_arrParam, $totalItems, $totalItemsPerPage);
-		}
 		$this->_view->render($this->_arrParam['controller'] . '/index');
 	}
 
 	public function formAction()
 	{
 		$this->_view->setTitle('Form');
+		$this->_view->setTitlePageHeader(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
+		$this->_view->setUserInfo(Session::get('user'));
+
 		if (!empty($this->_arrParam['id'])) $this->_view->data = $this->_model->getItem($this->_arrParam);
 
 		if (isset($this->_arrParam['form']) && Session::get('token') == $this->_arrParam['form']['token']) {

@@ -1,10 +1,10 @@
 <?php
-$token = time();
-Session::set('token', $token);
 $indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], $this->params['action']);
-$filterLink = (isset($this->params['search-key']) && !empty(trim($this->params['search-key']))) ? "$indexActionLink&search-key=" . $this->params['search-key'] : $indexActionLink;
 $formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
 $btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
+
+$groupOptionsDefault = ['default' => ' - Select Group - '] + $this->groupOptions;
+$groupSelectDefault  = Form::select($groupOptionsDefault, 'group_id', $this->params['group_id'] ?? 'default', 'filter-element');
 
 if (!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))) {
     $notification = Helper::showMessege('success', 'Thông báo', [Session::get('notificationElement') ?? 'Thông tin thành viên' => Session::get('notification')]);
@@ -12,30 +12,40 @@ if (!empty(Session::get('notificationElement')) || !empty(Session::get('notifica
     Session::unset('notification');
 }
 
+$inputFilterStatus = '';
+$inputSearchKey = '';
+$inputGroupId = '';
+
+if (isset($this->params['filterStatus'])) $inputFilterStatus = Form::input('hidden', 'filterStatus', $this->params['filterStatus']);
+
+if (isset($this->params['search-key']))   $inputSearchKey = Form::input('hidden', 'search-key', $this->params['search-key']);
+
+if (isset($this->params['group_id']))     $inputGroupId = Form::input('hidden', 'group_id', $this->params['group_id']);
+
+$searchValue = $this->params['search-key'] ?? '';
+
 $xhtml = '';
-/* echo '<pre>';
-print_r($this->items);
-echo '</pre>';
-die(); */
 if (!empty($this->items)) {
     foreach ($this->items as $key => $value) {
-        $groupOptions = [
-            'default' => ' - Select Group - ',
-            $value['group_id'] => $value['group_name'],
-            "1" => 'Active'
-        ];
-        $id           = Helper::highlight($this->params['search-key'] ?? '', $value['id']);
-        $userName     = Helper::highlight($this->params['search-key'] ?? '', $value['username']);
-        $fullName     = Helper::highlight($this->params['search-key'] ?? '', $value['fullname']);
-        $email        = Helper::highlight($this->params['search-key'] ?? '', $value['email']);
-        $pathDelete   = URL::createLink($this->params['module'], $this->params['controller'], 'delete', ['id' => $id]);
-        //$linkGroupAcp = URL::createLink($this->params['module'], $this->params['controller'], 'changeGroupAcp', ['id' => $id, 'status' => $value['group_acp'], 'token' => $token]);
-        $linkStatus   = URL::createLink($this->params['module'], $this->params['controller'], 'changeStatus', ['id' => $id, 'status' => $value['status'], 'token' => $token]);
-        //$showGroupAcp = Helper::showStatus($value['group_acp'], $linkGroupAcp);
+        $id           = Helper::highlight($searchValue, $value['id']);
+        $userName     = Helper::highlight($searchValue, $value['username']);
+        $fullName     = Helper::highlight($searchValue, $value['fullname']);
+        $email        = Helper::highlight($searchValue, $value['email']);
+
+        $linkStatus   = URL::createLink($this->params['module'], $this->params['controller'], 'changeStatus', ['id' => $id, 'status' => $value['status']]);
         $showStatus   = Helper::showStatus($value['status'], $linkStatus);
+
+        $dataUrlLink  = URL::createLink($this->params['module'], $this->params['controller'], 'changeGroupId', ['id' => $value['id']]);
+        $dataUrl      = "data-url='$dataUrlLink'";
+        $groupSelect  = Form::select($this->groupOptions, '', $value['group_id'] ?? '', 'btn-ajax-group-id', $dataUrl);
+
+        $resetPasswordLink     = URL::createLink($this->params['module'], $this->params['controller'], 'changePassword', ['id' => $value['id']]);
+        $btnResetPassword      = Helper::createButtonLink($resetPasswordLink, '<i class="fas fa-key "></i>', 'secondary', true, true);
 
         $editLink     = URL::createLink($this->params['module'], $this->params['controller'], 'form', ['id' => $value['id']]);
         $btnEdit      = Helper::createButtonLink($editLink, '<i class="fas fa-pen"></i>', 'info', true, true);
+
+        $pathDelete   = URL::createLink($this->params['module'], $this->params['controller'], 'delete', ['id' => $id]);
         $btnDelete    = Helper::createButtonLink($pathDelete, '<i class="fas fa-trash "></i>', 'danger', true, true);
 
         $xhtml .= '<tr>
@@ -46,15 +56,7 @@ if (!empty($this->items)) {
                             <p class="mb-0">FullName: ' . $fullName . '</p>
                             <p class="mb-0">Email: ' . $email . '</p>
                         </td>
-                        <td>
-                            <select class="form-control custom-select w-auto">
-                                <option> - Select Group - </option>
-                                <option selected>Admin</option>
-                                <option>Manager</option>
-                                <option>Member</option>
-                                <option>Register</option>
-                            </select>
-                        </td>
+                        <td>' . $groupSelect . '</td>
                         <td>' . $showStatus . '</td>
                         <td>
                             <p class="mb-0"><i class="far fa-user"></i>' . $value['created_by'] . '</p>
@@ -64,9 +66,7 @@ if (!empty($this->items)) {
                             <p class="mb-0"><i class="far fa-user"></i>' . $value['modified_by'] . '</p>
                             <p class="mb-0"><i class="far fa-clock"></i>' . $value['modified'] . '</p>
                         </td>
-                        <td>
-                            <a href="#" class="btn btn-secondary btn-sm rounded-circle"><i class="fas fa-key"></i></a>
-                            ' . $btnEdit . $btnDelete . '
+                        <td>' . $btnResetPassword . $btnEdit . $btnDelete . '
                         </td>
                     </tr>';
     }
@@ -89,24 +89,27 @@ if (!empty($this->items)) {
                 <div class="container-fluid">
                     <div class="row justify-content-between align-items-center">
                         <div class="area-filter-status mb-2">
-                            <?= Helper::areaFilterStatus($filterLink, $this->arrCountItems, $this->params['filterStatus'] ?? 'all') ?>
+                            <?= Helper::areaFilterStatus($this->arrCountItems, $this->params) ?>
                         </div>
                         <div class="area-filter-attribute mb-2">
-                            <select class="form-control custom-select">
-                                <option> - Select Group - </option>
-                                <option>Admin</option>
-                                <option>Manager</option>
-                                <option>Member</option>
-                                <option>Register</option>
-                            </select>
+                            <form action="" method="GET" id="filter-form">
+                                <?= Form::input('hidden', 'module', $this->params['module']) ?>
+                                <?= Form::input('hidden', 'controller', $this->params['controller']) ?>
+                                <?= Form::input('hidden', 'action', $this->params['action']) ?>
+                                <?= $inputFilterStatus ?>
+                                <?= $inputSearchKey ?>
+                                <?= $groupSelectDefault ?>
+                            </form>
                         </div>
                         <div class="area-search mb-2">
                             <form action="" method="GET">
                                 <?= Form::input('hidden', 'module', $this->params['module']) ?>
                                 <?= Form::input('hidden', 'controller', $this->params['controller']) ?>
                                 <?= Form::input('hidden', 'action', $this->params['action']) ?>
+                                <?= $inputFilterStatus ?>
+                                <?= $inputGroupId ?>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" name="search-key" value="<?= $this->params['search-key'] ?? '' ?>">
+                                    <input type="text" class="form-control" name="search-key" value="<?= $searchValue ?>">
                                     <span class="input-group-append">
                                         <button type="submit" class="btn btn-info">Search</button>
                                         <a href="<?= $indexActionLink ?>" class="btn btn-danger">Clear</a>
@@ -125,7 +128,7 @@ if (!empty($this->items)) {
                 <h3 class="card-title">List</h3>
 
                 <div class="card-tools">
-                    <a href="#" class="btn btn-tool" data-card-widget="refresh">
+                    <a href="<?= $indexActionLink ?>" class="btn btn-tool" data-card-widget="refresh">
                         <i class="fas fa-sync-alt"></i>
                     </a>
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -175,7 +178,7 @@ if (!empty($this->items)) {
                 </div>
             </div>
             <div class="card-footer clearfix">
-                <?= $this->pagination ?? '' ?>
+                <?= $this->pagination->showPagination() ?? '' ?>
             </div>
         </div>
     </div>

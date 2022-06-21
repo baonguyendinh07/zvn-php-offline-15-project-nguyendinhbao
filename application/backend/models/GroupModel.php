@@ -12,28 +12,49 @@ class GroupModel extends Model
 
 	public function createWhereSearch($params)
 	{
-		$where = '';
-		$p = ')';
+		$before = '';
+		$after 	= '';
+		$start = 0;
 		foreach ($params as $param => $value) {
-			$beforeValue = $params[$param - 1][0] ?? '';
-			if ($beforeValue == 'fullname' && $value[0] == 'status') {
-				$operator = "$p AND";
-				$p = '';
-			} else $operator = 'OR';
-			$where .= " $operator $value[0] LIKE '$value[1]'";
+			if (count($params) > 1 && ($param == 'status' || $param == 'group_acp')) {
+				if ($value == 'default') continue;
+				$operator = 'AND';
+				$start = $start == 3 ? 3 : 4;
+				$after = '';
+			} else {
+				$operator = 'OR';
+				$start = 3;
+			}
+			if ($param == 'id') {
+				$before = '(';
+				$after 	= '';
+			}
+			if ($param == 'name') {
+				$before = '';
+				$after 	= ')';
+			}
+			$where[] = "$operator $before$param LIKE '$value'$after";
 		}
-		$where = '(' . substr($where, 4) . $p;
-		return $this->where = "WHERE $where";
+		$where = implode(' ', $where);
+		$where = 'WHERE ' . substr($where, $start);
+		return $this->where = $where;
 	}
 
 	public function countItems($params)
 	{
 		$query[] = "SELECT COUNT(`status`) as `all`, SUM(`status` = 'active') as `active`, SUM(`status` = 'inactive') as `inactive` FROM `$this->table`";
 		if (isset($params['search-key']) && !empty(trim($params['search-key']))) {
-			$this->arrSearch[] = ['id', '%' . $params['search-key'] . '%'];
-			$this->arrSearch[] = ['name', '%' . $params['search-key'] . '%'];
-			$query[] = $this->createWhereSearch($this->arrSearch);
+			$this->arrSearch = [
+				'id' => '%' . $params['search-key'] . '%',
+				'name' => '%' . $params['search-key'] . '%'
+			];
 		}
+
+		if (isset($params['group_acp']) && trim($params['group_acp']) != '') {
+			$this->arrSearch['group_acp']	 = $params['group_acp'];
+		}
+
+		$query[] = isset($this->arrSearch) ? $this->createWhereSearch($this->arrSearch) : '';
 		$query = implode(' ', $query);
 		return $this->listRecord($query)[0];
 	}
@@ -41,17 +62,15 @@ class GroupModel extends Model
 	public function listItems($params, $totalItems, $totalItemsPerPage)
 	{
 		$query[] = 'SELECT * FROM `group`';
-		if (isset($params['filterStatus']) || !empty($params['filterStatus'])) {
-			$this->arrSearch[]	 = ['status', $params['filterStatus']];
+
+		if (isset($params['filterStatus']) && ($params['filterStatus'] == 'active' || $params['filterStatus'] == 'inactive')) {
+			$this->arrSearch['status']	 = $params['filterStatus'];
 			$this->createWhereSearch($this->arrSearch);
 		}
+
+		$this->where;
 		$query[] = $this->where;
 
-		$totalPage			= ceil($totalItems / $totalItemsPerPage);
-		if ($params['page'] >= 1 && $params['page'] <= $totalPage) $currentPage = $params['page'];
-		else 													   $currentPage = $totalPage;
-
-		$query[] = ' LIMIT ' . ($currentPage - 1) * $totalItemsPerPage . ', ' . $totalItemsPerPage;
 		$query = implode(' ', $query);
 		return $this->listRecord($query);
 	}

@@ -12,30 +12,53 @@ class UserModel extends Model
 
 	public function createWhereSearch($params)
 	{
-		$where = '';
-		$p = ')';
+		$before = '';
+		$after 	= '';
+		$start = 0;
 		foreach ($params as $param => $value) {
-			$beforeValue = $params[$param - 1][0] ?? '';
-			if ($beforeValue == 'fullname' && $value[0] == 'status') {
-				$operator = "$p AND";
-				$p = '';
-			} else $operator = 'OR';
-			$where .= " $operator $this->table.$value[0] LIKE '$value[1]'";
+			$before = '';
+			$after 	= '';
+			if (count($params) > 1 && ($param == 'status' || $param == 'group_id')) {
+				if ($value == 'default') continue;
+				$operator = 'AND';
+				$start = $start == 3 ? 3 : 4;
+				$after = '';
+			} else {
+				$operator = 'OR';
+				$start = 3;
+			}
+			if ($param == 'id') {
+				$before = '(';
+				$after 	= '';
+			}
+			if ($param == 'fullname') {
+				$before = '';
+				$after 	= ')';
+			}
+			$where[] = "$operator $before$this->table.$param LIKE '$value'$after";
 		}
-		$where = '(' . substr($where, 4) . $p;
-		return $this->where = "WHERE $where";
+		$where = implode(' ', $where);
+		$where = 'WHERE ' . substr($where, $start);
+		return $this->where = $where;
 	}
 
 	public function countItems($params)
 	{
 		$query[] = "SELECT COUNT(`status`) as `all`, SUM(`status` = 'active') as `active`, SUM(`status` = 'inactive') as `inactive` FROM `$this->table`";
 		if (isset($params['search-key']) && !empty(trim($params['search-key']))) {
-			$this->arrSearch[] = ['id', '%' . $params['search-key'] . '%'];
-			$this->arrSearch[] = ['username', '%' . $params['search-key'] . '%'];
-			$this->arrSearch[] = ['email', '%' . $params['search-key'] . '%'];
-			$this->arrSearch[] = ['fullname', '%' . $params['search-key'] . '%'];
-			$query[] = $this->createWhereSearch($this->arrSearch);
+			$this->arrSearch = [
+				'id' => '%' . $params['search-key'] . '%',
+				'username' => '%' . $params['search-key'] . '%',
+				'email' => '%' . $params['search-key'] . '%',
+				'fullname' => '%' . $params['search-key'] . '%'
+			];
 		}
+
+		if (isset($params['group_id']) && is_numeric($params['group_id'])) {
+			$this->arrSearch['group_id']	 = $params['group_id'];
+		}
+
+		$query[] = isset($this->arrSearch) ? $this->createWhereSearch($this->arrSearch) : '';
 		$query = implode(' ', $query);
 		return $this->listRecord($query)[0];
 	}
@@ -46,17 +69,28 @@ class UserModel extends Model
 		$query[] = "FROM `$this->table`, `group`";
 		$query[] = "WHERE `user`.`group_id`=`group`.`id`";
 
-		if (isset($params['filterStatus']) || !empty($params['filterStatus'])) {
-			$this->arrSearch[]	 = ['status', $params['filterStatus']];
+		if (isset($params['filterStatus']) && ($params['filterStatus'] == 'active' || $params['filterStatus'] == 'inactive')) {
+			$this->arrSearch['status']	 = $params['filterStatus'];
 			$this->createWhereSearch($this->arrSearch);
 		}
+		$this->where;
 		$query[] = (!empty($this->where)) ? 'AND' . substr($this->where, 5) : '';
 
 		$totalPage			= ceil($totalItems / $totalItemsPerPage);
 		if ($params['page'] >= 1 && $params['page'] <= $totalPage) $currentPage = $params['page'];
-		else 													   $currentPage = $totalPage;
+		else 													   $currentPage = 1;
+		$fromElement = ($currentPage - 1) * $totalItemsPerPage;
+		if ($fromElement >= 0) {
+			$query[] = 'LIMIT ' . $fromElement . ', ' . $totalItemsPerPage;
+			$query = implode(' ', $query);
+			return $this->listRecord($query);
+		}
+	}
 
-		$query[] = 'LIMIT ' . ($currentPage - 1) * $totalItemsPerPage . ', ' . $totalItemsPerPage;
+	public function getListGroup()
+	{
+		$query[] = "SELECT `id`, `name`";
+		$query[] = "FROM `group`";
 		$query = implode(' ', $query);
 		return $this->listRecord($query);
 	}
@@ -86,16 +120,31 @@ class UserModel extends Model
 
 	public function changeStatus($params, $value)
 	{
-		if ($value == 'group_acp') $status = $params['status'] == 1 ? 0 : 1;
-		elseif ($value == 'status') $status = $params['status'] == 'active' ? 'inactive' : 'active';
+		if ($value == 'status') 	$status = $params['status'] == 'active' ? 'inactive' : 'active';
+		elseif ($value == 'group_id') 	$status = $params['group_id'];
 		$updateParams = [
 			$value => $status,
 			'modified' => date('Y-m-d H:i:s')
 		];
 
 		$this->update($updateParams, [['id', $params['id']]]);
-		Session::set('notificationElement', $value);
-		Session::set('notification', 'được chỉnh sửa thành công!');
+
+		if ($value == 'status') {
+			$linkParams = [
+				'id' => $params['id'],
+				'status' => $status
+			];
+			$link = URL::createLink($params['module'], $params['controller'], $params['action'], $linkParams);
+			$result = Helper::showStatus($status, $link);
+		} elseif ($value == 'group_id') {
+			$groupOptions = Helper::convertArrList($this->getListGroup());
+			$dataUrlLink  = URL::createLink($params['module'], $params['controller'], 'changeGroupId', ['id' => $params['id']]);
+			$dataUrl = "data-url='$dataUrlLink'";
+			$result = Form::select($groupOptions, '', $status, 'btn-ajax-group-id', $dataUrl);
+		}
+		return $result;
+		//Session::set('notificationElement', $value);
+		//Session::set('notification', 'được chỉnh sửa thành công!');
 	}
 
 	public function deleteItem($id, $options = null)

@@ -39,8 +39,7 @@
         <?php require_once 'html/footer.php'; ?>
     </div>
     <!-- ./wrapper -->
-    <?php echo $this->_pluginJsFiles; ?>
-    <?php echo $this->_jsFiles; ?>
+    <?php require_once 'html/script.php'; ?>
 </body>
 
 </html>

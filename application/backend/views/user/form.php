@@ -1,17 +1,6 @@
 <?php
-$formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
 $indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'index');
-$idUrl = '';
-if (!empty($this->data['id'])) {
-    $idUrl = '&id=' . $this->data['id'] ?? '';
-    $inputId = Form::input('hidden', 'form[id]', $this->data['id'] ?? '');
-}
-
-$groupOptions = [
-    'default' => ' - Select Group ACP - ',
-    "0" => 'Inactive',
-    "1" => 'Active'
-];
+if (!empty($this->data['id'])) $inputId = Form::input('hidden', 'form[id]', $this->data['id']);
 
 $statusOptions = [
     'default' => ' - Select Status - ',
@@ -19,22 +8,20 @@ $statusOptions = [
     'active' => 'Active'
 ];
 
-$lblUsername = Form::label('Username');
-$lblPassword = Form::label('Password');
-$lblEmail    = Form::label('Email');
-$lblFullname = Form::label('Fullname');
-$lblStatus   = Form::label('Status');
-$lblGroup    = Form::label('Group');
+$groupOptionsDefault = ['default' => ' - Select Group - '] + $this->groupOptions;
 
-$inputUsername   = Form::input('text', 'form[username]', '');
-$inputPassword   = Form::input('password', 'form[password]', '');
-$inputEmail      = Form::input('text', 'form[email]', $this->data['email'] ?? '');
+$lblUsername = Form::label('Username', 'form-label fw-bold');
+$lblPassword = Form::label('Password', 'form-label fw-bold');
+$lblEmail    = Form::label('Email', 'form-label fw-bold');
+$lblFullname = Form::label('Fullname', 'form-label fw-bold');
+$lblStatus   = Form::label('Status', 'form-label fw-bold');
+$lblGroup    = Form::label('Group', 'form-label fw-bold');
+
+$inputPassword   = Form::input('password', 'form[password]');
 $inputFullname   = Form::input('text', 'form[fullname]', $this->data['fullname'] ?? '');
 
-
-//$groupSelect     = Form::select($groupOptions, 'form[group_acp]', $this->data['group_acp'] ?? 'default');
 $statusSelect    = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'default');
-//$inputOrdering   = Form::input('number', 'form[ordering]', $this->data['ordering'] ?? '');
+$groupIdSelect   = Form::select($groupOptionsDefault, 'form[group_id]', $this->data['group_id'] ?? 'default');
 
 Session::set('token', time());
 $inputToken = Form::input('hidden', 'form[token]', time());
@@ -42,19 +29,19 @@ $inputToken = Form::input('hidden', 'form[token]', time());
 <div class="row">
     <div class="col-12">
         <?= $this->errors ?? '' ?>
-        <form action="<?= $formActionLink ?>" method="post">
+        <form action="" method="post">
             <?= $inputToken ?>
-            <?= $inputId ?? '' ?>
+            <?= $inputId ?? ''?>
             <div class="card card-outline card-info">
                 <div class="card-body">
                     <div class="form-group">
-                        <?= $lblUsername . $inputUsername ?>
+                        <?= $lblUsername . $this->inputUsername ?>
                     </div>
                     <div class="form-group">
                         <?= $lblPassword . $inputPassword ?>
                     </div>
                     <div class="form-group">
-                        <?= $lblEmail . $inputEmail ?>
+                        <?= $lblEmail . $this->inputEmail ?>
                     </div>
                     <div class="form-group">
                         <?= $lblFullname . $inputFullname ?>
@@ -63,14 +50,7 @@ $inputToken = Form::input('hidden', 'form[token]', time());
                         <?= $lblStatus . $statusSelect ?>
                     </div>
                     <div class="form-group">
-                        <?= $lblGroup ?>
-                        <select class="custom-select">
-                            <option selected> - Select Group - </option>
-                            <option>Admin</option>
-                            <option>Manager</option>
-                            <option>Member</option>
-                            <option>Register</option>
-                        </select>
+                        <?= $lblGroup . $groupIdSelect ?>
                     </div>
                 </div>
                 <div class="card-footer">

@@ -2,20 +2,42 @@
 $token = time();
 Session::set('token', $token);
 $indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], $this->params['action']);
-$filterLink = (isset($this->params['search-key']) && !empty(trim($this->params['search-key']))) ? "$indexActionLink&search-key=" . $this->params['search-key'] : $indexActionLink;
+
+// $filterLink = $indexActionLink . $this->searchURL . $this->groupAcpURL;
 $formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
 $btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
+
+$inputFilterStatus = '';
+$inputSearchKey = '';
+$inputGroupACP = '';
+
+if (isset($this->params['filterStatus'])) $inputFilterStatus = Form::input('hidden', 'filterStatus', $this->params['filterStatus']);
+
+if (isset($this->params['search-key'])) $inputSearchKey = Form::input('hidden', 'search-key', $this->params['search-key']);
+
+if (isset($this->params['group_acp'])) $inputGroupACP = Form::input('hidden', 'group_acp', $this->params['group_acp']);
+
+$searchValue = $this->params['search-key'] ?? '';
+
+$groupAcpOptions = [
+	'default' => ' - Select Group ACP - ',
+	"0" => 'Inactive',
+	"1" => 'Active'
+];
+
+$groupAcpSelect  = Form::select($groupAcpOptions, 'group_acp', $this->params['group_acp'] ?? '', 'filter-element');
 
 if (!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))) {
 	$notification = Helper::showMessege('success', 'Thông báo', [Session::get('notificationElement') ?? 'Thông tin thành viên' => Session::get('notification')]);
 	Session::unset('notificationElement');
 	Session::unset('notification');
 }
+
 $xhtml = '';
 if (!empty($this->items)) {
 	foreach ($this->items as $key => $value) {
-		$id        	  = Helper::highlight($this->params['search-key'] ?? '', $value['id']);
-		$name 		  = Helper::highlight($this->params['search-key'] ?? '', $value['name']);
+		$id        	  = Helper::highlight($searchValue, $value['id']);
+		$name 		  = Helper::highlight($searchValue, $value['name']);
 		$pathDelete   = URL::createLink($this->params['module'], $this->params['controller'], 'delete', ['id' => $id]);
 		$linkGroupAcp = URL::createLink($this->params['module'], $this->params['controller'], 'changeGroupAcp', ['id' => $id, 'status' => $value['group_acp'], 'token' => $token]);
 		$linkStatus   = URL::createLink($this->params['module'], $this->params['controller'], 'changeStatus', ['id' => $id, 'status' => $value['status'], 'token' => $token]);
@@ -31,7 +53,7 @@ if (!empty($this->items)) {
 					<td>' . $id . '</td>
 					<td>' . $name . '</td>
 					<td>' . $showGroupAcp . '</td>
-					<td>' . $showStatus . '</td>
+					<td class="position-relative">' . $showStatus . '</td>
 					<td>
 						<p class="mb-0"><i class="far fa-user"></i>' . $value['created_by'] . '</p>
 						<p class="mb-0"><i class="far fa-clock"></i>' . $value['created'] . '</p>
@@ -40,9 +62,7 @@ if (!empty($this->items)) {
 						<p class="mb-0"><i class="far fa-user"></i>' . $value['modified_by'] . '</p>
 						<p class="mb-0"><i class="far fa-clock"></i>' . $value['modified'] . '</p>
 					</td>
-					<td>
-						' . $btnEdit . $btnDelete . '
-					</td>
+					<td>' . $btnEdit . $btnDelete . '</td>
 				</tr>';
 	}
 }
@@ -53,7 +73,6 @@ if (!empty($this->items)) {
 		<div class="card card-outline card-info">
 			<div class="card-header">
 				<h3 class="card-title">Search & Filter</h3>
-
 				<div class="card-tools">
 					<button type="button" class="btn btn-tool" data-card-widget="collapse">
 						<i class="fas fa-minus"></i>
@@ -64,15 +83,27 @@ if (!empty($this->items)) {
 				<div class="container-fluid">
 					<div class="row justify-content-between align-items-center">
 						<div class="area-filter-status mb-2">
-							<?= Helper::areaFilterStatus($filterLink, $this->arrCountItems, $this->params['filterStatus'] ?? 'all') ?>
+							<?= Helper::areaFilterStatus($this->arrCountItems, $this->params) ?>
+						</div>
+						<div class="area-filter-attribute mb-2">
+							<form action="" method="GET" id="filter-form">
+								<?= Form::input('hidden', 'module', 'backend') ?>
+								<?= Form::input('hidden', 'controller', 'group') ?>
+								<?= Form::input('hidden', 'action', 'index') ?>
+								<?= $inputFilterStatus ?>
+								<?= $inputSearchKey ?>
+								<?= $groupAcpSelect ?>
+							</form>
 						</div>
 						<div class="area-search mb-2">
 							<form action="" method="GET">
 								<?= Form::input('hidden', 'module', 'backend') ?>
 								<?= Form::input('hidden', 'controller', 'group') ?>
 								<?= Form::input('hidden', 'action', 'index') ?>
+								<?= $inputFilterStatus ?>
+                                <?= $inputGroupACP ?>
 								<div class="input-group">
-									<input type="text" class="form-control" name="search-key" value="<?= $this->params['search-key'] ?? '' ?>">
+									<input type="text" class="form-control" name="search-key" value="<?= $searchValue ?>">
 									<span class="input-group-append">
 										<button type="submit" class="btn btn-info">Search</button>
 										<a href="<?= $indexActionLink ?>" class="btn btn-danger">Clear</a>
@@ -111,7 +142,7 @@ if (!empty($this->items)) {
 									<option>Inactive</option>
 								</select>
 								<span class="input-group-append">
-									<button type="button" class="btn btn-info">Apply</button>
+									<button type="button" class="btn btn-info" id="btn-apply">Apply</button>
 								</span>
 							</div>
 						</div>

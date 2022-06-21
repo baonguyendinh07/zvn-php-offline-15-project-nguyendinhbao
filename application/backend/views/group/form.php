@@ -19,9 +19,9 @@ $statusOptions = [
     'active' => 'Active'
 ];
 
-$lblName = Form::label('Name');
-$lblStatus = Form::label('Status');
-$lblGroupACP = Form::label('Group ACP');
+$lblName     = Form::label('Name', 'form-label fw-bold',);
+$lblStatus   = Form::label('Status', 'form-label fw-bold',);
+$lblGroupACP = Form::label('Group ACP', 'form-label fw-bold',);
 
 $inputName       = Form::input('text', 'form[name]', $this->data['name'] ?? '');
 

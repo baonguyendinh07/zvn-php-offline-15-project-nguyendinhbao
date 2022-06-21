@@ -8,7 +8,7 @@ class Helper
         } elseif ($status == 'inactive' || $status == 0) {
             $aClass = "btn-danger";
         }
-        return sprintf('<a href="%s" class="btn %s rounded-circle btn-sm"><i class="fas fa-check"></i></a>', $link, $aClass);
+        return sprintf('<a href="%s" class="btn %s rounded-circle btn-sm btn-ajax-status"><i class="fas fa-check"></i></a>', $link, $aClass);
     }
 
     public static function createButtonLink($link, $content, $color, $isCircle = false, $isSmall = false)
@@ -18,7 +18,7 @@ class Helper
 
         return sprintf('<a href="%s" class="btn btn-%s %s %s">%s</a>', $link, $color, $circle, $small, $content);
     }
-    
+
     public static function highlight($searchKey, $subject)
     {
         if (!empty(trim($searchKey))) {
@@ -27,7 +27,7 @@ class Helper
         }
         return $subject;
     }
-    
+
     public static function randomString($length = 5)
     {
         $arrCharacter = array_merge(range('A', 'Z'), range('a', 'z'), range(0, 9));
@@ -38,40 +38,42 @@ class Helper
         return $result;
     }
 
-/*     public static function showMessege($class, $notification)
+    public static function convertArrList($array)
     {
-        $xhtml = '';
-        if(!empty(Session::get('notification'))){
-            $xhtml = sprintf('
-            <div class="alert alert-%s alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                <h5><i class="icon fas fa-exclamation-triangle"></i> %s!</h5>
-                %s
-            </div>', $class, $notification, Session::get('notification'));
-            Session::unset('notification');
+        $result = [];
+        foreach ($array as $value) {
+            $result[$value['id']] = $value['name'];
         }
-        
-        return $xhtml;
-    } */
+        return $result;
+    }
 
-    public static function showMessege($class, $notification, $arrElements){
-        $xhtml= '<div class="alert alert-'.$class.' alert-dismissible">
+    public static function showMessege($class, $notification, $arrElements)
+    {
+        $xhtml = '<div class="alert alert-' . $class . ' alert-dismissible">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    <h5><i class="icon fas fa-exclamation-triangle"></i> '.$notification.'!</h5>
+                    <h5><i class="icon fas fa-exclamation-triangle"></i> ' . $notification . '!</h5>
                     <ul class="list-unstyled mb-0">';
-        foreach($arrElements as $key =>$value){
-            $xhtml .= '<li class="text-white"><b>'.ucfirst($key).'</b> '.$value.'!</li>';
+        foreach ($arrElements as $key => $value) {
+            $xhtml .= '<li class="text-white"><b>' . ucfirst($key) . '</b> ' . $value . '!</li>';
         }
         $xhtml .= '</ul></div>';
         return $xhtml;
     }
 
-    public static function areaFilterStatus($link, $options, $status){
+    public static function areaFilterStatus($options, $params)
+    {
         $xhtml = '';
-        foreach($options as $option => $countItems){
-            $aClass = $option == $status ? 'btn-info' : 'btn-secondary';
-            $url    = ($option != 'all') ? "$link&filterStatus=$option" : $link;
-            $xhtml .= sprintf('<a href="%s" class="btn %s">%s<span class="badge badge-pill badge-light">%s</span></a> ', $url, $aClass, ucfirst($option), $countItems);
+        $keySelected = $params['filterStatus'] ?? 'all';
+        $linkParams = [];
+
+        if (isset($params['group_id'])) $linkParams['group_id'] = $params['group_id'];
+        if (isset($params['search-key'])) $linkParams['search-key'] = $params['search-key'];
+
+        foreach ($options as $option => $countItems) {
+            $aClass = $option == $keySelected ? 'btn-info' : 'btn-secondary';
+            $linkParams['filterStatus'] = $option;
+            $url = URL::createLink($params['module'], $params['controller'], $params['action'], $linkParams);
+            $xhtml .= sprintf('<a href="%s" class="btn %s">%s<span class="badge badge-pill badge-light">%s</span></a> ', $url, $aClass, ucfirst($option), $countItems ?? 0);
         }
         return $xhtml;
     }

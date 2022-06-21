@@ -35,12 +35,7 @@ class Validate
 	// Set error
 	public function setError($element, $message)
 	{
-
-		if (array_key_exists($element, $this->errors)) {
-			$this->errors[$element] .= ' - ' . $message;
-		} else {
 			$this->errors[$element] = $message;
-		}
 	}
 
 	// Get result
@@ -61,7 +56,7 @@ class Validate
 	{
 		foreach ($this->rules as $element => $value) {
 			if ($value['required'] == true && trim($this->source[$element]) == null) {
-				$this->setError($element, 'is not empty');
+				$this->setError($element, 'không được bỏ trống');
 			} else {
 				switch ($value['type']) {
 					case 'int':
@@ -80,7 +75,10 @@ class Validate
 						$this->validateStatus($element, $value['options']);
 						break;
 					case 'group':
-						$this->validateGroupID($element);
+						$this->validateGroupID($element, $value['options']);
+						break;
+					case 'username':
+						$this->validateUsername($element, $value['options']);
 						break;
 					case 'password':
 						$this->validatePassword($element, $value['options']);
@@ -90,6 +88,14 @@ class Validate
 						break;
 					case 'existRecord':
 						$this->validateExistRecord($element, $value['options']);
+						break;
+					case 'string-notExistRecord':
+						$this->validateString($element, $value['options']['min'], $value['options']['max']);
+						$this->validateNotExistRecord($element, $value['options']);
+						break;
+					case 'email-notExistRecord':
+						$this->validateEmail($element);
+						$this->validateNotExistRecord($element, $value['options']);
 						break;
 					case 'file':
 						$this->validateFile($element, $value['options']);
@@ -108,7 +114,7 @@ class Validate
 	private function validateInt($element, $min = 0, $max = 0)
 	{
 		if (!filter_var($this->source[$element], FILTER_VALIDATE_INT, array("options" => array("min_range" => $min, "max_range" => $max)))) {
-			$this->setError($element, 'is an invalid number');
+			$this->setError($element, 'không hợp lệ');
 		}
 	}
 
@@ -117,11 +123,11 @@ class Validate
 	{
 		$length = strlen($this->source[$element]);
 		if ($length < $min) {
-			$this->setError($element, 'is too short');
+			$this->setError($element, 'quá ngắn');
 		} elseif ($length > $max) {
-			$this->setError($element, 'is too long');
+			$this->setError($element, 'quá dài');
 		} elseif (!is_string($this->source[$element])) {
-			$this->setError($element, 'is an invalid string');
+			$this->setError($element, 'không hợp lệ');
 		}
 	}
 
@@ -129,7 +135,7 @@ class Validate
 	private function validateURL($element)
 	{
 		if (!filter_var($this->source[$element], FILTER_VALIDATE_URL)) {
-			$this->setError($element, 'is an invalid url');
+			$this->setError($element, 'không hợp lệ');
 		}
 	}
 
@@ -137,56 +143,25 @@ class Validate
 	private function validateEmail($element)
 	{
 		if (!filter_var($this->source[$element], FILTER_VALIDATE_EMAIL)) {
-			$this->setError($element, 'is an invalid email');
+			$this->setError($element, 'không hợp lệ');
 		}
 	}
 
-	/* 	public function showErrors()
+	public function showErrors($key = true)
 	{
-		$xhtml = '';
-		if (!empty($this->errors)) {
-			$xhtml .= '<ul class="error">';
+		$xhtml = '<div class="alert alert-danger" role="alert"><ul>';
+		if ($key) {
 			foreach ($this->errors as $key => $value) {
-				$xhtml .= '<li>' . $value . ' </li>';
+				$xhtml .= '<li style="display:block; margin-bottom: 5px"><b>' . ucfirst($key) . '</b> ' . $value . '!</li>';
 			}
-			$xhtml .=  '</ul>';
-		}
-		return $xhtml;
-	} */
-	/* 		if (!empty(Session::get('notification'))) {
-			$xhtml = sprintf('
-            <div class="alert alert-%s alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                <h5><i class="icon fas fa-exclamation-triangle"></i> %s!</h5>
-                %s
-            </div>', $class, $notification, Session::get('notification'));
-			Session::unset('notification');
-		} */
-
-	public function showErrors()
-	{
-		$xhtml = '<div class="alert alert-danger alert-dismissible">
-		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-		<h5><i class="icon fas fa-exclamation-triangle"></i> Lỗi!</h5>
-		<ul class="list-unstyled mb-0">';
-		foreach ($this->errors as $key => $value) {
-			$xhtml .= '<li class="text-white"><b>' . ucfirst($key) . '</b> ' . $value . '!</li>';
+		} else {
+			foreach ($this->errors as $value) {
+				$xhtml .= '<li>' . $value . '!</li>';
+			}
 		}
 		$xhtml .= '</ul></div>';
 		return $xhtml;
 	}
-
-	/* 	public static function showMessege($class, $notification, $arrElements){
-        $xhtml= '<div class="alert alert-'.$class.' alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    <h5><i class="icon fas fa-exclamation-triangle"></i> '.$notification.'!</h5>
-                    <ul class="list-unstyled mb-0">';
-        foreach($arrElements as $key =>$value){
-            $xhtml .= '<li class="text-white"><b>'.ucfirst($key).'</b> '.$value.'!</li>';
-        }
-        $xhtml .= '</ul></div>';
-        return $xhtml;
-    } */
 
 	public function isValid()
 	{
@@ -203,22 +178,31 @@ class Validate
 	}
 
 	// Validate GroupID
-	private function validateGroupID($element)
+	private function validateGroupID($element, $options)
 	{
-		if ($this->source[$element] == 0) {
+		if (!in_array($this->source[$element], $options)) {
 			$this->setError($element, 'select group');
 		}
+	}
+
+	//Validate Username
+	private function validateUsername($element, $options)
+	{
+		$pattern = '#^(?=.{' . $options['min'] . ',' . $options['max'] . '}$)(?![_.0-9])(?!.*[_.]{2})[a-z0-9._]+(?<![_.])$#';
+		if (!preg_match($pattern, $this->source[$element])) {
+			$this->setError($element, 'là không hợp lệ');
+		};
 	}
 
 	// Validate Password
 	private function validatePassword($element, $options)
 	{
-		if ($options['action'] == 'add' || ($options['action'] == 'edit' && $this->source[$element])) {
-			$pattern = '#^(?=.*\d)(?=.*[A-Z])(?=.*\W).{8,8}$#';	// Php4567!
-			if (!preg_match($pattern, $this->source[$element])) {
-				$this->setError($element, 'is an invalid password');
-			};
-		}
+		// At least 1 number, at least 1 upper case
+		$pattern = '#^(?=.*\d)(?=.*[A-Z]).*.{' . $options['min'] . ',' . $options['max'] . '}$#';
+		// Php4567!
+		if (!preg_match($pattern, $this->source[$element])) {
+			$this->setError($element, 'không hợp lệ');
+		};
 	}
 
 	// Validate Date
@@ -248,14 +232,24 @@ class Validate
 
 		$query	  = $options['query'];
 		if ($database->isExist($query) == false) {
-			$this->setError($element, 'record is not exist');
+			$this->setError($element, 'Thông tin đăng nhập không đúng hoặc tài khoản chưa kích hoạt');
+		}
+	}
+
+	// Validate Not Exist record
+	private function validateNotExistRecord($element, $options)
+	{
+		$database = $options['database'];
+
+		$query	  = $options['query'];	// SELECT id FROM user where username = 'admin'
+		if ($database->isExist($query) == true) {
+			$this->setError($element, 'đã tồn tại');
 		}
 	}
 
 	// Validate File
 	private function validateFile($element, $options)
 	{
-
 		if (!filter_var($this->source[$element]['size'], FILTER_VALIDATE_INT, array("options" => array("min_range" => $options['min'], "max_range" => $options['max'])))) {
 			$this->setError($element, 'kích thước không phù hợp');
 		}
