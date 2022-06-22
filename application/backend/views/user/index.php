@@ -46,7 +46,7 @@ if (!empty($this->items)) {
         $btnEdit      = Helper::createButtonLink($editLink, '<i class="fas fa-pen"></i>', 'info', true, true);
 
         $pathDelete   = URL::createLink($this->params['module'], $this->params['controller'], 'delete', ['id' => $id]);
-        $btnDelete    = Helper::createButtonLink($pathDelete, '<i class="fas fa-trash "></i>', 'danger', true, true);
+        $btnDelete    = Helper::createButtonLink($pathDelete, '<i class="fas fa-trash "></i>', 'danger btn-delete', true, true);
 
         $xhtml .= '<tr>
                         <td><input type="checkbox"></td>
@@ -56,8 +56,8 @@ if (!empty($this->items)) {
                             <p class="mb-0">FullName: ' . $fullName . '</p>
                             <p class="mb-0">Email: ' . $email . '</p>
                         </td>
-                        <td>' . $groupSelect . '</td>
-                        <td>' . $showStatus . '</td>
+                        <td class="position-relative">' . $groupSelect . '</td>
+                        <td class="position-relative">' . $showStatus . '</td>
                         <td>
                             <p class="mb-0"><i class="far fa-user"></i>' . $value['created_by'] . '</p>
                             <p class="mb-0"><i class="far fa-clock"></i>' . $value['created'] . '</p>

@@ -50,10 +50,27 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="index.php?module=backend&controller=user&action=index" class="nav-link">
+                    <a href="" class="nav-link">
                         <i class="nav-icon fas fa-user"></i>
-                        <p>User</p>
+                        <p>
+                            User
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="index.php?module=backend&controller=user&action=index" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>List</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.php?module=backend&controller=user&action=form" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Add</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link">

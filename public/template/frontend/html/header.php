@@ -2,13 +2,14 @@
 if (isset($this->_userInfoParams['userInfo']['username'])) {
     $avatarLink = $this->_pathImg . 'avatar/' . $this->_userInfoParams['userInfo']['username'] . '.jpg';
     $userActionButton = '
-            <li><a href="index.php?module=frontend&controller=index&action=logout">Đăng xuất</a></li>
+            <li><a href="index.php?module=frontend&controller=profile&action=accountForm">Profile</a></li>
+            <li><a href="index.php?module=frontend&controller=login&action=logout">Đăng xuất</a></li>
             ';
 } else {
     $avatarLink = $this->_pathImg . 'avatar.png';
     $userActionButton = '
-            <li><a href="index.php?module=frontend&controller=index&action=login">Đăng nhập</a></li>
-            <li><a href="index.php?module=frontend&controller=index&action=register">Đăng ký</a></li>
+            <li><a href="index.php?module=frontend&controller=login&action=login">Đăng nhập</a></li>
+            <li><a href="index.php?module=frontend&controller=register&action=register">Đăng ký</a></li>
             ';
 }
 ?>

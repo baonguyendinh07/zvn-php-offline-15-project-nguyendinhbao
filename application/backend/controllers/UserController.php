@@ -4,7 +4,7 @@ class UserController extends Controller
 	public function __construct($arrParams)
 	{
 		parent::__construct($arrParams);
-		$this->_templateObj->setFolderTemplate('backend/');
+		$this->_templateObj->setFolderTemplate($this->_arrParam['controller']. '/');
 		$this->_templateObj->setFileTemplate('index.php');
 		$this->_templateObj->setFileConfig('template.ini');
 		$this->_templateObj->load();
@@ -49,13 +49,12 @@ class UserController extends Controller
 		$this->_view->setTitle(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
 		$this->_view->setTitlePageHeader(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
 		$this->_view->setUserInfo(Session::get('user'));
-		
+
 		$this->_view->inputUsername = Form::input('text', 'form[username]', $this->_arrParam['form']['username'] ?? '');
 		$this->_view->inputEmail    = Form::input('text', 'form[email]', $this->_arrParam['form']['email'] ?? '');
 
-		if (!empty($this->_arrParam['id']) || !empty($this->_arrParam['form']['id'])) {
+		if (isset($this->_arrParam['id']) && (!empty($this->_arrParam['id']) || !empty($this->_arrParam['form']['id']))) {
 			$paramId = !empty($this->_arrParam['id']) ? $this->_arrParam : $this->_arrParam['form'];
-
 			$this->_view->data = $this->_model->getItem($paramId);
 			$this->_view->inputUsername = '<p class="form-control btn-light">' . $this->_view->data['username'] . '</p>';
 			$this->_view->inputEmail 	= '<p class="form-control btn-light">' . $this->_view->data['email'] . '</p>';

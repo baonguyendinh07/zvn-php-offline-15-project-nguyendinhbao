@@ -49,7 +49,6 @@ if (!empty($this->items)) {
 		$btnDelete 	  = Helper::createButtonLink($pathDelete, '<i class="fas fa-trash "></i>', 'danger', true, true);
 
 		$xhtml .= '<tr>
-					<td><input type="checkbox"></td>
 					<td>' . $id . '</td>
 					<td>' . $name . '</td>
 					<td>' . $showGroupAcp . '</td>
@@ -69,53 +68,6 @@ if (!empty($this->items)) {
 ?>
 <div class="row">
 	<div class="col-12">
-		<!-- Search & Filter -->
-		<div class="card card-outline card-info">
-			<div class="card-header">
-				<h3 class="card-title">Search & Filter</h3>
-				<div class="card-tools">
-					<button type="button" class="btn btn-tool" data-card-widget="collapse">
-						<i class="fas fa-minus"></i>
-					</button>
-				</div>
-			</div>
-			<div class="card-body">
-				<div class="container-fluid">
-					<div class="row justify-content-between align-items-center">
-						<div class="area-filter-status mb-2">
-							<?= Helper::areaFilterStatus($this->arrCountItems, $this->params) ?>
-						</div>
-						<div class="area-filter-attribute mb-2">
-							<form action="" method="GET" id="filter-form">
-								<?= Form::input('hidden', 'module', 'backend') ?>
-								<?= Form::input('hidden', 'controller', 'group') ?>
-								<?= Form::input('hidden', 'action', 'index') ?>
-								<?= $inputFilterStatus ?>
-								<?= $inputSearchKey ?>
-								<?= $groupAcpSelect ?>
-							</form>
-						</div>
-						<div class="area-search mb-2">
-							<form action="" method="GET">
-								<?= Form::input('hidden', 'module', 'backend') ?>
-								<?= Form::input('hidden', 'controller', 'group') ?>
-								<?= Form::input('hidden', 'action', 'index') ?>
-								<?= $inputFilterStatus ?>
-                                <?= $inputGroupACP ?>
-								<div class="input-group">
-									<input type="text" class="form-control" name="search-key" value="<?= $searchValue ?>">
-									<span class="input-group-append">
-										<button type="submit" class="btn btn-info">Search</button>
-										<a href="<?= $indexActionLink ?>" class="btn btn-danger">Clear</a>
-									</span>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- /.card-body -->
-		</div>
 		<!-- List -->
 		<div class="card card-outline card-info">
 			<div class="card-header">
@@ -133,27 +85,13 @@ if (!empty($this->items)) {
 				<?= $notification ?? '' ?>
 				<div class="container-fluid">
 					<div class="row align-items-center justify-content-between mb-2">
-						<div>
-							<div class="input-group">
-								<select class="form-control custom-select">
-									<option>Bulk Action</option>
-									<option>Delete</option>
-									<option>Active</option>
-									<option>Inactive</option>
-								</select>
-								<span class="input-group-append">
-									<button type="button" class="btn btn-info" id="btn-apply">Apply</button>
-								</span>
-							</div>
-						</div>
-						<div><?= $btnAddNew ?></div>
+						<div style="float: right;"><?= $btnAddNew ?></div>
 					</div>
 				</div>
 				<div class="table-responsive">
 					<table class="table align-middle text-center table-bordered">
 						<thead>
 							<tr>
-								<th><input type="checkbox"></th>
 								<th>ID</th>
 								<th>Name</th>
 								<th>Group ACP</th>
@@ -171,7 +109,6 @@ if (!empty($this->items)) {
 				</div>
 			</div>
 			<div class="card-footer clearfix">
-				<?= $this->pagination ?? '' ?>
 			</div>
 		</div>
 	</div>

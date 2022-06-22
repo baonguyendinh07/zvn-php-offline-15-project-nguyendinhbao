@@ -5,7 +5,7 @@ class LoginController extends Controller
     public function __construct($arrParams)
     {
         parent::__construct($arrParams);
-        $this->_templateObj->setFolderTemplate($this->_arrParam['module'].'/');
+        $this->_templateObj->setFolderTemplate($this->_arrParam['module'] . '/');
         $this->_templateObj->setFileTemplate('login.php');
         $this->_templateObj->setFileConfig('template.ini');
         $this->_templateObj->load();
@@ -45,7 +45,7 @@ class LoginController extends Controller
         }
         $this->_view->username = $this->_arrParam['form']['username'] ?? '';
         $this->_view->password = $this->_arrParam['form']['password'] ?? '';
-        $this->_view->render($this->_arrParam['controller'].'/'.$this->_arrParam['action']);
+        $this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
     }
 
     public function logoutAction()

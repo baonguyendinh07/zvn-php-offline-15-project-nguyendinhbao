@@ -1,5 +1,5 @@
 <?php
-class IndexModel extends Model
+class LoginModel extends Model
 {
 	public function __construct()
 	{
@@ -29,10 +29,5 @@ class IndexModel extends Model
 		$query = implode(' ', $query);
 		$result = $this->singleRecord($query);
 		return $result;
-	}
-
-	public function getItem($params)
-	{
-		return $this->singleRecord("SELECT * FROM `$this->table` WHERE `id` = {$params['id']}");
 	}
 }

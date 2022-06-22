@@ -114,7 +114,7 @@ class UserModel extends Model
 			unset($params['token']);
 			$params['modified'] = date('Y-m-d H:i:s');
 			$this->update($params, [['id', $id]]);
-			Session::set('notification', 'Thông tin thành viên được chỉnh sửa thành công!');
+			Session::set('notification', 'được chỉnh sửa thành công!');
 		}
 	}
 

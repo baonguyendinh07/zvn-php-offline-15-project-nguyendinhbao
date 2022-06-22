@@ -22,6 +22,7 @@
     <!-- Quick-view modal popup end-->
 
     <!-- footer -->
+    <?php require_once 'html/phonering.php'; ?>
     <?php require_once 'html/footer.php'; ?>
 
     <!-- footer end -->
