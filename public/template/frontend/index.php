@@ -9,32 +9,14 @@
     <?php require_once 'html/loader-skeleton.php'; ?>
 
     <!-- header start -->
-    <?php require_once 'html/header.php'; ?>
+    <?php require_once 'html/my-header.php'; ?>
     <!-- header end -->
-
-    <!-- Home slider -->
-    <?php require_once 'html/my-home-slider.php'; ?>
-    <!-- Home slider end -->
-
-    <!-- Top Collection -->
-    <!-- Title-->
-
-    <!-- Product slider end -->
-    <!-- Top Collection end-->
-
-    <!-- service layout -->
-    <?php require_once 'html/container.php'; ?>
-    <!-- service layout  end -->
-
-    <!-- Tab product -->
+    
+    <!-- Content -->
     <?php
     require_once APPLICATION_PATH . $this->_moduleName . DS . 'views' . DS . $this->_fileView . '.php';
     ?>
-
-    <!-- Tab product end -->
-
-    <!-- Quick-view modal popup start-->
-    <!-- Quick-view modal popup end-->
+    <!-- Content end -->
 
     <!-- footer -->
     <?php require_once 'html/phonering.php'; ?>

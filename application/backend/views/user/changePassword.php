@@ -9,10 +9,10 @@ $lblEmail    = Form::label('Email', 'form-label fw-bold', false);
 $lblFullname = Form::label('Fullname', 'form-label fw-bold', false);
 $lblPassword = Form::label('Password', 'form-label fw-bold', false);
 
-$idXhtml         = '<p class="form-control btn-light">' . $this->data['id'] . '</p>';
-$usernameXhtml   = '<p class="form-control btn-light">' . $this->data['username'] . '</p>';
-$emailXhtml      = '<p class="form-control btn-light">' . $this->data['email'] . '</p>';
-$fullnameXhtml   = '<p class="form-control btn-light">' . $this->data['fullname'] . '</p>';
+$idXhtml         = '<p class="form-control btn-blue">' . $this->data['id'] . '</p>';
+$usernameXhtml   = '<p class="form-control btn-blue">' . $this->data['username'] . '</p>';
+$emailXhtml      = '<p class="form-control btn-blue">' . $this->data['email'] . '</p>';
+$fullnameXhtml   = '<p class="form-control btn-blue">' . $this->data['fullname'] . '</p>';
 
 $randomPassword  = Helper::randomString(12);
 $inputPassword   = Form::input('text', 'form[password]', $randomPassword, 'random-password');

@@ -47,7 +47,7 @@ $inputToken = Form::input('hidden', 'form[token]', time());
                     <h6 class="title-font">Đăng ký tài khoản</h6>
                     <p>Sign up for a free account at our store. Registration is quick and easy. It allows you to be
                         able to order from our shop. To start shopping click register.</p>
-                    <a href="index.php?module=frontend&controller=register&action=register" class="btn btn-solid">Đăng ký</a>
+                    <a href="index.php?module=frontend&controller=user&action=register" class="btn btn-solid">Đăng ký</a>
                 </div>
             </div>
         </div>

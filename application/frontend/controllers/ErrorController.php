@@ -3,9 +3,10 @@ class ErrorController extends Controller
 {
 	public function __construct($arrParams)
 	{
+		$arrParams['controller'] = 'error';
 		parent::__construct($arrParams);
 		$this->_templateObj->setFolderTemplate('frontend/');
-		$this->_templateObj->setFileTemplate('index2.php');
+		$this->_templateObj->setFileTemplate('index.php');
 		$this->_templateObj->setFileConfig('template.ini');
 		$this->_templateObj->load();
 	}

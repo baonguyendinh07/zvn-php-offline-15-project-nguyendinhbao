@@ -1,15 +1,15 @@
 <?php
 if (!empty($this->data['id'])) $inputId = Form::input('hidden', 'form[id]', $this->data['id']);
 
-$lblUsername = Form::label('Tên tài khoản', 'required', false);
-$lblFullname = Form::label('Họ và tên', 'required', false);
-$lblEmail    = Form::label('Email', 'required', false);
-$lblPassword = Form::label('Mật khẩu', 'required', false);
+$lblUsername = Form::label('Tên tài khoản', 'required');
+$lblFullname = Form::label('Họ và tên', 'required');
+$lblEmail    = Form::label('Email', 'required');
+$lblPassword = Form::label('Mật khẩu', 'required');
 
-$inputUsername   = Form::input('text', 'form[username]', $this->username);
-$inputFullname   = Form::input('text', 'form[fullname]', $this->fullname);
-$inputEmail      = Form::input('text', 'form[email]', $this->email);
-$inputPassword   = Form::input('password', 'form[password]', $this->password);
+$inputUsername   = Form::input('text', 'form[username]', $this->data['username'] ?? '');
+$inputFullname   = Form::input('text', 'form[fullname]', $this->data['fullname'] ?? '');
+$inputEmail      = Form::input('text', 'form[email]', $this->data['email'] ?? '');
+$inputPassword   = Form::input('password', 'form[password]');
 
 Session::set('token', time());
 $inputToken = Form::input('hidden', 'form[token]', time());

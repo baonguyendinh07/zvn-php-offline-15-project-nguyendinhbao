@@ -5,7 +5,6 @@ class Form
     {
         $required = $required === true ? '<span class="text-danger">*</span>' : '';
         return sprintf('<label class="%s">%s %s</label>', $class, $name, $required);
-        //form-label fw-bold
     }
 
     public static function input($type, $name, $value = '', $id = '', $placeholder = '')

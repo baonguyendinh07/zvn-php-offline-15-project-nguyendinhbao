@@ -11,7 +11,7 @@ $statusOptions = [
 $groupOptionsDefault = ['default' => ' - Select Group - '] + $this->groupOptions;
 
 $lblUsername = Form::label('Username', 'form-label fw-bold');
-$lblPassword = Form::label('Password', 'form-label fw-bold');
+$lblPassword = Form::label('Password', 'form-label fw-bold', false);
 $lblEmail    = Form::label('Email', 'form-label fw-bold');
 $lblFullname = Form::label('Fullname', 'form-label fw-bold');
 $lblStatus   = Form::label('Status', 'form-label fw-bold');

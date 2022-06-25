@@ -1,7 +1,6 @@
 <?php
 class Template
 {
-
 	// File config (admin/main/template.ini)
 	private $_fileConfig;
 

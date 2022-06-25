@@ -149,14 +149,15 @@ class Validate
 
 	public function showErrors($key = true)
 	{
-		$xhtml = '<div class="alert alert-danger" role="alert"><ul>';
+		$xhtml = '<div class="alert alert-danger" role="alert"><ul style="padding: 0; margin: 0">';
 		if ($key) {
 			foreach ($this->errors as $key => $value) {
-				$xhtml .= '<li style="display:block; margin-bottom: 5px"><b>' . ucfirst($key) . '</b> ' . $value . '!</li>';
+				if($key == 'birthday') $key = "Ngày sinh";
+				$xhtml .= '<li style="display:block; margin: 10px 0"><b>' . ucfirst($key) . '</b> ' . $value . '!</li>';
 			}
 		} else {
 			foreach ($this->errors as $value) {
-				$xhtml .= '<li>' . $value . '!</li>';
+				$xhtml .= '<li style="display:block; margin: 10px 0">'.$value . '!</li>';
 			}
 		}
 		$xhtml .= '</ul></div>';
@@ -221,7 +222,7 @@ class Validate
 		$tsCurrent		= mktime(0, 0, 0, $arrDateCurrent['month'], $arrDateCurrent['day'], $arrDateCurrent['year']);
 
 		if ($tsCurrent < $tsStart || $tsCurrent > $tsEnd) {
-			$this->setError($element, 'is an invalid date');
+			$this->setError($element, 'không hợp lệ');
 		}
 	}
 

@@ -7,7 +7,13 @@ $groupOptionsDefault = ['default' => ' - Select Group - '] + $this->groupOptions
 $groupSelectDefault  = Form::select($groupOptionsDefault, 'group_id', $this->params['group_id'] ?? 'default', 'filter-element');
 
 if (!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))) {
-    $notification = Helper::showMessege('success', 'Thông báo', [Session::get('notificationElement') ?? 'Thông tin thành viên' => Session::get('notification')]);
+    $notification = Helper::showMessege(
+        'success',
+        'Thông báo',
+        [
+            Session::get('notificationElement') ?? 'Thông tin thành viên' => Session::get('notification')
+        ]
+    );
     Session::unset('notificationElement');
     Session::unset('notification');
 }

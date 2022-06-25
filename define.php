@@ -22,4 +22,5 @@
 	define ('DB_USER'			, 'root');						
 	define ('DB_PASS'			, '');						
 	define ('DB_NAME'			, 'bookstore_php_off');						
-	define ('DB_TABLE'			, 'group');						
+	define ('DB_TABLE'			, 'group');
+	define ('LOGIN_TIME'		, '3600');								

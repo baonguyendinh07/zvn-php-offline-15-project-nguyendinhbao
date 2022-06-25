@@ -19,8 +19,8 @@ class Controller
 	protected $_arrParam;
 
 	public function __construct($arrParams)
-	{
-		$this->setModel($arrParams['module'], $arrParams['controller']);
+	{	
+		if($arrParams['controller'] !='error') $this->setModel($arrParams['module'], $arrParams['controller']);
 		$this->setTemplate($this);
 		$this->setView($arrParams['module']);
 		if(isset($arrParams['page'])){

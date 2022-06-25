@@ -30,7 +30,7 @@ class Bootstrap
 		$userInfo = Session::get('user') ?? '';
 		$logged = false;
 		if (!empty($userInfo)) {
-			$logged = ($userInfo['login'] == true) && ($userInfo['time'] + 3600 >= time());
+			if($userInfo['login_time'] >= time()) $logged = true;
 			if ($logged == false) Session::unset('user');
 		}
 
@@ -44,12 +44,12 @@ class Bootstrap
 				$this->_error();
 			}
 		} else {
-			if ($module == 'backend') {
-				if ($controller != 'login' || $action != 'login') {
-					$this->_params['module'] = 'frontend';
-					$this->_error();
-				}
+			if ($module == 'backend' && ($controller != 'user' || $action != 'login')) {
+				$this->_params['module'] = 'frontend';
+				$this->_error();
 			} elseif (!file_exists($this->filePath) || !method_exists($this->_controllerObject, $actionName)) {
+				$this->_error();
+			} elseif ($controller == 'user' && $action != 'login' && $action != 'register') {
 				$this->_error();
 			}
 		}
