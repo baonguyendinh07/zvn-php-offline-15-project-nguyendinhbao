@@ -1,19 +1,6 @@
 <?php
 $profileActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'profile');
 
-if (!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))) {
-    $notification = Helper::showMessege(
-        'success',
-        'Thông báo',
-        [
-            Session::get('notificationElement') ?? 'Thông tin cá nhân của bạn' => Session::get('notification')
-        ]
-    );
-    Session::unset('notificationElement');
-    Session::unset('notification');
-}
-
-$changePasswordLink = URL::createLink($this->params['module'], $this->params['controller'], 'changeAccountPassword');
 $lblOldPassword      = Form::label('Old Password', 'form-label fw-bold');
 $lblPassword         = Form::label('Password', 'form-label fw-bold');
 $lblConfirmPassword  = Form::label('Confirm Password', 'form-label fw-bold');

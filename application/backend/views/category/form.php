@@ -8,19 +8,14 @@ $statusOptions = [
     'active' => 'Active'
 ];
 
-$groupOptionsDefault = ['default' => ' - Select Group - '] + $this->groupOptions;
+$lblName         = Form::label('Name', 'form-label fw-bold');
+$lblStatus       = Form::label('Status', 'form-label fw-bold');
+$lblOrdering     = Form::label('Ordering', 'form-label fw-bold');
+$lblPicture      = Form::label('Picture', 'form-label fw-bold');
 
-$lblUsername = Form::label('Username', 'form-label fw-bold');
-$lblEmail    = Form::label('Email', 'form-label fw-bold');
-$lblFullname = Form::label('Fullname', 'form-label fw-bold');
-$lblStatus   = Form::label('Status', 'form-label fw-bold');
-$lblGroup    = Form::label('Group', 'form-label fw-bold');
-
-$inputPassword   = Form::input('password', 'form[password]');
-$inputFullname   = Form::input('text', 'form[fullname]', $this->data['fullname'] ?? '');
-
+$inputName       = Form::input('text', 'form[name]', $this->data['name'] ?? '');
 $statusSelect    = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'default');
-$groupIdSelect   = Form::select($groupOptionsDefault, 'form[group_id]', $this->data['group_id'] ?? 'default');
+$inputOrdering   = Form::input('number', 'form[ordering]', $this->data['ordering'] ?? '');
 
 Session::set('token', time());
 $inputToken = Form::input('hidden', 'form[token]', time());
@@ -34,22 +29,16 @@ $inputToken = Form::input('hidden', 'form[token]', time());
             <div class="card card-outline card-info">
                 <div class="card-body">
                     <div class="form-group">
-                        <?= $lblUsername . $this->inputUsername ?>
-                    </div>
-                    <div class="form-group">
-                        <?= $lblEmail . $this->inputEmail ?>
-                    </div>
-                    <div class="form-group">
-                        <?= $this->lblPassword . $inputPassword ?>
-                    </div>
-                    <div class="form-group">
-                        <?= $lblFullname . $inputFullname ?>
+                        <?= $lblName . $inputName ?>
                     </div>
                     <div class="form-group">
                         <?= $lblStatus . $statusSelect ?>
                     </div>
                     <div class="form-group">
-                        <?= $lblGroup . $groupIdSelect ?>
+                        <?= $lblOrdering . $inputOrdering ?>
+                    </div>
+                    <div class="form-group">
+                        <?= $lblPicture . $inputName ?>
                     </div>
                 </div>
                 <div class="card-footer">

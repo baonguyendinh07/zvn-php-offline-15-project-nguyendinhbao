@@ -1,4 +1,7 @@
 <?php
+// list: id name picture price saleoff caterogy status special ordering created modifier
+// form: name picture price saleoff status special category ordering description
+
 $indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], $this->params['action']);
 $formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
 $btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
@@ -33,9 +36,6 @@ $xhtml = '';
 if (!empty($this->items)) {
     foreach ($this->items as $key => $value) {
         $id           = Helper::highlight($searchValue, $value['id']);
-        $userName     = Helper::highlight($searchValue, $value['username']);
-        $fullName     = Helper::highlight($searchValue, $value['fullname']);
-        $email        = Helper::highlight($searchValue, $value['email']);
 
         $linkStatus   = URL::createLink($this->params['module'], $this->params['controller'], 'changeStatus', ['id' => $id, 'status' => $value['status']]);
         $showStatus   = Helper::showStatus($value['status'], $linkStatus);
@@ -43,9 +43,6 @@ if (!empty($this->items)) {
         $dataUrlLink  = URL::createLink($this->params['module'], $this->params['controller'], 'changeGroupId', ['id' => $value['id']]);
         $dataUrl      = "data-url='$dataUrlLink'";
         $groupSelect  = Form::select($this->groupOptions, '', $value['group_id'] ?? '', 'btn-ajax-group-id', $dataUrl);
-
-        $resetPasswordLink     = URL::createLink($this->params['module'], $this->params['controller'], 'changePassword', ['id' => $value['id']]);
-        $btnResetPassword      = Helper::createButtonLink($resetPasswordLink, '<i class="fas fa-key "></i>', 'secondary', true, true);
 
         $editLink     = URL::createLink($this->params['module'], $this->params['controller'], 'form', ['id' => $value['id']]);
         $btnEdit      = Helper::createButtonLink($editLink, '<i class="fas fa-pen"></i>', 'info', true, true);
@@ -57,21 +54,16 @@ if (!empty($this->items)) {
                         <td><input type="checkbox"></td>
                         <td>' . $id . '</td>
                         <td class="text-left">
-                            <p class="mb-0">Username: ' . $userName . '</p>
-                            <p class="mb-0">FullName: ' . $fullName . '</p>
-                            <p class="mb-0">Email: ' . $email . '</p>
+                            <p class="mb-0">Name: ' . $name . '</p>
+                            <p class="mb-0">Price: ' . $price . '</p>
+                            <p class="mb-0">Sale Off: ' . $saleOff . '</p>
                         </td>
-                        <td class="position-relative">' . $groupSelect . '</td>
+                        <td class="position-relative">' . $picture . '</td>
+                        <td class="position-relative">' . $categorySelect . '</td>
                         <td class="position-relative">' . $showStatus . '</td>
-                        <td>
-                            <p class="mb-0"><i class="far fa-user"></i>' . $value['created_by'] . '</p>
-                            <p class="mb-0"><i class="far fa-clock"></i>' . $value['created'] . '</p>
-                        </td>
-                        <td>
-                            <p class="mb-0"><i class="far fa-user"></i>' . $value['modified_by'] . '</p>
-                            <p class="mb-0"><i class="far fa-clock"></i>' . $value['modified'] . '</p>
-                        </td>
-                        <td>' . $btnResetPassword . $btnEdit . $btnDelete . '
+                        <td class="position-relative">' . $specialSelect . '</td>
+                        <td class="position-relative">' . $ordering . '</td>
+                        <td>' . $btnEdit . $btnDelete . '
                         </td>
                     </tr>';
     }
@@ -165,14 +157,16 @@ if (!empty($this->items)) {
                     <table class="table align-middle text-center table-bordered">
                         <thead>
                             <tr>
-                                <th><input type="checkbox"></th>
-                                <th>ID</th>
+                                <!-- // list: id name picture price saleoff caterogy status special ordering created modifier -->
+                                <th style="width: 30px"><input type="checkbox"></th>
+                                <th style="width: 30px">ID</th>
                                 <th class="text-left">Info</th>
-                                <th>Group</th>
-                                <th>Status</th>
-                                <th>Created</th>
-                                <th>Modified</th>
-                                <th>Action</th>
+                                <th>Picture</th>
+                                <th style="width: 150px">Category</th>
+                                <th style="width: 45px">Status</th>
+                                <th style="width: 45px">Special</th>
+                                <th style="width: 45px">Ordering</th>
+                                <th style="width: 50px">Action</th>
                             </tr>
                         </thead>
                         <tbody>

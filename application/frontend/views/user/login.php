@@ -2,8 +2,8 @@
 $lblUsername     = Form::label('Tên đăng nhập hoặc email', 'required', false);
 $lblPassword     = Form::label('Mật khẩu', 'required', false);
 
-$inputUsername   = Form::input('text', 'form[username]', $this->username ?? '');
-$inputPassword   = Form::input('password', 'form[password]', $this->password ?? '');
+$inputUsername   = Form::input('text', 'form[username]', $this->data['username'] ?? '');
+$inputPassword   = Form::input('password', 'form[password]', $this->data['password'] ?? '');
 Session::set('token', time());
 $inputToken = Form::input('hidden', 'form[token]', time());
 ?>

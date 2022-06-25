@@ -47,11 +47,9 @@ class Helper
         return $result;
     }
 
-    public static function showMessege($class, $notification, $arrElements)
+    public static function showMessege($class, $arrElements)
     {
-        $xhtml = '<div class="alert alert-' . $class . ' alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    <h5><i class="icon fas fa-exclamation-triangle"></i> ' . $notification . '!</h5>
+        $xhtml = '<div class="alert alert-' . $class . '">
                     <ul class="list-unstyled mb-0">';
         foreach ($arrElements as $key => $value) {
             $xhtml .= '<li class="text-white"><b>' . ucfirst($key) . '</b> ' . $value . '!</li>';

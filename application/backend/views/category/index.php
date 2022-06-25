@@ -3,9 +3,6 @@ $indexActionLink = URL::createLink($this->params['module'], $this->params['contr
 $formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
 $btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
 
-$groupOptionsDefault = ['default' => ' - Select Group - '] + $this->groupOptions;
-$groupSelectDefault  = Form::select($groupOptionsDefault, 'group_id', $this->params['group_id'] ?? 'default', 'filter-element');
-
 if (!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))) {
     $notification = Helper::showMessege(
         'success',
@@ -19,13 +16,10 @@ if (!empty(Session::get('notificationElement')) || !empty(Session::get('notifica
 
 $inputFilterStatus = '';
 $inputSearchKey = '';
-$inputGroupId = '';
 
 if (isset($this->params['filterStatus'])) $inputFilterStatus = Form::input('hidden', 'filterStatus', $this->params['filterStatus']);
 
 if (isset($this->params['search-key']))   $inputSearchKey = Form::input('hidden', 'search-key', $this->params['search-key']);
-
-if (isset($this->params['group_id']))     $inputGroupId = Form::input('hidden', 'group_id', $this->params['group_id']);
 
 $searchValue = $this->params['search-key'] ?? '';
 
@@ -33,19 +27,13 @@ $xhtml = '';
 if (!empty($this->items)) {
     foreach ($this->items as $key => $value) {
         $id           = Helper::highlight($searchValue, $value['id']);
-        $userName     = Helper::highlight($searchValue, $value['username']);
-        $fullName     = Helper::highlight($searchValue, $value['fullname']);
-        $email        = Helper::highlight($searchValue, $value['email']);
+        $name         = Helper::highlight($searchValue, $value['name']);
 
         $linkStatus   = URL::createLink($this->params['module'], $this->params['controller'], 'changeStatus', ['id' => $id, 'status' => $value['status']]);
         $showStatus   = Helper::showStatus($value['status'], $linkStatus);
 
         $dataUrlLink  = URL::createLink($this->params['module'], $this->params['controller'], 'changeGroupId', ['id' => $value['id']]);
         $dataUrl      = "data-url='$dataUrlLink'";
-        $groupSelect  = Form::select($this->groupOptions, '', $value['group_id'] ?? '', 'btn-ajax-group-id', $dataUrl);
-
-        $resetPasswordLink     = URL::createLink($this->params['module'], $this->params['controller'], 'changePassword', ['id' => $value['id']]);
-        $btnResetPassword      = Helper::createButtonLink($resetPasswordLink, '<i class="fas fa-key "></i>', 'secondary', true, true);
 
         $editLink     = URL::createLink($this->params['module'], $this->params['controller'], 'form', ['id' => $value['id']]);
         $btnEdit      = Helper::createButtonLink($editLink, '<i class="fas fa-pen"></i>', 'info', true, true);
@@ -56,13 +44,9 @@ if (!empty($this->items)) {
         $xhtml .= '<tr>
                         <td><input type="checkbox"></td>
                         <td>' . $id . '</td>
-                        <td class="text-left">
-                            <p class="mb-0">Username: ' . $userName . '</p>
-                            <p class="mb-0">FullName: ' . $fullName . '</p>
-                            <p class="mb-0">Email: ' . $email . '</p>
-                        </td>
-                        <td class="position-relative">' . $groupSelect . '</td>
+                        <td class="text-left"><p class="mb-0">' . $name . '</p></td>
                         <td class="position-relative">' . $showStatus . '</td>
+                        <td>' . $value['ordering'] . '</td>
                         <td>
                             <p class="mb-0"><i class="far fa-user"></i>' . $value['created_by'] . '</p>
                             <p class="mb-0"><i class="far fa-clock"></i>' . $value['created'] . '</p>
@@ -71,8 +55,7 @@ if (!empty($this->items)) {
                             <p class="mb-0"><i class="far fa-user"></i>' . $value['modified_by'] . '</p>
                             <p class="mb-0"><i class="far fa-clock"></i>' . $value['modified'] . '</p>
                         </td>
-                        <td>' . $btnResetPassword . $btnEdit . $btnDelete . '
-                        </td>
+                        <td>' . $btnEdit . $btnDelete . '</td>
                     </tr>';
     }
 }
@@ -83,7 +66,6 @@ if (!empty($this->items)) {
         <div class="card card-outline card-info">
             <div class="card-header">
                 <h3 class="card-title">Search & Filter</h3>
-
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
@@ -96,23 +78,12 @@ if (!empty($this->items)) {
                         <div class="area-filter-status mb-2">
                             <?= Helper::areaFilterStatus($this->arrCountItems, $this->params) ?>
                         </div>
-                        <div class="area-filter-attribute mb-2">
-                            <form action="" method="GET" id="filter-form">
-                                <?= Form::input('hidden', 'module', $this->params['module']) ?>
-                                <?= Form::input('hidden', 'controller', $this->params['controller']) ?>
-                                <?= Form::input('hidden', 'action', $this->params['action']) ?>
-                                <?= $inputFilterStatus ?>
-                                <?= $inputSearchKey ?>
-                                <?= $groupSelectDefault ?>
-                            </form>
-                        </div>
                         <div class="area-search mb-2">
                             <form action="" method="GET">
                                 <?= Form::input('hidden', 'module', $this->params['module']) ?>
                                 <?= Form::input('hidden', 'controller', $this->params['controller']) ?>
                                 <?= Form::input('hidden', 'action', $this->params['action']) ?>
                                 <?= $inputFilterStatus ?>
-                                <?= $inputGroupId ?>
                                 <div class="input-group">
                                     <input type="text" class="form-control" name="search-key" value="<?= $searchValue ?>">
                                     <span class="input-group-append">
@@ -131,7 +102,6 @@ if (!empty($this->items)) {
         <div class="card card-outline card-info">
             <div class="card-header">
                 <h3 class="card-title">List</h3>
-
                 <div class="card-tools">
                     <a href="<?= $indexActionLink ?>" class="btn btn-tool" data-card-widget="refresh">
                         <i class="fas fa-sync-alt"></i>
@@ -167,9 +137,9 @@ if (!empty($this->items)) {
                             <tr>
                                 <th><input type="checkbox"></th>
                                 <th>ID</th>
-                                <th class="text-left">Info</th>
-                                <th>Group</th>
+                                <th class="text-left">Name</th>
                                 <th>Status</th>
+                                <th>Ordering</th>
                                 <th>Created</th>
                                 <th>Modified</th>
                                 <th>Action</th>

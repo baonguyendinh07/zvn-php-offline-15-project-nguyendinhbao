@@ -7,7 +7,7 @@ $lblId       = Form::label('Id', 'form-label fw-bold', false);
 $lblUsername = Form::label('Username', 'form-label fw-bold', false);
 $lblEmail    = Form::label('Email', 'form-label fw-bold', false);
 $lblFullname = Form::label('Fullname', 'form-label fw-bold', false);
-$lblPassword = Form::label('Password', 'form-label fw-bold', false);
+$lblPassword = Form::label('Password', 'form-label fw-bold');
 
 $idXhtml         = '<p class="form-control btn-blue">' . $this->data['id'] . '</p>';
 $usernameXhtml   = '<p class="form-control btn-blue">' . $this->data['username'] . '</p>';

@@ -6,12 +6,7 @@ class UserController extends Controller
 		parent::__construct($arrParams);
 		$this->_templateObj->setFolderTemplate($this->_arrParam['module'] . '/');
 		$templateFile = 'login.php';
-		if (isset(Session::get('user')['login_time'])) {
-			$templateFile = 'index.php';
-
-			require_once APPLICATION_PATH . $this->_arrParam['module'] . DS . 'controllers' . DS . 'ErrorController.php';
-			$this->error = new ErrorController($this->_arrParam);
-		}
+		if (isset(Session::get('user')['login_time'])) $templateFile = 'index.php';
 		$this->_templateObj->setFileTemplate($templateFile);
 		$this->_templateObj->setFileConfig('template.ini');
 		$this->_templateObj->load();
@@ -60,6 +55,7 @@ class UserController extends Controller
 
 		$this->_view->inputUsername = Form::input('text', 'form[username]', $this->_arrParam['form']['username'] ?? '');
 		$this->_view->inputEmail    = Form::input('text', 'form[email]', $this->_arrParam['form']['email'] ?? '');
+		$this->_view->lblPassword = Form::label('Password', 'form-label fw-bold');
 
 		if (isset($this->_arrParam['id']) && !empty($this->_model->getItem($this->_arrParam['id']))) {
 			// Chỉ lấy id có group_id lớn hơn group_id hiện tại đăng nhập
@@ -68,7 +64,10 @@ class UserController extends Controller
 			$this->_view->data = $this->_model->getItem($id);
 			$this->_view->inputUsername = '<p class="form-control btn-blue">' . $this->_view->data['username'] . '</p>';
 			$this->_view->inputEmail 	= '<p class="form-control btn-blue">' . $this->_view->data['email'] . '</p>';
+			$this->_view->lblPassword = Form::label('Password', 'form-label fw-bold', false);
 		} elseif (isset($this->_arrParam['id']) && empty($this->_model->getItem($this->_arrParam['id']))) {
+			require_once APPLICATION_PATH . $this->_arrParam['module'] . DS . 'controllers' . DS . 'ErrorController.php';
+			$this->error = new ErrorController($this->_arrParam);
 			$this->error->errorAction();
 		}
 
@@ -84,7 +83,7 @@ class UserController extends Controller
 			$this->_view->data = $this->_arrParam['form'];
 			$validate = new Validate($this->_view->data);
 
-			$passwordOptions = ['min' => 12, 'max' => 24];
+			$passwordOptions = ['min' => 8, 'max' => 24];
 			$fullNameOptions = ['min' => 3, 'max' => 50];
 
 			if (!empty($this->_arrParam['form']['id'])) {
@@ -140,7 +139,7 @@ class UserController extends Controller
 
 			if (isset($this->_arrParam['form']) && Session::get('token') == $this->_arrParam['form']['token']) {
 				$validate = new Validate($this->_arrParam['form']);
-				$passwordOptions = ['min' => 12, 'max' => 24];
+				$passwordOptions = ['min' => 8, 'max' => 24];
 
 				$validate->addRule('password', 'password', $passwordOptions);
 
@@ -162,6 +161,8 @@ class UserController extends Controller
 			$this->_view->params = $this->_arrParam;
 			$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
 		} else {
+			require_once APPLICATION_PATH . $this->_arrParam['module'] . DS . 'controllers' . DS . 'ErrorController.php';
+			$this->error = new ErrorController($this->_arrParam);
 			$this->error->errorAction();
 		}
 	}
@@ -176,31 +177,41 @@ class UserController extends Controller
 		if (!empty($this->_arrParam['status'])) echo $this->_model->changeStatus($this->_arrParam, 'status');
 	}
 
+	public function changeGroupIdAction()
+	{
+		if (!empty($this->_arrParam['group_id'])) echo $this->_model->changeStatus($this->_arrParam, 'group_id');
+	}
+
 	public function loginAction()
 	{
+		if (!empty(Session::get('user')['login_time']) && Session::get('user')['login_time'] >= time()) {
+			$returnLink = URL::createLink($this->_arrParam['module'], 'user', 'index');
+			$this->redirect($returnLink);
+		}
+
 		$this->_view->setTitle('Amin login');
 		if (isset($this->_arrParam['form']) && Session::get('token') == $this->_arrParam['form']['token']) {
 			$validate = new Validate($this->_arrParam['form']);
-			
-			if(empty(trim($this->_arrParam['form']['username']))){
+
+			if (empty(trim($this->_arrParam['form']['username']))) {
 				$validate->setError('username', 'Username không được bỏ trống');
 			}
 
-			if(empty(trim($this->_arrParam['form']['password']))){
+			if (empty(trim($this->_arrParam['form']['password']))) {
 				$validate->setError('password', 'Password không được bỏ trống');
 			}
 
- 			if($validate->isValid()){
+			if ($validate->isValid()) {
 				$username = $this->_arrParam['form']['username'];
 				$password = md5($this->_arrParam['form']['password']);
-	
+
 				$query = $this->_model->passwordQuery($username, $password, true);
 				$validateOptions = [
 					'database' => $this->_model,
 					'query'    => $query
 				];
 				$validate->addRule('username', 'existRecord', $validateOptions);
-	
+
 				$validate->run();
 			}
 
@@ -219,8 +230,7 @@ class UserController extends Controller
 				$this->_view->errors = $validate->showErrors(false);
 			}
 		}
-		$this->_view->username = $this->_arrParam['form']['username'] ?? '';
-		$this->_view->password = $this->_arrParam['form']['password'] ?? '';
+		$this->_view->data = $this->_arrParam['form'] ?? '';
 		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
 	}
 
@@ -300,7 +310,7 @@ class UserController extends Controller
 				$validate->setError('Mật khẩu cũ', 'không đúng');
 			}
 
-			$passwordOptions = ['min' => 12, 'max' => 24];
+			$passwordOptions = ['min' => 8, 'max' => 24];
 			$validate->addRule('password', 'password', $passwordOptions);
 			$validate->run();
 

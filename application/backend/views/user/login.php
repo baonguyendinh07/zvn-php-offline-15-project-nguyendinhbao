@@ -1,6 +1,6 @@
 <?php
-$inputUsername   = Form::input('text', 'form[username]', $this->username ?? '', '', 'Username or Email');
-$inputPassword   = Form::input('password', 'form[password]', $this->password ?? '', '', 'Password');
+$inputUsername   = Form::input('text', 'form[username]', $this->data['username'] ?? '', '', 'Username or Email');
+$inputPassword   = Form::input('password', 'form[password]', $this->data['password'] ?? '', '', 'Password');
 Session::set('token', time());
 $inputToken = Form::input('hidden', 'form[token]', time());
 ?>

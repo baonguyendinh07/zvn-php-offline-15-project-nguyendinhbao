@@ -1,5 +1,5 @@
 <?php
-class UserModel extends Model
+class BookModel extends Model
 {
 	private $where = '';
 	private $arrSearch;
@@ -7,7 +7,7 @@ class UserModel extends Model
 	public function __construct()
 	{
 		parent::__construct();
-		$this->setTable('user');
+		$this->setTable('book');
 	}
 
 	public function createWhereSearch($params)
@@ -18,7 +18,7 @@ class UserModel extends Model
 		foreach ($params as $param => $value) {
 			$before = '';
 			$after 	= '';
-			if (count($params) > 1 && ($param == 'status' || $param == 'group_id')) {
+			if (count($params) > 1 && ($param == 'status' || $param == 'category_id')) {
 				if ($value == 'default') continue;
 				$operator = 'AND';
 				$start = $start == 3 ? 3 : 4;
@@ -49,14 +49,12 @@ class UserModel extends Model
 		if (isset($params['search-key']) && !empty(trim($params['search-key']))) {
 			$this->arrSearch = [
 				'id' => '%' . $params['search-key'] . '%',
-				'username' => '%' . $params['search-key'] . '%',
-				'email' => '%' . $params['search-key'] . '%',
-				'fullname' => '%' . $params['search-key'] . '%'
+				'name' => '%' . $params['search-key'] . '%'
 			];
 		}
 
-		if (isset($params['group_id']) && is_numeric($params['group_id'])) {
-			$this->arrSearch['group_id']	 = $params['group_id'];
+		if (isset($params['category_id']) && is_numeric($params['category_id'])) {
+			$this->arrSearch['category_id']	 = $params['category_id'];
 		}
 
 		$where = 'WHERE';
@@ -64,19 +62,17 @@ class UserModel extends Model
 			$query[] = $this->createWhereSearch($this->arrSearch) ?? '';
 			$where = 'AND';
 		}
-		$group_id = Session::get('user')['userInfo']['group_id'];
-		$query[] = "$where `user`.`group_id`>'$group_id'";
+
 		$query = implode(' ', $query);
 		return $this->listRecord($query)[0];
 	}
 
 	public function listItems($params, $totalItems, $totalItemsPerPage)
 	{
-		$query[] = "SELECT `user`.`id`, `user`.`username`, `user`.`email`, `user`.`fullname`, `user`.`password`, `user`.`created`, `user`.`created_by`, `user`.`modified`, `user`.`modified_by`, `user`.`register_date`, `user`.`register_ip`, `user`.`status`, `user`.`ordering`, `user`.`group_id`, `group`.`name` as `group_name`";
-		$query[] = "FROM `$this->table`, `group`";
-
-		$group_id = Session::get('user')['userInfo']['group_id'];
-		$query[] = "WHERE `user`.`group_id`=`group`.`id` AND `user`.`group_id`>'$group_id'";
+        // id name picture price saleoff caterogy status special ordering created modifier
+		$query[] = "SELECT `book`.`id`, `book`.`name`, `book`.`picture`, `book`.`price`, `book`.`sale_off`, `book`.`status`, `book`.`ordering`, `book`.`created`, `book`.`created_by`, `book`.`modified`, `book`.`modified_by`, `book`.`category_id`, `category`.`name` as `category_name`";
+		$query[] = "FROM `$this->table`, `category`";
+        $query[] = "WHERE `book`.`category_id`=`category`.`id`";
 
 		if (isset($params['filterStatus']) && ($params['filterStatus'] == 'active' || $params['filterStatus'] == 'inactive')) {
 			$this->arrSearch['status']	 = $params['filterStatus'];
@@ -110,8 +106,8 @@ class UserModel extends Model
 		$query[] = "WHERE `id`='$id'";
 		$operater = '>';
 		if ($currentUser == true) $operater = '=';
-		$group_id = Session::get('user')['userInfo']['group_id'];
-		$query[] = "AND `$this->table`.`group_id`$operater'$group_id'";
+		$category_id = Session::get('user')['userInfo']['category_id'];
+		$query[] = "AND `$this->table`.`category_id`$operater'$category_id'";
 		$query = implode(' ', $query);
 		return $this->singleRecord($query);
 	}
@@ -141,7 +137,7 @@ class UserModel extends Model
 	public function changeStatus($params, $value)
 	{
 		if ($value == 'status') 	$status = $params['status'] == 'active' ? 'inactive' : 'active';
-		elseif ($value == 'group_id') 	$status = $params['group_id'];
+		elseif ($value == 'category_id') 	$status = $params['category_id'];
 		$updateParams = [
 			$value => $status,
 			'modified' => date('Y-m-d H:i:s'),
@@ -157,36 +153,12 @@ class UserModel extends Model
 			];
 			$link = URL::createLink($params['module'], $params['controller'], $params['action'], $linkParams);
 			$result = Helper::showStatus($status, $link);
-		} elseif ($value == 'group_id') {
+		} elseif ($value == 'category_id') {
 			$groupOptions = Helper::convertArrList($this->getListGroup());
 			$dataUrlLink  = URL::createLink($params['module'], $params['controller'], 'changeGroupId', ['id' => $params['id']]);
 			$dataUrl = "data-url='$dataUrlLink'";
 			$result = Form::select($groupOptions, '', $status, 'btn-ajax-group-id', $dataUrl);
 		}
-		return $result;
-	}
-
-	public function passwordQuery($username, $password, $backend = false)
-	{
-		$query[] = "SELECT `$this->table`.`id`";
-		$query[] = "FROM `$this->table` LEFT JOIN `group` ON `$this->table`.`group_id`=`group`.`id`";
-		$query[] = "WHERE (`$this->table`.`username`='$username' OR `$this->table`.`email`='$username') AND `$this->table`.`password`='$password' AND `$this->table`.`status`='active'";
-		if ($backend == true) $query[] = "AND `group`.`group_acp`='1'";
-
-		return implode(' ', $query);
-	}
-
-	public function getUserInfo($params, $backend = false)
-	{
-		$username = $params['username'];
-		$password = md5($params['password']);
-		$query[] = "SELECT `$this->table`.`id`, `$this->table`.`username`, `$this->table`.`fullname`, `$this->table`.`email`, `$this->table`.`group_id`, `group`.`name`, `group`.`group_acp`";
-		$query[] = "FROM `$this->table` LEFT JOIN `group` ON `$this->table`.`group_id`=`group`.`id`";
-		$query[] = "WHERE (`$this->table`.`username`='$username' OR `$this->table`.`email`='$username') AND `$this->table`.`password`='$password'";
-		if ($backend == true) $query[] = "AND `group`.`group_acp`='1'";
-
-		$query = implode(' ', $query);
-		$result = $this->singleRecord($query);
 		return $result;
 	}
 

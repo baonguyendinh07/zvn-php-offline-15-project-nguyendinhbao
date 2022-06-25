@@ -4,7 +4,6 @@ $indexActionLink = URL::createLink($this->params['module'], $this->params['contr
 if (!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))) {
     $notification = Helper::showMessege(
         'success',
-        'Thông báo',
         [
             Session::get('notificationElement') ?? 'Thông tin tài khoản của bạn' => Session::get('notification')
         ]
@@ -41,14 +40,14 @@ $inputToken = Form::input('hidden', 'form[token]', time());
                         <?= $lblUsername . $this->inputUsername ?>
                     </div>
                     <div class="form-group">
-                        <?= $lblPassword ?>    
+                        <?= $lblPassword ?>
                         <p class="form-control btn-blue">************</p>
                     </div>
                     <div class="form-group">
-                        <?= $lblFullname . $inputFullname ?>
+                        <?= $lblEmail . $this->inputEmail ?>
                     </div>
                     <div class="form-group">
-                        <?= $lblEmail . $this->inputEmail ?>
+                        <?= $lblFullname . $inputFullname ?>
                     </div>
                     <div class="form-group">
                         <?= $lblBirthday . $inputBirthday ?>
