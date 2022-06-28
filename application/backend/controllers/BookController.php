@@ -23,7 +23,11 @@ class BookController extends Controller
 		$linkParams = [];
 		if (isset($this->_arrParam['search-key'])) 	 $linkParams['search-key'] = $this->_arrParam['search-key'];
 		if (isset($this->_arrParam['filterStatus'])) $linkParams['filterStatus'] = $this->_arrParam['filterStatus'];
-		if (isset($this->_arrParam['group_id'])) 	 $linkParams['group_id'] = $this->_arrParam['group_id'];
+		if (isset($this->_arrParam['category_id']))  $linkParams['category_id'] = $this->_arrParam['category_id'];
+		if (isset($this->_arrParam['special'])) {
+			$linkParams['special'] = $this->_arrParam['special'];
+		}
+
 		$pageURL = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], $this->_arrParam['action'], $linkParams);
 
 		if (isset($this->_arrParam['filterStatus'])) $filterStatus = $this->_arrParam['filterStatus'];
@@ -42,7 +46,7 @@ class BookController extends Controller
 
 		// Show list
 		$this->_view->items = $this->_model->listItems($this->_arrParam, $totalItems, $this->_pagination['totalItemsPerPage']);
-		$this->_view->groupOptions = Helper::convertArrList($this->_model->getListGroup());
+		$this->_view->categoryOptions = Helper::convertArrList($this->_model->getListCategory());
 
 		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
 	}
@@ -53,63 +57,81 @@ class BookController extends Controller
 		$this->_view->setTitlePageHeader(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
 		$this->_view->setUserInfo(Session::get('user'));
 
-		$this->_view->inputUsername = Form::input('text', 'form[username]', $this->_arrParam['form']['username'] ?? '');
-		$this->_view->inputEmail    = Form::input('text', 'form[email]', $this->_arrParam['form']['email'] ?? '');
-		$this->_view->lblPassword = Form::label('Password', 'form-label fw-bold');
+		$this->_view->categoryOptions = Helper::convertArrList($this->_model->getListCategory());
+
+		$this->_view->pictureXHTML = '';
 
 		if (isset($this->_arrParam['id']) && !empty($this->_model->getItem($this->_arrParam['id']))) {
-			// Chỉ lấy id có group_id lớn hơn group_id hiện tại đăng nhập
-			// => kiểm tra gruop_id arrParam['id'], nếu true thì tiếp tục, nếu false thì quay về trang error
 			$id = $this->_arrParam['id'];
 			$this->_view->data = $this->_model->getItem($id);
-			$this->_view->inputUsername = '<p class="form-control btn-blue">' . $this->_view->data['username'] . '</p>';
-			$this->_view->inputEmail 	= '<p class="form-control btn-blue">' . $this->_view->data['email'] . '</p>';
-			$this->_view->lblPassword = Form::label('Password', 'form-label fw-bold', false);
+
+			$pictureImg			= '';
+			$hiddenPictureName 	= '';
+			if(!empty($this->_view->data['picture'])){
+				$pictureImg = '<img src="' . FILES_URL . $this->_arrParam['controller'] . DS . $this->_view->data['picture'] . '" style="width: 60px">';
+
+				$hiddenPictureName = Form::input('hidden', 'form[hiddenPictureName]', $this->_view->data['picture']);
+			}
+
+			$this->_view->pictureXHTML = $pictureImg . $hiddenPictureName;
 		} elseif (isset($this->_arrParam['id']) && empty($this->_model->getItem($this->_arrParam['id']))) {
 			require_once APPLICATION_PATH . $this->_arrParam['module'] . DS . 'controllers' . DS . 'ErrorController.php';
 			$this->error = new ErrorController($this->_arrParam);
 			$this->error->errorAction();
 		}
 
-		$this->_view->groupOptions = Helper::convertArrList($this->_model->getListGroup());
-
-		$i = 0;
-		foreach ($this->_view->groupOptions as $key => $value) {
-			$groupOptions[$i] = $key;
-			$i++;
-		}
-
 		if (isset($this->_arrParam['form']) && Session::get('token') == $this->_arrParam['form']['token']) {
+			if (!empty($_FILES['picture'])) $this->_arrParam['form']['picture'] = $_FILES['picture'];
+
 			$this->_view->data = $this->_arrParam['form'];
+
 			$validate = new Validate($this->_view->data);
 
-			$passwordOptions = ['min' => 8, 'max' => 24];
-			$fullNameOptions = ['min' => 3, 'max' => 50];
+			$i = 0;
+			foreach ($this->_view->categoryOptions as $key => $value) {
+				$categoryOptions[$i] = $key;
+				$i++;
+			}
 
-			if (!empty($this->_arrParam['form']['id'])) {
-				if (!empty(trim($this->_arrParam['form']['password']))) {
-					$validate->addRule('password', 'password', $passwordOptions);
-				}
-				$validate->addRule('fullname', 'string', $fullNameOptions)
-					->addRule('status', 'status', ['active', 'inactive'])
-					->addRule('group_id', 'group', $groupOptions);
-			} else {
-				$usernameOptions = ['min' => 12, 'max' => 24];
-				$validate->addRule('username', 'username', $usernameOptions)
-					->addRule('password', 'password', $passwordOptions)
-					->addRule('email', 'email')
-					->addRule('fullname', 'string', $fullNameOptions)
-					->addRule('status', 'status', ['active', 'inactive'])
-					->addRule('group_id', 'group', $groupOptions);
+			$validate->addRule('name', 'string', ['min' => 10, 'max' => 100])
+				->addRule('status', 'status', ['active', 'inactive'])
+				->addRule('price', 'int', ['min' => 1, 'max' => 100000000])
+				->addRule('category_id', 'group', $categoryOptions);
+
+			if (!empty($this->_arrParam['form']['picture']['name'])) {
+				$pictureOptions =
+					[
+						'min' => 100,
+						'max' => 1000000,
+						'extension' => ['jpg', 'jpeg', 'png'],
+						'fileType'	=> 'image'
+					];
+				$validate->addRule('picture', 'file', $pictureOptions, false);
+			}
+
+			if (!empty($this->_arrParam['form']['sale_off'])) {
+				$validate->addRule('sale_off', 'int', ['min' => 1, 'max' => 100]);
+			}
+
+			if ($this->_arrParam['form']['special'] != 'default') {
+				$validate->addRule('special', 'status', [0, 1]);
+			}
+
+			if (!empty($this->_arrParam['form']['ordering'])) {
+				$validate->addRule('ordering', 'int', ['min' => 1, 'max' => 100]);
+			}
+
+			if (!empty($this->_arrParam['form']['description'])) {
+				$validate->addRule('description', 'string', ['min' => 10, 'max' => 500]);
 			}
 
 			$validate->run();
 
 			if ($validate->isValid()) {
 				$results = $validate->getResult();
-				$results['password'] = md5($results['password']);
+
 				$task = 'add';
-				if (!empty(trim($results['id']))) {
+				if (isset($results['id']) && !empty(trim($results['id']))) {
 					$results['id'] = $id;
 					$task = 'edit';
 				}
@@ -123,7 +145,6 @@ class BookController extends Controller
 			}
 		}
 		$this->_view->params = $this->_arrParam;
-
 		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
 	}
 
@@ -132,14 +153,23 @@ class BookController extends Controller
 		if (!empty($this->_arrParam['status'])) echo $this->_model->changeStatus($this->_arrParam, 'status');
 	}
 
-	public function changeGroupIdAction()
+	public function changeCategoryIdAction()
 	{
-		if (!empty($this->_arrParam['group_id'])) echo $this->_model->changeStatus($this->_arrParam, 'group_id');
+		if (!empty($this->_arrParam['category_id'])) echo $this->_model->changeStatus($this->_arrParam, 'category_id');
+	}
+
+	public function changeSpecialAction()
+	{
+		if (isset($this->_arrParam['special'])) echo $this->_model->changeStatus($this->_arrParam, 'special');
 	}
 
 	public function deleteAction()
 	{
-		if (isset($_GET['id'])) $this->_model->deleteItem($_GET['id']);
+		if (isset($this->_arrParam['id'])) $this->_model->delete([$this->_arrParam['id']]);
+
+		if (isset($this->_arrParam['picture']) && !empty($this->_arrParam['picture'])) {
+			Upload::removeFile($this->_arrParam['controller'], $this->_arrParam['picture']);
+		}
 		Session::set('notification', 'đã được xóa thành công!');
 
 		$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'index');

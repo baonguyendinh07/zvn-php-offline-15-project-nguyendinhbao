@@ -1,34 +1,38 @@
 <?php
-// list: id name picture price saleoff caterogy status special ordering created modifier
-// form: name picture price saleoff status special category ordering description
-
 $indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], $this->params['action']);
+$pathImg = FILES_URL . $this->params['controller'] . DS;
 $formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
 $btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
 
-$groupOptionsDefault = ['default' => ' - Select Group - '] + $this->groupOptions;
-$groupSelectDefault  = Form::select($groupOptionsDefault, 'group_id', $this->params['group_id'] ?? 'default', 'filter-element');
+$categoryOptionsDefault = ['default' => ' - Select Category - '] + $this->categoryOptions;
+$categorySelectDefault  = Form::select($categoryOptionsDefault, 'category_id', $this->params['category_id'] ?? 'default', 'filter-element');
 
 if (!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))) {
     $notification = Helper::showMessege(
         'success',
         [
-            Session::get('notificationElement') ?? 'Thông tin thành viên' => Session::get('notification')
+            Session::get('notificationElement') ?? 'Thông tin sách' => Session::get('notification')
         ]
     );
     Session::unset('notificationElement');
     Session::unset('notification');
 }
 
-$inputFilterStatus = '';
-$inputSearchKey = '';
-$inputGroupId = '';
-
 if (isset($this->params['filterStatus'])) $inputFilterStatus = Form::input('hidden', 'filterStatus', $this->params['filterStatus']);
 
 if (isset($this->params['search-key']))   $inputSearchKey = Form::input('hidden', 'search-key', $this->params['search-key']);
 
-if (isset($this->params['group_id']))     $inputGroupId = Form::input('hidden', 'group_id', $this->params['group_id']);
+if (isset($this->params['category_id']))  $inputCategoryId = Form::input('hidden', 'category_id', $this->params['category_id']);
+
+if (isset($this->params['special']))      $inputSpecial = Form::input('hidden', 'special', $this->params['special']);
+
+$specialOptions = [
+    'default' => ' - Select Special - ',
+    "0" => 'Inactive',
+    "1" => 'Active'
+];
+
+$specialSelect  = Form::select($specialOptions, 'special', $this->params['special'] ?? '', 'filter-element');
 
 $searchValue = $this->params['search-key'] ?? '';
 
@@ -36,33 +40,38 @@ $xhtml = '';
 if (!empty($this->items)) {
     foreach ($this->items as $key => $value) {
         $id           = Helper::highlight($searchValue, $value['id']);
+        $name         = Helper::highlight($searchValue, $value['name']);
+        $picture      = empty($value['picture']) ? $pathImg . 'default.jpg' : $pathImg . $value['picture'];
 
         $linkStatus   = URL::createLink($this->params['module'], $this->params['controller'], 'changeStatus', ['id' => $id, 'status' => $value['status']]);
         $showStatus   = Helper::showStatus($value['status'], $linkStatus);
 
-        $dataUrlLink  = URL::createLink($this->params['module'], $this->params['controller'], 'changeGroupId', ['id' => $value['id']]);
+        $linkSpecial = URL::createLink($this->params['module'], $this->params['controller'], 'changeSpecial', ['id' => $id, 'special' => $value['special']]);
+        $showSpecial = Helper::showStatus($value['special'], $linkSpecial, 'special');
+
+        $dataUrlLink  = URL::createLink($this->params['module'], $this->params['controller'], 'changeCategoryId', ['id' => $value['id']]);
         $dataUrl      = "data-url='$dataUrlLink'";
-        $groupSelect  = Form::select($this->groupOptions, '', $value['group_id'] ?? '', 'btn-ajax-group-id', $dataUrl);
+        $categorySelect  = Form::select($this->categoryOptions, '', $value['category_id'] ?? '', 'btn-ajax-category-id', $dataUrl);
 
         $editLink     = URL::createLink($this->params['module'], $this->params['controller'], 'form', ['id' => $value['id']]);
         $btnEdit      = Helper::createButtonLink($editLink, '<i class="fas fa-pen"></i>', 'info', true, true);
 
-        $pathDelete   = URL::createLink($this->params['module'], $this->params['controller'], 'delete', ['id' => $id]);
+        $pathDelete   = URL::createLink($this->params['module'], $this->params['controller'], 'delete', ['id' => $id, 'picture' => $value['picture']]);
         $btnDelete    = Helper::createButtonLink($pathDelete, '<i class="fas fa-trash "></i>', 'danger btn-delete', true, true);
 
         $xhtml .= '<tr>
                         <td><input type="checkbox"></td>
                         <td>' . $id . '</td>
                         <td class="text-left">
-                            <p class="mb-0">Name: ' . $name . '</p>
-                            <p class="mb-0">Price: ' . $price . '</p>
-                            <p class="mb-0">Sale Off: ' . $saleOff . '</p>
+                            <p class="mb-0"><b>Name</b>: ' . $name . '</p>
+                            <p class="mb-0"><b>Price</b>: ' . $value['price'] . '</p>
+                            <p class="mb-0"><b>Sale Off</b>: ' . $value['sale_off'] . '</p>
                         </td>
-                        <td class="position-relative">' . $picture . '</td>
+                        <td class="position-relative"><img src="' . $picture . '" style="width:60px"></td>
                         <td class="position-relative">' . $categorySelect . '</td>
                         <td class="position-relative">' . $showStatus . '</td>
-                        <td class="position-relative">' . $specialSelect . '</td>
-                        <td class="position-relative">' . $ordering . '</td>
+                        <td class="position-relative">' . $showSpecial . '</td>
+                        <td class="position-relative">' . $value['ordering'] . '</td>
                         <td>' . $btnEdit . $btnDelete . '
                         </td>
                     </tr>';
@@ -75,7 +84,6 @@ if (!empty($this->items)) {
         <div class="card card-outline card-info">
             <div class="card-header">
                 <h3 class="card-title">Search & Filter</h3>
-
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
@@ -93,9 +101,10 @@ if (!empty($this->items)) {
                                 <?= Form::input('hidden', 'module', $this->params['module']) ?>
                                 <?= Form::input('hidden', 'controller', $this->params['controller']) ?>
                                 <?= Form::input('hidden', 'action', $this->params['action']) ?>
-                                <?= $inputFilterStatus ?>
-                                <?= $inputSearchKey ?>
-                                <?= $groupSelectDefault ?>
+                                <?= $inputFilterStatus ?? '' ?>
+                                <?= $inputSearchKey ?? '' ?>
+                                <?= $categorySelectDefault ?>
+                                <?= $specialSelect ?>
                             </form>
                         </div>
                         <div class="area-search mb-2">
@@ -103,11 +112,12 @@ if (!empty($this->items)) {
                                 <?= Form::input('hidden', 'module', $this->params['module']) ?>
                                 <?= Form::input('hidden', 'controller', $this->params['controller']) ?>
                                 <?= Form::input('hidden', 'action', $this->params['action']) ?>
-                                <?= $inputFilterStatus ?>
-                                <?= $inputGroupId ?>
-                                <div class="input-group">
+                                <?= $inputFilterStatus ?? '' ?>
+                                <?= $inputCategoryId ?? '' ?>
+                                <?= $inputSpecial ?? '' ?>
+                                <div class="input-category">
                                     <input type="text" class="form-control" name="search-key" value="<?= $searchValue ?>">
-                                    <span class="input-group-append">
+                                    <span class="input-category-append">
                                         <button type="submit" class="btn btn-info">Search</button>
                                         <a href="<?= $indexActionLink ?>" class="btn btn-danger">Clear</a>
                                     </span>
@@ -138,14 +148,14 @@ if (!empty($this->items)) {
                 <div class="container-fluid">
                     <div class="row align-items-center justify-content-between mb-2">
                         <div>
-                            <div class="input-group">
+                            <div class="input-category">
                                 <select class="form-control custom-select">
                                     <option>Bulk Action</option>
                                     <option>Delete</option>
                                     <option>Active</option>
                                     <option>Inactive</option>
                                 </select>
-                                <span class="input-group-append">
+                                <span class="input-category-append">
                                     <button type="button" class="btn btn-info">Apply</button>
                                 </span>
                             </div>
@@ -157,7 +167,6 @@ if (!empty($this->items)) {
                     <table class="table align-middle text-center table-bordered">
                         <thead>
                             <tr>
-                                <!-- // list: id name picture price saleoff caterogy status special ordering created modifier -->
                                 <th style="width: 30px"><input type="checkbox"></th>
                                 <th style="width: 30px">ID</th>
                                 <th class="text-left">Info</th>

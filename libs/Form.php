@@ -7,9 +7,9 @@ class Form
         return sprintf('<label class="%s">%s %s</label>', $class, $name, $required);
     }
 
-    public static function input($type, $name, $value = '', $id = '', $placeholder = '')
+    public static function input($type, $name, $value = '', $id = '', $placeholder = '', $style = '')
     {
-        return sprintf('<input type="%s" name="%s" class="form-control" id="%s" value="%s" placeholder="%s">', $type, $name, $id, $value, $placeholder);
+        return sprintf('<input type="%s" name="%s" class="form-control" id="%s" value="%s" placeholder="%s" %s>', $type, $name, $id, $value, $placeholder, $style);
     }
 
     public static function select($options, $name, $selectResult, $class = '', $attr = '')
@@ -19,6 +19,6 @@ class Form
             $selected = strval($key) == $selectResult ? 'selected' : '';
             $optionsXHTML .= sprintf('<option value="%s" %s>%s</option>', $key, $selected, $option);
         }
-        return sprintf('<select class="custom-select %s" name="%s" %s>%s</select>', $class, $name, $attr, $optionsXHTML);
+        return sprintf('<select class="custom-select %s" name="%s" %s style="display:block;width:160px">%s</select>', $class, $name, $attr, $optionsXHTML);
     }
 }

@@ -53,6 +53,8 @@ class UserController extends Controller
 		$this->_view->setTitlePageHeader(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
 		$this->_view->setUserInfo(Session::get('user'));
 
+		$this->_view->groupOptions = Helper::convertArrList($this->_model->getListGroup());
+
 		$this->_view->inputUsername = Form::input('text', 'form[username]', $this->_arrParam['form']['username'] ?? '');
 		$this->_view->inputEmail    = Form::input('text', 'form[email]', $this->_arrParam['form']['email'] ?? '');
 		$this->_view->lblPassword = Form::label('Password', 'form-label fw-bold');
@@ -71,14 +73,6 @@ class UserController extends Controller
 			$this->error->errorAction();
 		}
 
-		$this->_view->groupOptions = Helper::convertArrList($this->_model->getListGroup());
-
-		$i = 0;
-		foreach ($this->_view->groupOptions as $key => $value) {
-			$groupOptions[$i] = $key;
-			$i++;
-		}
-
 		if (isset($this->_arrParam['form']) && Session::get('token') == $this->_arrParam['form']['token']) {
 			$this->_view->data = $this->_arrParam['form'];
 			$validate = new Validate($this->_view->data);
@@ -86,22 +80,26 @@ class UserController extends Controller
 			$passwordOptions = ['min' => 8, 'max' => 24];
 			$fullNameOptions = ['min' => 3, 'max' => 50];
 
+			$i = 0;
+			foreach ($this->_view->groupOptions as $key => $value) {
+				$groupOptions[$i] = $key;
+				$i++;
+			}
+
 			if (!empty($this->_arrParam['form']['id'])) {
 				if (!empty(trim($this->_arrParam['form']['password']))) {
 					$validate->addRule('password', 'password', $passwordOptions);
 				}
-				$validate->addRule('fullname', 'string', $fullNameOptions)
-					->addRule('status', 'status', ['active', 'inactive'])
-					->addRule('group_id', 'group', $groupOptions);
 			} else {
 				$usernameOptions = ['min' => 12, 'max' => 24];
 				$validate->addRule('username', 'username', $usernameOptions)
 					->addRule('password', 'password', $passwordOptions)
-					->addRule('email', 'email')
-					->addRule('fullname', 'string', $fullNameOptions)
-					->addRule('status', 'status', ['active', 'inactive'])
-					->addRule('group_id', 'group', $groupOptions);
+					->addRule('email', 'email');
 			}
+
+			$validate->addRule('fullname', 'string', $fullNameOptions)
+				->addRule('status', 'status', ['active', 'inactive'])
+				->addRule('group_id', 'group', $groupOptions);
 
 			$validate->run();
 
@@ -109,7 +107,7 @@ class UserController extends Controller
 				$results = $validate->getResult();
 				$results['password'] = md5($results['password']);
 				$task = 'add';
-				if (!empty(trim($results['id']))) {
+				if (isset($results['id']) && !empty(trim($results['id']))) {
 					$results['id'] = $id;
 					$task = 'edit';
 				}
@@ -339,7 +337,7 @@ class UserController extends Controller
 
 	public function deleteAction()
 	{
-		if (isset($_GET['id'])) $this->_model->deleteItem($_GET['id']);
+		if (isset($this->_arrParam['id'])) $this->_model->delete([$this->_arrParam['id']]);
 		Session::set('notification', 'đã được xóa thành công!');
 
 		$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'index');

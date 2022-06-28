@@ -35,7 +35,7 @@ class Validate
 	// Set error
 	public function setError($element, $message)
 	{
-			$this->errors[$element] = $message;
+		$this->errors[$element] = $message;
 	}
 
 	// Get result
@@ -152,12 +152,12 @@ class Validate
 		$xhtml = '<div class="alert alert-danger" role="alert"><ul style="padding: 0; margin: 0">';
 		if ($key) {
 			foreach ($this->errors as $key => $value) {
-				if($key == 'birthday') $key = "Ngày sinh";
+				if ($key == 'birthday') $key = "Ngày sinh";
 				$xhtml .= '<li style="display:block; margin: 10px 0"><b>' . ucfirst($key) . '</b> ' . $value . '!</li>';
 			}
 		} else {
 			foreach ($this->errors as $value) {
-				$xhtml .= '<li style="display:block; margin: 10px 0">'.$value . '!</li>';
+				$xhtml .= '<li style="display:block; margin: 10px 0">' . $value . '!</li>';
 			}
 		}
 		$xhtml .= '</ul></div>';
@@ -174,7 +174,7 @@ class Validate
 	private function validateStatus($element, $select)
 	{
 		if ($this->source[$element] != strval($select[0]) && $this->source[$element] != strval($select[1])) {
-			$this->setError($element, 'select status');
+			$this->setError($element, 'vui lòng chọn trạng thái');
 		}
 	}
 
@@ -182,7 +182,7 @@ class Validate
 	private function validateGroupID($element, $options)
 	{
 		if (!in_array($this->source[$element], $options)) {
-			$this->setError($element, 'select group');
+			$this->setError($element, 'vui lòng chọn nhóm');
 		}
 	}
 
@@ -256,8 +256,13 @@ class Validate
 		}
 
 		$ext = pathinfo($this->source[$element]['name'], PATHINFO_EXTENSION);
-		if (in_array($ext, $options['entension']) == false) {
+		if (in_array($ext, $options['extension']) == false) {
 			$this->setError($element, 'phần mở rộng không phù hợp');
+		}
+
+		$ext = explode('/', $this->source[$element]['type'])[0];
+		if ($options['fileType'] != $ext) {
+			$this->setError($element, 'không phải là kiểu ' . $options['fileType']);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 <?php
 $indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], $this->params['action']);
+$pathImg = FILES_URL . $this->params['controller'] . DS;
 $formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
 $btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
 
@@ -7,7 +8,7 @@ if (!empty(Session::get('notificationElement')) || !empty(Session::get('notifica
     $notification = Helper::showMessege(
         'success',
         [
-            Session::get('notificationElement') ?? 'Thông tin thành viên' => Session::get('notification')
+            Session::get('notificationElement') ?? 'Category' => Session::get('notification')
         ]
     );
     Session::unset('notificationElement');
@@ -28,6 +29,7 @@ if (!empty($this->items)) {
     foreach ($this->items as $key => $value) {
         $id           = Helper::highlight($searchValue, $value['id']);
         $name         = Helper::highlight($searchValue, $value['name']);
+        $picture      = empty($value['picture']) ? $pathImg . 'default.jpg' : $pathImg . $value['picture'];
 
         $linkStatus   = URL::createLink($this->params['module'], $this->params['controller'], 'changeStatus', ['id' => $id, 'status' => $value['status']]);
         $showStatus   = Helper::showStatus($value['status'], $linkStatus);
@@ -38,13 +40,14 @@ if (!empty($this->items)) {
         $editLink     = URL::createLink($this->params['module'], $this->params['controller'], 'form', ['id' => $value['id']]);
         $btnEdit      = Helper::createButtonLink($editLink, '<i class="fas fa-pen"></i>', 'info', true, true);
 
-        $pathDelete   = URL::createLink($this->params['module'], $this->params['controller'], 'delete', ['id' => $id]);
+        $pathDelete   = URL::createLink($this->params['module'], $this->params['controller'], 'delete', ['id' => $id, 'picture' => $value['picture']]);
         $btnDelete    = Helper::createButtonLink($pathDelete, '<i class="fas fa-trash "></i>', 'danger btn-delete', true, true);
 
         $xhtml .= '<tr>
                         <td><input type="checkbox"></td>
                         <td>' . $id . '</td>
                         <td class="text-left"><p class="mb-0">' . $name . '</p></td>
+                        <td class="position-relative"><img src="' . $picture . '" style="width:60px"></td>
                         <td class="position-relative">' . $showStatus . '</td>
                         <td>' . $value['ordering'] . '</td>
                         <td>
@@ -138,11 +141,12 @@ if (!empty($this->items)) {
                                 <th><input type="checkbox"></th>
                                 <th>ID</th>
                                 <th class="text-left">Name</th>
-                                <th>Status</th>
-                                <th>Ordering</th>
-                                <th>Created</th>
-                                <th>Modified</th>
-                                <th>Action</th>
+                                <th>Picture</th>
+                                <th style="width: 30px">Status</th>
+                                <th style="width: 50px">Ordering</th>
+                                <th style="width: 120px">Created</th>
+                                <th style="width: 120px">Modified</th>
+                                <th style="width: 50px">Action</th>
                             </tr>
                         </thead>
                         <tbody>

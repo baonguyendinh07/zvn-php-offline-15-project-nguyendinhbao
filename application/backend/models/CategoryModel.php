@@ -1,6 +1,7 @@
 <?php
 class CategoryModel extends Model
 {
+	private $_columns = ['id', 'name', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'ordering'];
 	private $where = '';
 	private $arrSearch;
 
@@ -52,20 +53,24 @@ class CategoryModel extends Model
 				'name' => '%' . $params['search-key'] . '%'
 			];
 		}
+
+		if (isset($this->arrSearch)) $query[] = $this->createWhereSearch($this->arrSearch) ?? '';
+
 		$query = implode(' ', $query);
 		return $this->listRecord($query)[0];
 	}
 
 	public function listItems($params, $totalItems, $totalItemsPerPage)
 	{
-		$query[] = "SELECT `id`, `name`, `created`, `created_by`, `modified`, `modified_by`, `status`, `ordering`";
+		$query[] = "SELECT `id`, `name`, `picture`, `created`, `created_by`, `modified`, `modified_by`, `status`, `ordering`";
 		$query[] = "FROM `$this->table`";
 
 		if (isset($params['filterStatus']) && ($params['filterStatus'] == 'active' || $params['filterStatus'] == 'inactive')) {
 			$this->arrSearch['status']	 = $params['filterStatus'];
 			$this->createWhereSearch($this->arrSearch);
 		}
-		$query[] = $this->where ?? '';
+
+		$query[] = $this->where;
 
 		$totalPage			= ceil($totalItems / $totalItemsPerPage);
 		if ($params['page'] >= 1 && $params['page'] <= $totalPage) $currentPage = $params['page'];
@@ -78,32 +83,50 @@ class CategoryModel extends Model
 		}
 	}
 
- 	public function getItem($id)
+	public function getItem($id)
 	{
-		$query[] = "SELECT * FROM `$this->table`";
+		$query[] = "SELECT `id`, `name`, `picture`, `status`, `ordering` FROM `$this->table`";
 		$query[] = "WHERE `id`='$id'";
 		$query = implode(' ', $query);
 		return $this->singleRecord($query);
 	}
- 
+
 	public function saveItem($params, $options = null)
 	{
 		if ($options == 'add') {
 			unset($params['token']);
-			$params['created'] 	  = date('Y-m-d H:i:s');
-			$params['created_by'] = Session::get('user')['userInfo']['id'];
+			$params['name'] 		= mysqli_real_escape_string($this->connect, $params['name']);
+			$params['created'] 	  	= date('Y-m-d H:i:s');
+			$params['created_by'] 	= Session::get('user')['userInfo']['username'];
 
-			$this->insert($params);
+			if (empty($params['picture']['name'])) {
+				unset($params['picture']);
+			} else {
+				$params['picture'] = Upload::uploadFile($params['picture'], 'category');
+			}
+
+			$data	= array_intersect_key($params, array_flip($this->_columns));
+			$this->insert($data);
+
 			Session::set('notification', 'được thêm thành công!');
 		} elseif ($options == 'edit') {
 			$id = $params['id'];
 			unset($params['id']);
 			unset($params['token']);
-			unset($params['username']);
-			unset($params['email']);
-			$params['modified'] = date('Y-m-d H:i:s');
-			$params['modified_by'] = Session::get('user')['userInfo']['id'];
-			$this->update($params, [['id', $id]]);
+			$params['name'] 		= mysqli_real_escape_string($this->connect, $params['name']);
+			$params['modified'] 	= date('Y-m-d H:i:s');
+			$params['modified_by']	= Session::get('user')['userInfo']['username'];
+
+			if (empty($params['picture']['name'])) {
+				unset($params['picture']);
+			} else {
+				Upload::removeFile('category', $params['hiddenPictureName']);
+				$params['picture'] = Upload::uploadFile($params['picture'], 'category');
+			}
+
+			$data	= array_intersect_key($params, array_flip($this->_columns));
+			$this->update($data, [['id', $id]]);
+
 			Session::set('notification', 'được chỉnh sửa thành công');
 		}
 	}
@@ -128,10 +151,5 @@ class CategoryModel extends Model
 			$result = Helper::showStatus($status, $link);
 		}
 		return $result;
-	}
-
-	public function deleteItem($id, $options = null)
-	{
-		$this->delete(array($id));
 	}
 }

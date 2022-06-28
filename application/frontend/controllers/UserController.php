@@ -34,6 +34,7 @@ class UserController extends Controller
 				$password = md5($this->_arrParam['form']['password']);
 
 				$query = $this->_model->passwordQuery($username, $password, true);
+				
 				$validateOptions = [
 					'database' => $this->_model,
 					'query'    => $query

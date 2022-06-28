@@ -1,6 +1,7 @@
 <?php
 class UserModel extends Model
 {
+	private $_columns = ['id', 'username', 'email', 'fullname', 'password','created', 'created_by', 'modified', 'modified_by', 'status', 'ordering', 'group_id'];
 	private $where = '';
 	private $arrSearch;
 
@@ -122,8 +123,8 @@ class UserModel extends Model
 			unset($params['token']);
 			$params['created'] 	  = date('Y-m-d H:i:s');
 			$params['created_by'] = Session::get('user')['userInfo']['username'];
-
-			$this->insert($params);
+			$data	= array_intersect_key($params, array_flip($this->_columns));
+			$this->insert($data);
 			Session::set('notification', 'được thêm thành công!');
 		} elseif ($options == 'edit') {
 			$id = $params['id'];
@@ -133,7 +134,8 @@ class UserModel extends Model
 			unset($params['email']);
 			$params['modified'] = date('Y-m-d H:i:s');
 			$params['modified_by'] = Session::get('user')['userInfo']['username'];
-			$this->update($params, [['id', $id]]);
+			$data	= array_intersect_key($params, array_flip($this->_columns));
+			$this->update($data, [['id', $id]]);
 			Session::set('notification', 'được chỉnh sửa thành công');
 		}
 	}
@@ -188,10 +190,5 @@ class UserModel extends Model
 		$query = implode(' ', $query);
 		$result = $this->singleRecord($query);
 		return $result;
-	}
-
-	public function deleteItem($id, $options = null)
-	{
-		$this->delete(array($id));
 	}
 }

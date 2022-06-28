@@ -1,6 +1,7 @@
 <?php
 class BookModel extends Model
 {
+	private $_columns = ['id', 'name', 'description', 'price', 'sale_off', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'ordering', 'category_id'];
 	private $where = '';
 	private $arrSearch;
 
@@ -18,7 +19,7 @@ class BookModel extends Model
 		foreach ($params as $param => $value) {
 			$before = '';
 			$after 	= '';
-			if (count($params) > 1 && ($param == 'status' || $param == 'category_id')) {
+			if (count($params) > 1 && ($param == 'status' || $param == 'category_id' || $param == 'special')) {
 				if ($value == 'default') continue;
 				$operator = 'AND';
 				$start = $start == 3 ? 3 : 4;
@@ -31,7 +32,7 @@ class BookModel extends Model
 				$before = '(';
 				$after 	= '';
 			}
-			if ($param == 'fullname') {
+			if ($param == 'name') {
 				$before = '';
 				$after 	= ')';
 			}
@@ -57,11 +58,11 @@ class BookModel extends Model
 			$this->arrSearch['category_id']	 = $params['category_id'];
 		}
 
-		$where = 'WHERE';
-		if (isset($this->arrSearch)) {
-			$query[] = $this->createWhereSearch($this->arrSearch) ?? '';
-			$where = 'AND';
+		if (isset($params['special']) && is_numeric($params['special'])) {
+			$this->arrSearch['special']	 = $params['special'];
 		}
+
+		if (isset($this->arrSearch)) $query[] = $this->createWhereSearch($this->arrSearch) ?? '';
 
 		$query = implode(' ', $query);
 		return $this->listRecord($query)[0];
@@ -69,10 +70,9 @@ class BookModel extends Model
 
 	public function listItems($params, $totalItems, $totalItemsPerPage)
 	{
-        // id name picture price saleoff caterogy status special ordering created modifier
-		$query[] = "SELECT `book`.`id`, `book`.`name`, `book`.`picture`, `book`.`price`, `book`.`sale_off`, `book`.`status`, `book`.`ordering`, `book`.`created`, `book`.`created_by`, `book`.`modified`, `book`.`modified_by`, `book`.`category_id`, `category`.`name` as `category_name`";
+		$query[] = "SELECT `book`.`id`, `book`.`name`, `book`.`picture`, `book`.`price`, `book`.`sale_off`, `book`.`status`, `book`.`special`, `book`.`ordering`, `book`.`created`, `book`.`created_by`, `book`.`modified`, `book`.`modified_by`, `book`.`category_id`, `category`.`name` as `category_name`";
 		$query[] = "FROM `$this->table`, `category`";
-        $query[] = "WHERE `book`.`category_id`=`category`.`id`";
+		$query[] = "WHERE `book`.`category_id`=`category`.`id`";
 
 		if (isset($params['filterStatus']) && ($params['filterStatus'] == 'active' || $params['filterStatus'] == 'inactive')) {
 			$this->arrSearch['status']	 = $params['filterStatus'];
@@ -92,22 +92,18 @@ class BookModel extends Model
 		}
 	}
 
-	public function getListGroup()
+	public function getListCategory()
 	{
 		$query[] = "SELECT `id`, `name`";
-		$query[] = "FROM `group`";
+		$query[] = "FROM `category`";
 		$query = implode(' ', $query);
 		return $this->listRecord($query);
 	}
 
 	public function getItem($id, $currentUser = false)
 	{
-		$query[] = "SELECT * FROM `$this->table`";
+		$query[] = "SELECT `id`, `name`, `description`, `picture`, `price`, `sale_off`, `status`, `special`, `ordering`, `category_id` FROM `$this->table`";
 		$query[] = "WHERE `id`='$id'";
-		$operater = '>';
-		if ($currentUser == true) $operater = '=';
-		$category_id = Session::get('user')['userInfo']['category_id'];
-		$query[] = "AND `$this->table`.`category_id`$operater'$category_id'";
 		$query = implode(' ', $query);
 		return $this->singleRecord($query);
 	}
@@ -116,28 +112,47 @@ class BookModel extends Model
 	{
 		if ($options == 'add') {
 			unset($params['token']);
-			$params['created'] 	  = date('Y-m-d H:i:s');
-			$params['created_by'] = Session::get('user')['userInfo']['username'];
+			$params['name'] 		= mysqli_real_escape_string($this->connect, $params['name']);
+			$params['description'] 	= mysqli_real_escape_string($this->connect, $params['description']);
+			$params['created'] 	  	= date('Y-m-d H:i:s');
+			$params['created_by'] 	= Session::get('user')['userInfo']['username'];
 
-			$this->insert($params);
+			if (empty($params['picture']['name'])) {
+				unset($params['picture']);
+			} else {
+				$params['picture'] = Upload::uploadFile($params['picture'], 'book');
+			}
+
+			$data	= array_intersect_key($params, array_flip($this->_columns));
+			$this->insert($data);
 			Session::set('notification', 'được thêm thành công!');
 		} elseif ($options == 'edit') {
 			$id = $params['id'];
 			unset($params['id']);
 			unset($params['token']);
-			unset($params['username']);
-			unset($params['email']);
+			$params['name'] 		= mysqli_real_escape_string($this->connect, $params['name']);
+			$params['description'] 	= mysqli_real_escape_string($this->connect,$params['description']);
 			$params['modified'] = date('Y-m-d H:i:s');
 			$params['modified_by'] = Session::get('user')['userInfo']['username'];
-			$this->update($params, [['id', $id]]);
+
+			if (empty($params['picture']['name'])) {
+				unset($params['picture']);
+			} else {
+				Upload::removeFile('book', $params['hiddenPictureName']);
+				$params['picture'] = Upload::uploadFile($params['picture'], 'book');
+			}
+
+			$data	= array_intersect_key($params, array_flip($this->_columns));
+			$this->update($data, [['id', $id]]);
 			Session::set('notification', 'được chỉnh sửa thành công');
 		}
 	}
 
 	public function changeStatus($params, $value)
 	{
-		if ($value == 'status') 	$status = $params['status'] == 'active' ? 'inactive' : 'active';
-		elseif ($value == 'category_id') 	$status = $params['category_id'];
+		if ($value == 'status') 		 $status = $params['status'] == 'active' ? 'inactive' : 'active';
+		elseif ($value == 'category_id') $status = $params['category_id'];
+		elseif ($value == 'special') 	 $status = $params['special'] == 1 ? 0 : 1;
 		$updateParams = [
 			$value => $status,
 			'modified' => date('Y-m-d H:i:s'),
@@ -146,24 +161,19 @@ class BookModel extends Model
 
 		$this->update($updateParams, [['id', $params['id']]]);
 
-		if ($value == 'status') {
+		if ($value == 'status' || $value == 'special') {
 			$linkParams = [
 				'id' => $params['id'],
-				'status' => $status
+				$value => $status
 			];
 			$link = URL::createLink($params['module'], $params['controller'], $params['action'], $linkParams);
-			$result = Helper::showStatus($status, $link);
+			$result = Helper::showStatus($status, $link, $value);
 		} elseif ($value == 'category_id') {
-			$groupOptions = Helper::convertArrList($this->getListGroup());
-			$dataUrlLink  = URL::createLink($params['module'], $params['controller'], 'changeGroupId', ['id' => $params['id']]);
+			$categoryOptions = Helper::convertArrList($this->getListCategory());
+			$dataUrlLink  = URL::createLink($params['module'], $params['controller'], 'changeCategoryId', ['id' => $params['id']]);
 			$dataUrl = "data-url='$dataUrlLink'";
-			$result = Form::select($groupOptions, '', $status, 'btn-ajax-group-id', $dataUrl);
+			$result = Form::select($categoryOptions, '', $status, 'btn-ajax-category-id', $dataUrl);
 		}
 		return $result;
-	}
-
-	public function deleteItem($id, $options = null)
-	{
-		$this->delete(array($id));
 	}
 }

@@ -1,31 +1,10 @@
-<div class="breadcrumb-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title">
-                    <h2 class="py-2">Lịch sử mua hàng</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<?php
+include_once BLOCK_PATH . 'user.php';
+?>
 <section class="faq-section section-b-space">
     <div class="container">
         <div class="row">
-            <div class="col-lg-3">
-                <div class="dashboard-left">
-                    <div class="collection-mobile-back"><span class="filter-back"><i class="fa fa-angle-left" aria-hidden="true"></i> Ẩn</span></div>
-                    <div class="block-content">
-                        <ul>
-                            <li><a href="index.php?module=frontend&controller=user&action=profile">Thông tin tài khoản</a></li>
-                            <li><a href="index.php?module=frontend&controller=user&action=changePassword">Thay đổi mật khẩu</a></li>
-                            <li class="active"><a href="index.php?module=frontend&controller=user&action=orderHistory">Lịch sử mua hàng</a></li>
-                            <li><a href="index.php?module=frontend&controller=user&action=logout">Đăng xuất</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <?= $actionXHTML ?? '' ?>
             <div class="col-lg-9">
                 <div class="accordion theme-accordion" id="accordionExample">
                     <div class="accordion theme-accordion" id="accordionExample">

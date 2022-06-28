@@ -19,6 +19,21 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on('change', '.btn-ajax-category-id', function (e) {
+        e.preventDefault();
+        var category_id = $(this).val();
+        var url = $(this).data('url') + '&category_id=' + category_id;
+        var tdTag = $(this).parent();
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (response) {
+                tdTag.html(response);
+                tdTag.find('select.btn-ajax-category-id').notify("Success", { className: 'success', position: 'top-center' });
+            }
+        });
+    });
+
     $(document).on('click', '.btn-ajax-status', function (e) {
         e.preventDefault();
         var url = $(this).attr('href');
@@ -31,7 +46,20 @@ $(document).ready(function () {
                 tdTag.find('a.btn-ajax-status').notify("Success", { className: 'success', position: 'top-center' });
             }
         });
+    });
 
+    $(document).on('click', '.btn-ajax-special', function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        var tdTag = $(this).parent();
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (response) {
+                tdTag.html(response);
+                tdTag.find('a.btn-ajax-special').notify("Success", { className: 'success', position: 'top-center' });
+            }
+        });
     });
 
     $('.btn-ajax-pw').click(function () {

@@ -1,4 +1,5 @@
 <?php
+//// name* picture* price* saleoff status* special* caterogy* ordering* desciption
 $indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'index');
 if (!empty($this->data['id'])) $inputId = Form::input('hidden', 'form[id]', $this->data['id']);
 
@@ -8,19 +9,35 @@ $statusOptions = [
     'active' => 'Active'
 ];
 
-$groupOptionsDefault = ['default' => ' - Select Group - '] + $this->groupOptions;
+$specialOptions = [
+    'default' => ' - Select Special - ',
+    "0" => 'Inactive',
+    "1" => 'Active'
+];
 
-$lblUsername = Form::label('Username', 'form-label fw-bold');
-$lblEmail    = Form::label('Email', 'form-label fw-bold');
-$lblFullname = Form::label('Fullname', 'form-label fw-bold');
-$lblStatus   = Form::label('Status', 'form-label fw-bold');
-$lblGroup    = Form::label('Group', 'form-label fw-bold');
+$categoryOptionsDefault = ['default' => ' - Select Category - '] + $this->categoryOptions;
 
-$inputPassword   = Form::input('password', 'form[password]');
-$inputFullname   = Form::input('text', 'form[fullname]', $this->data['fullname'] ?? '');
+$lblName        = Form::label('Name', 'form-label fw-bold');
+$lblPicture     = Form::label('Picture', 'form-label fw-bold', false);
+$lblPrice       = Form::label('Price', 'form-label fw-bold');
+$lblSaleOff     = Form::label('Sale Off', 'form-label fw-bold', false);
+$lblStatus      = Form::label('Status', 'form-label fw-bold');
+$lblSpecial     = Form::label('Special', 'form-label fw-bold', false);
+$lblCategoryId  = Form::label('Category', 'form-label fw-bold');
+$lblOrdering    = Form::label('Ordering', 'form-label fw-bold', false);
+$lblDescription = Form::label('Description', 'form-label fw-bold', false);
 
-$statusSelect    = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'default');
-$groupIdSelect   = Form::select($groupOptionsDefault, 'form[group_id]', $this->data['group_id'] ?? 'default');
+$inputName      = Form::input('text', 'form[name]', $this->data['name'] ?? '');
+$inputPicture   = Form::input('file', 'picture', '', '', '', 'style="width:220px; border:none"');
+$inputPrice     = Form::input('number', 'form[price]', $this->data['price'] ?? '');
+$inputSaleOff   = Form::input('number', 'form[sale_off]', $this->data['sale_off'] ?? '');
+$inputOrdering  = Form::input('number', 'form[ordering]', $this->data['ordering'] ?? '');
+$description    = $this->data['description'] ?? '';
+$inputDescription = '<textarea name="form[description]" class="form-control" rows="5">' . $description . '</textarea>';
+
+$statusSelect       = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'default');
+$categoryIdSelect   = Form::select($categoryOptionsDefault, 'form[category_id]', $this->data['category_id'] ?? 'default');
+$specialSelect      = Form::select($specialOptions, 'form[special]', $this->data['special'] ?? 'default');
 
 Session::set('token', time());
 $inputToken = Form::input('hidden', 'form[token]', time());
@@ -28,28 +45,37 @@ $inputToken = Form::input('hidden', 'form[token]', time());
 <div class="row">
     <div class="col-12">
         <?= $this->errors ?? '' ?>
-        <form action="" method="post">
+        <form action="" method="post" enctype="multipart/form-data">
             <?= $inputToken ?>
-            <?= $inputId ?? ''?>
+            <?= $inputId ?? '' ?>
             <div class="card card-outline card-info">
                 <div class="card-body">
                     <div class="form-group">
-                        <?= $lblUsername . $this->inputUsername ?>
+                        <?= $lblName . $inputName ?>
                     </div>
                     <div class="form-group">
-                        <?= $lblEmail . $this->inputEmail ?>
+                        <?= $lblPicture . $inputPicture . $this->pictureXHTML ?>
                     </div>
                     <div class="form-group">
-                        <?= $this->lblPassword . $inputPassword ?>
+                        <?= $lblPrice . $inputPrice ?>
                     </div>
                     <div class="form-group">
-                        <?= $lblFullname . $inputFullname ?>
+                        <?= $lblSaleOff . $inputSaleOff ?>
                     </div>
                     <div class="form-group">
                         <?= $lblStatus . $statusSelect ?>
                     </div>
                     <div class="form-group">
-                        <?= $lblGroup . $groupIdSelect ?>
+                        <?= $lblSpecial . $specialSelect ?>
+                    </div>
+                    <div class="form-group">
+                        <?= $lblCategoryId . $categoryIdSelect ?>
+                    </div>
+                    <div class="form-group">
+                        <?= $lblOrdering . $inputOrdering ?>
+                    </div>
+                    <div class="form-group">
+                        <?= $lblDescription . $inputDescription ?>
                     </div>
                 </div>
                 <div class="card-footer">

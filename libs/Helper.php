@@ -1,14 +1,14 @@
 <?php
 class Helper
 {
-    public static function showStatus($status, $link)
+    public static function showStatus($status, $link, $column = 'status')
     {
-        if ($status == 'active' || $status == 1) {
+        if ($status === 'active' || $status == 1) {
             $aClass = "btn-success";
-        } elseif ($status == 'inactive' || $status == 0) {
+        } elseif ($status === 'inactive' || $status == 0) {
             $aClass = "btn-danger";
         }
-        return sprintf('<a href="%s" class="btn %s rounded-circle btn-sm btn-ajax-status"><i class="fas fa-check"></i></a>', $link, $aClass);
+        return sprintf('<a href="%s" class="btn %s rounded-circle btn-sm btn-ajax-%s"><i class="fas fa-check"></i></a>', $link, $aClass, $column);
     }
 
     public static function createButtonLink($link, $content, $color, $isCircle = false, $isSmall = false)
@@ -64,8 +64,10 @@ class Helper
         $keySelected = $params['filterStatus'] ?? 'all';
         $linkParams = [];
 
-        if (isset($params['group_id'])) $linkParams['group_id'] = $params['group_id'];
-        if (isset($params['search-key'])) $linkParams['search-key'] = $params['search-key'];
+        if (isset($params['group_id']))     $linkParams['group_id'] = $params['group_id'];
+        if (isset($params['category_id']))  $linkParams['category_id'] = $params['category_id'];
+        if (isset($params['special']))      $linkParams['special'] = $params['special'];
+        if (isset($params['search-key']))   $linkParams['search-key'] = $params['search-key'];
 
         foreach ($options as $option => $countItems) {
             $aClass = $option == $keySelected ? 'btn-info' : 'btn-secondary';
