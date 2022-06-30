@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><book_store><category>
+								<id>1</id>
+								<name>Văn Học - Tiểu Thuyết</name>
+								<picture>hft8q1c3.jpg</picture>
+							</category><category>
+								<id>2</id>
+								<name>Kinh Tế</name>
+								<picture>3soNzUuH.png</picture>
+							</category><category>
+								<id>3</id>
+								<name>Tin học</name>
+								<picture>sITg1bwt.jpg</picture>
+							</category><category>
+								<id>4</id>
+								<name> Kỹ Năng Sống</name>
+								<picture>6CuLDpHi.jpg</picture>
+							</category><category>
+								<id>5</id>
+								<name>Thiếu Nhi</name>
+								<picture>mkSDB82z.jpg</picture>
+							</category><category>
+								<id>6</id>
+								<name> Thường Thức - Đời Sống</name>
+								<picture>ERBdcoe3.jpg</picture>
+							</category><category>
+								<id>7</id>
+								<name>Ngoại Ngữ - Từ Điển</name>
+								<picture>oj3RmAwB.jpg</picture>
+							</category><category>
+								<id>8</id>
+								<name>Truyện Tranh</name>
+								<picture>fRQnVtL4.jpg</picture>
+							</category><category>
+								<id>9</id>
+								<name>Văn Hóa - Nghệ Thuật</name>
+								<picture>btkjrfal.jpg</picture>
+							</category><category>
+								<id>10</id>
+								<name>Y Học</name>
+								<picture>r2ya0Ftq.jpg</picture>
+							</category><category>
+								<id>11</id>
+								<name>Pháp Luật - Chính Trị</name>
+								<picture>rUqp3Tgk.jpg</picture>
+							</category><category>
+								<id>12</id>
+								<name>Lịch Sử</name>
+								<picture>4EbOGwdX.jpg</picture>
+							</category><category>
+								<id>13</id>
+								<name>Tôn Giáo - Tâm Linh</name>
+								<picture>nZxrQ1GH.jpg</picture>
+							</category><category>
+								<id>14</id>
+								<name>Bà Mẹ - Em Bé</name>
+								<picture>9A03qfvC.jpg</picture>
+							</category><category>
+								<id>15</id>
+								<name>Giáo Khoa - Giáo Trình</name>
+								<picture>ULTDc5Gk.jpg</picture>
+							</category></book_store>

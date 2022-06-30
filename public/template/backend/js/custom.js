@@ -34,6 +34,21 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on('change', '.btn-ajax-ordering', function (e) {
+        e.preventDefault();
+        let ele = $(this);
+        var ordering = ele.val();
+        var url = ele.data('url') + '&ordering=' + ordering;
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (response) {
+                console.log(response);
+                ele.notify("Success", { className: 'success', position: 'top-center' });
+            }
+        });
+    });
+
     $(document).on('click', '.btn-ajax-status', function (e) {
         e.preventDefault();
         var url = $(this).attr('href');

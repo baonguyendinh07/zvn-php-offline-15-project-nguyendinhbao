@@ -3,7 +3,6 @@ $indexActionLink = URL::createLink($this->params['module'], $this->params['contr
 if (!empty($this->data['id'])) $inputId = Form::input('hidden', 'form[id]', $this->data['id']);
 
 $statusOptions = [
-    'default' => ' - Select Status - ',
     'inactive' => 'Inactive',
     'active' => 'Active'
 ];
@@ -14,8 +13,8 @@ $lblOrdering     = Form::label('Ordering', 'form-label fw-bold', false);
 $lblPicture      = Form::label('Picture', 'form-label fw-bold', false);
 
 $inputName       = Form::input('text', 'form[name]', $this->data['name'] ?? '');
-$statusSelect    = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'default');
-$inputOrdering   = Form::input('number', 'form[ordering]', $this->data['ordering'] ?? '');
+$statusSelect    = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'active');
+$inputOrdering   = Form::input('number', 'form[ordering]', $this->data['ordering'] ?? 10);
 $inputPicture    = Form::input('file', 'picture', '', '', '', 'style="width:220px; border:none"');
 
 Session::set('token', time());

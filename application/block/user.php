@@ -1,5 +1,5 @@
 <?php
-if ($_GET['module'] == 'frontend' && $_GET['controller'] == 'user') {
+if (isset($_GET['module']) && $_GET['module'] == 'frontend' && $_GET['controller'] == 'user') {
     $option = [
         'profile' => 'Thông tin tài khoản',
         'changePassword' => 'Thay đổi mật khẩu',

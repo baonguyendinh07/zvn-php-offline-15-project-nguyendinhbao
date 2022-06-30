@@ -38,7 +38,7 @@ class BookController extends Controller
 		//Pagination
 		$this->_arrParam['page'] = isset($this->_arrParam['page']) ? $this->_arrParam['page'] : 1;
 		$configPagination = [
-			'totalItemsPerPage' => 3,
+			'totalItemsPerPage' => 10,
 			'pageRange' => 3
 		];
 		$this->setPagination($configPagination);
@@ -67,7 +67,7 @@ class BookController extends Controller
 
 			$pictureImg			= '';
 			$hiddenPictureName 	= '';
-			if(!empty($this->_view->data['picture'])){
+			if (!empty($this->_view->data['picture'])) {
 				$pictureImg = '<img src="' . FILES_URL . $this->_arrParam['controller'] . DS . $this->_view->data['picture'] . '" style="width: 60px">';
 
 				$hiddenPictureName = Form::input('hidden', 'form[hiddenPictureName]', $this->_view->data['picture']);
@@ -121,8 +121,8 @@ class BookController extends Controller
 				$validate->addRule('ordering', 'int', ['min' => 1, 'max' => 100]);
 			}
 
-			if (!empty($this->_arrParam['form']['description'])) {
-				$validate->addRule('description', 'string', ['min' => 10, 'max' => 500]);
+			if (!empty($this->_arrParam['form']['short_description'])) {
+				$validate->addRule('short_description', 'string', ['min' => 10, 'max' => 1000]);
 			}
 
 			$validate->run();
@@ -161,6 +161,11 @@ class BookController extends Controller
 	public function changeSpecialAction()
 	{
 		if (isset($this->_arrParam['special'])) echo $this->_model->changeStatus($this->_arrParam, 'special');
+	}
+
+	public function changeOrderingAction()
+	{
+		if (!empty($this->_arrParam['ordering'])) echo $this->_model->changeStatus($this->_arrParam, 'ordering');
 	}
 
 	public function deleteAction()

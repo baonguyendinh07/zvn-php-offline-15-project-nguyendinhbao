@@ -4,15 +4,13 @@ $indexActionLink = URL::createLink($this->params['module'], $this->params['contr
 if (!empty($this->data['id'])) $inputId = Form::input('hidden', 'form[id]', $this->data['id']);
 
 $statusOptions = [
-    'default' => ' - Select Status - ',
     'inactive' => 'Inactive',
     'active' => 'Active'
 ];
 
 $specialOptions = [
-    'default' => ' - Select Special - ',
-    "0" => 'Inactive',
-    "1" => 'Active'
+    "0" => 'No',
+    "1" => 'Yes'
 ];
 
 $categoryOptionsDefault = ['default' => ' - Select Category - '] + $this->categoryOptions;
@@ -25,19 +23,19 @@ $lblStatus      = Form::label('Status', 'form-label fw-bold');
 $lblSpecial     = Form::label('Special', 'form-label fw-bold', false);
 $lblCategoryId  = Form::label('Category', 'form-label fw-bold');
 $lblOrdering    = Form::label('Ordering', 'form-label fw-bold', false);
-$lblDescription = Form::label('Description', 'form-label fw-bold', false);
+$lblDescription = Form::label('Short Description', 'form-label fw-bold', false);
 
 $inputName      = Form::input('text', 'form[name]', $this->data['name'] ?? '');
 $inputPicture   = Form::input('file', 'picture', '', '', '', 'style="width:220px; border:none"');
 $inputPrice     = Form::input('number', 'form[price]', $this->data['price'] ?? '');
 $inputSaleOff   = Form::input('number', 'form[sale_off]', $this->data['sale_off'] ?? '');
-$inputOrdering  = Form::input('number', 'form[ordering]', $this->data['ordering'] ?? '');
-$description    = $this->data['description'] ?? '';
-$inputDescription = '<textarea name="form[description]" class="form-control" rows="5">' . $description . '</textarea>';
+$inputOrdering  = Form::input('number', 'form[ordering]', $this->data['ordering'] ?? 10);
+$shortDescription    = $this->data['short_description'] ?? '';
+$inputDescription = '<textarea name="form[short_description]" class="form-control" rows="5">' . $shortDescription . '</textarea>';
 
-$statusSelect       = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'default');
+$statusSelect       = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'active');
 $categoryIdSelect   = Form::select($categoryOptionsDefault, 'form[category_id]', $this->data['category_id'] ?? 'default');
-$specialSelect      = Form::select($specialOptions, 'form[special]', $this->data['special'] ?? 'default');
+$specialSelect      = Form::select($specialOptions, 'form[special]', $this->data['special'] ?? 0);
 
 Session::set('token', time());
 $inputToken = Form::input('hidden', 'form[token]', time());

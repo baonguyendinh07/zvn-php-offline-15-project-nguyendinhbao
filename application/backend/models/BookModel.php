@@ -1,7 +1,7 @@
 <?php
 class BookModel extends Model
 {
-	private $_columns = ['id', 'name', 'description', 'price', 'sale_off', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'ordering', 'category_id'];
+	private $_columns = ['id', 'name', 'short_description', 'price', 'sale_off', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'ordering', 'category_id'];
 	private $where = '';
 	private $arrSearch;
 
@@ -102,7 +102,7 @@ class BookModel extends Model
 
 	public function getItem($id, $currentUser = false)
 	{
-		$query[] = "SELECT `id`, `name`, `description`, `picture`, `price`, `sale_off`, `status`, `special`, `ordering`, `category_id` FROM `$this->table`";
+		$query[] = "SELECT `id`, `name`, `short_description`, `picture`, `price`, `sale_off`, `status`, `special`, `ordering`, `category_id` FROM `$this->table`";
 		$query[] = "WHERE `id`='$id'";
 		$query = implode(' ', $query);
 		return $this->singleRecord($query);
@@ -113,7 +113,7 @@ class BookModel extends Model
 		if ($options == 'add') {
 			unset($params['token']);
 			$params['name'] 		= mysqli_real_escape_string($this->connect, $params['name']);
-			$params['description'] 	= mysqli_real_escape_string($this->connect, $params['description']);
+			$params['short_description'] 	= mysqli_real_escape_string($this->connect, $params['short_description']);
 			$params['created'] 	  	= date('Y-m-d H:i:s');
 			$params['created_by'] 	= Session::get('user')['userInfo']['username'];
 
@@ -131,7 +131,7 @@ class BookModel extends Model
 			unset($params['id']);
 			unset($params['token']);
 			$params['name'] 		= mysqli_real_escape_string($this->connect, $params['name']);
-			$params['description'] 	= mysqli_real_escape_string($this->connect,$params['description']);
+			$params['short_description'] 	= mysqli_real_escape_string($this->connect,$params['short_description']);
 			$params['modified'] = date('Y-m-d H:i:s');
 			$params['modified_by'] = Session::get('user')['userInfo']['username'];
 
@@ -153,6 +153,7 @@ class BookModel extends Model
 		if ($value == 'status') 		 $status = $params['status'] == 'active' ? 'inactive' : 'active';
 		elseif ($value == 'category_id') $status = $params['category_id'];
 		elseif ($value == 'special') 	 $status = $params['special'] == 1 ? 0 : 1;
+		elseif ($value == 'ordering') 	 $status = $params['ordering'];
 		$updateParams = [
 			$value => $status,
 			'modified' => date('Y-m-d H:i:s'),
@@ -173,6 +174,8 @@ class BookModel extends Model
 			$dataUrlLink  = URL::createLink($params['module'], $params['controller'], 'changeCategoryId', ['id' => $params['id']]);
 			$dataUrl = "data-url='$dataUrlLink'";
 			$result = Form::select($categoryOptions, '', $status, 'btn-ajax-category-id', $dataUrl);
+		}elseif($value == 'ordering'){
+			$result = $status;
 		}
 		return $result;
 	}

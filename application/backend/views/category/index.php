@@ -34,8 +34,8 @@ if (!empty($this->items)) {
         $linkStatus   = URL::createLink($this->params['module'], $this->params['controller'], 'changeStatus', ['id' => $id, 'status' => $value['status']]);
         $showStatus   = Helper::showStatus($value['status'], $linkStatus);
 
-        $dataUrlLink  = URL::createLink($this->params['module'], $this->params['controller'], 'changeGroupId', ['id' => $value['id']]);
-        $dataUrl      = "data-url='$dataUrlLink'";
+        $dataUrlOrdering  = 'data-url="' . URL::createLink($this->params['module'], $this->params['controller'], 'changeOrdering', ['id' => $value['id']]) . '"';
+        $inputOrdering  = '<input type="number" value="' . $value['ordering'] . '" name="ordering" class="btn-ajax-ordering" style="width:50px;text-align:center" ' . $dataUrlOrdering . '>';
 
         $editLink     = URL::createLink($this->params['module'], $this->params['controller'], 'form', ['id' => $value['id']]);
         $btnEdit      = Helper::createButtonLink($editLink, '<i class="fas fa-pen"></i>', 'info', true, true);
@@ -47,9 +47,9 @@ if (!empty($this->items)) {
                         <td><input type="checkbox"></td>
                         <td>' . $id . '</td>
                         <td class="text-left"><p class="mb-0">' . $name . '</p></td>
-                        <td class="position-relative"><img src="' . $picture . '" style="width:60px"></td>
+                        <td class="position-relative"><img src="' . $picture . '" style="width:70px"></td>
                         <td class="position-relative">' . $showStatus . '</td>
-                        <td>' . $value['ordering'] . '</td>
+                        <td class="position-relative">' . $inputOrdering . '</td>
                         <td>
                             <p class="mb-0"><i class="far fa-user"></i>' . $value['created_by'] . '</p>
                             <p class="mb-0"><i class="far fa-clock"></i>' . $value['created'] . '</p>

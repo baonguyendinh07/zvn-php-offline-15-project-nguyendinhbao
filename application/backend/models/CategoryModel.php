@@ -134,10 +134,11 @@ class CategoryModel extends Model
 	public function changeStatus($params, $value)
 	{
 		if ($value == 'status') 	$status = $params['status'] == 'active' ? 'inactive' : 'active';
+		if ($value == 'ordering') 	$status = $params['ordering'] ;
 		$updateParams = [
 			$value => $status,
 			'modified' => date('Y-m-d H:i:s'),
-			'modified_by' => Session::get('user')['userInfo']['id']
+			'modified_by' => Session::get('user')['userInfo']['username']
 		];
 
 		$this->update($updateParams, [['id', $params['id']]]);
@@ -145,10 +146,12 @@ class CategoryModel extends Model
 		if ($value == 'status') {
 			$linkParams = [
 				'id' => $params['id'],
-				'status' => $status
+				$value => $status
 			];
 			$link = URL::createLink($params['module'], $params['controller'], $params['action'], $linkParams);
 			$result = Helper::showStatus($status, $link);
+		}elseif($value == 'ordering'){
+			$result = $status;
 		}
 		return $result;
 	}

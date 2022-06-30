@@ -1,4 +1,5 @@
 <?php
+include_once BLOCK_PATH . 'category.php';
 if (isset($this->_userInfoParams['userInfo']['username'])) {
     $avatarLink = $this->_pathImg . 'avatar/' . $this->_userInfoParams['userInfo']['username'] . '.jpg';
     $userActionButton = '
@@ -35,15 +36,11 @@ if (isset($this->_userInfoParams['userInfo']['username'])) {
                                         <div class="mobile-back text-right">Back<i class="fa fa-angle-right pl-2" aria-hidden="true"></i></div>
                                     </li>
                                     <li><a href="index.php?module=frontend&controller=index&action=index" class="my-menu-link active">Trang chủ</a></li>
-                                    <li><a href="list.html">Sách</a></li>
+                                    <li><a href="index.php?module=frontend&controller=book&action=list">Sách</a></li>
                                     <li>
-                                        <a href="category.html">Danh mục</a>
+                                        <a href="index.php?module=frontend&controller=book&action=category">Danh mục</a>
                                         <ul>
-                                            <li><a href="list.html">Bà mẹ - Em bé</a></li>
-                                            <li><a href="list.html">Chính Trị - Pháp Lý</a></li>
-                                            <li><a href="list.html">Học Ngoại Ngữ</a></li>
-                                            <li><a href="list.html">Công Nghệ Thông Tin</a></li>
-                                            <li><a href="list.html">Giáo Khoa - Giáo Trình</a>
+                                            <?= $headerCatarogy ?? '' ?>
                                         </ul>
                                     </li>
                                 </ul>

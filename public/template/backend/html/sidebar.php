@@ -27,6 +27,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="index.php?module=backend&controller=group&action=index" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>Group</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="" class="nav-link">
                         <i class="nav-icon fas fa-user"></i>
                         <p>
@@ -94,6 +100,12 @@
                             </a>
                         </li>
                     </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="index.php?module=backend&controller=user&action=changeAccountPassword" class="nav-link">
+                        <i class="nav-icon fas fa-key "></i>
+                        <p>Change Password</p>
+                    </a>
                 </li>
             </ul>
         </nav>

@@ -3,12 +3,9 @@ $indexActionLink = URL::createLink($this->params['module'], $this->params['contr
 if (!empty($this->data['id'])) $inputId = Form::input('hidden', 'form[id]', $this->data['id']);
 
 $statusOptions = [
-    'default' => ' - Select Status - ',
     'inactive' => 'Inactive',
     'active' => 'Active'
 ];
-
-$groupOptionsDefault = ['default' => ' - Select Group - '] + $this->groupOptions;
 
 $lblUsername = Form::label('Username', 'form-label fw-bold', false);
 $lblEmail    = Form::label('Email', 'form-label fw-bold', false);
@@ -16,11 +13,9 @@ $lblFullname = Form::label('Fullname', 'form-label fw-bold');
 $lblStatus   = Form::label('Status', 'form-label fw-bold');
 $lblGroup    = Form::label('Group', 'form-label fw-bold');
 
-$inputPassword   = Form::input('password', 'form[password]');
 $inputFullname   = Form::input('text', 'form[fullname]', $this->data['fullname'] ?? '');
-
-$statusSelect    = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'default');
-$groupIdSelect   = Form::select($groupOptionsDefault, 'form[group_id]', $this->data['group_id'] ?? 'default');
+$statusSelect    = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'active');
+$groupIdSelect   = Form::select($this->groupOptions, 'form[group_id]', $this->data['group_id'] ?? '4');
 
 Session::set('token', time());
 $inputToken = Form::input('hidden', 'form[token]', time());
@@ -40,7 +35,7 @@ $inputToken = Form::input('hidden', 'form[token]', time());
                         <?= $lblEmail . $this->inputEmail ?>
                     </div>
                     <div class="form-group">
-                        <?= $this->lblPassword . $inputPassword ?>
+                        <?= $this->lblPassword . $this->inputPassword ?>
                     </div>
                     <div class="form-group">
                         <?= $lblFullname . $inputFullname ?>

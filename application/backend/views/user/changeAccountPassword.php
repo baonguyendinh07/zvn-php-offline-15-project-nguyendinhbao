@@ -1,9 +1,9 @@
 <?php
 $profileActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'profile');
 
-$lblOldPassword      = Form::label('Old Password', 'form-label fw-bold');
-$lblPassword         = Form::label('Password', 'form-label fw-bold');
-$lblConfirmPassword  = Form::label('Confirm Password', 'form-label fw-bold');
+$lblOldPassword      = Form::label('Current Password', 'form-label fw-bold');
+$lblPassword         = Form::label('New Password', 'form-label fw-bold');
+$lblConfirmPassword  = Form::label('Confirm New Password', 'form-label fw-bold');
 
 $inputOldPassword        = Form::input('password', 'form[old_password]', $this->data['old_password'] ?? '');
 $inputPassword           = Form::input('password', 'form[password]');

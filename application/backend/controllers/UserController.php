@@ -57,7 +57,8 @@ class UserController extends Controller
 
 		$this->_view->inputUsername = Form::input('text', 'form[username]', $this->_arrParam['form']['username'] ?? '');
 		$this->_view->inputEmail    = Form::input('text', 'form[email]', $this->_arrParam['form']['email'] ?? '');
-		$this->_view->lblPassword = Form::label('Password', 'form-label fw-bold');
+		$this->_view->lblPassword 	= Form::label('Password', 'form-label fw-bold');
+		$this->_view->inputPassword = Form::input('password', 'form[password]');
 
 		if (isset($this->_arrParam['id']) && !empty($this->_model->getItem($this->_arrParam['id']))) {
 			// Chỉ lấy id có group_id lớn hơn group_id hiện tại đăng nhập
@@ -66,7 +67,8 @@ class UserController extends Controller
 			$this->_view->data = $this->_model->getItem($id);
 			$this->_view->inputUsername = '<p class="form-control btn-blue">' . $this->_view->data['username'] . '</p>';
 			$this->_view->inputEmail 	= '<p class="form-control btn-blue">' . $this->_view->data['email'] . '</p>';
-			$this->_view->lblPassword = Form::label('Password', 'form-label fw-bold', false);
+			$this->_view->lblPassword	= '';
+			$this->_view->inputPassword = '';
 		} elseif (isset($this->_arrParam['id']) && empty($this->_model->getItem($this->_arrParam['id']))) {
 			require_once APPLICATION_PATH . $this->_arrParam['module'] . DS . 'controllers' . DS . 'ErrorController.php';
 			$this->error = new ErrorController($this->_arrParam);
@@ -183,7 +185,7 @@ class UserController extends Controller
 	public function loginAction()
 	{
 		if (!empty(Session::get('user')['login_time']) && Session::get('user')['login_time'] >= time()) {
-			$returnLink = URL::createLink($this->_arrParam['module'], 'user', 'index');
+			$returnLink = URL::createLink($this->_arrParam['module'], 'dashboard', 'index');
 			$this->redirect($returnLink);
 		}
 
@@ -222,7 +224,7 @@ class UserController extends Controller
 					'login_time' => time() + LOGIN_TIME
 				];
 				Session::set('user', $arrSessionUser);
-				$returnLink = URL::createLink($this->_arrParam['module'], 'user', 'index');
+				$returnLink = URL::createLink($this->_arrParam['module'], 'dashboard', 'index');
 				$this->redirect($returnLink);
 			} else {
 				$this->_view->errors = $validate->showErrors(false);

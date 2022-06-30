@@ -12,7 +12,7 @@ if (!empty(Session::get('notificationElement')) || !empty(Session::get('notifica
     Session::unset('notification');
 }
 
-$lblOldPassword      = Form::label('Mật khẩu cũ');
+$lblOldPassword      = Form::label('Mật khẩu hiện tại');
 $lblPassword         = Form::label('Mật khẩu mới');
 $lblConfirmPassword  = Form::label('Xác nhận lại mật khẩu mới');
 

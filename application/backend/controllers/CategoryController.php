@@ -37,7 +37,7 @@ class CategoryController extends Controller
 		//Pagination
 		$this->_arrParam['page'] = isset($this->_arrParam['page']) ? $this->_arrParam['page'] : 1;
 		$configPagination = [
-			'totalItemsPerPage' => 3,
+			'totalItemsPerPage' => 5,
 			'pageRange' => 3
 		];
 		$this->setPagination($configPagination);
@@ -83,7 +83,7 @@ class CategoryController extends Controller
 
 			$validate = new Validate($this->_view->data);
 
-			$validate->addRule('name', 'string', ['min' => 10, 'max' => 50])
+			$validate->addRule('name', 'string', ['min' => 5, 'max' => 50])
 				->addRule('status', 'status', ['active', 'inactive']);
 
 			if (!empty($this->_arrParam['form']['ordering'])) {
@@ -127,6 +127,11 @@ class CategoryController extends Controller
 	public function changeStatusAction()
 	{
 		if (!empty($this->_arrParam['status'])) echo $this->_model->changeStatus($this->_arrParam, 'status');
+	}
+
+	public function changeOrderingAction()
+	{
+		if (!empty($this->_arrParam['ordering'])) echo $this->_model->changeStatus($this->_arrParam, 'ordering');
 	}
 
 	public function deleteAction()

@@ -11,9 +11,8 @@ if (!empty(Session::get('notificationElement')) || !empty(Session::get('notifica
     Session::unset('notificationElement');
     Session::unset('notification');
 }
-$changePasswordLink = URL::createLink($this->params['module'], $this->params['controller'], 'changeAccountPassword');
+
 $lblUsername       = Form::label('Username', 'form-label fw-bold', false);
-$lblPassword       = Form::label("<a href='$changePasswordLink'>Change Password</a>", 'form-label fw-bold', false);
 $lblEmail          = Form::label('Email', 'form-label fw-bold', false);
 $lblFullname       = Form::label('Fullname', 'form-label fw-bold');
 $lblBirthday       = Form::label('Birthday', 'form-label fw-bold', false);
@@ -38,10 +37,6 @@ $inputToken = Form::input('hidden', 'form[token]', time());
                 <div class="card-body">
                     <div class="form-group">
                         <?= $lblUsername . $this->inputUsername ?>
-                    </div>
-                    <div class="form-group">
-                        <?= $lblPassword ?>
-                        <p class="form-control btn-blue">************</p>
                     </div>
                     <div class="form-group">
                         <?= $lblEmail . $this->inputEmail ?>

@@ -41,6 +41,8 @@ if (!empty($this->items)) {
     foreach ($this->items as $key => $value) {
         $id           = Helper::highlight($searchValue, $value['id']);
         $name         = Helper::highlight($searchValue, $value['name']);
+        $saleOff      = $value['sale_off'] > 0 ? "<p class='mb-0'><b>Sale Off</b>: {$value['sale_off']}%</p>" : '';
+
         $picture      = empty($value['picture']) ? $pathImg . 'default.jpg' : $pathImg . $value['picture'];
 
         $linkStatus   = URL::createLink($this->params['module'], $this->params['controller'], 'changeStatus', ['id' => $id, 'status' => $value['status']]);
@@ -49,9 +51,11 @@ if (!empty($this->items)) {
         $linkSpecial = URL::createLink($this->params['module'], $this->params['controller'], 'changeSpecial', ['id' => $id, 'special' => $value['special']]);
         $showSpecial = Helper::showStatus($value['special'], $linkSpecial, 'special');
 
-        $dataUrlLink  = URL::createLink($this->params['module'], $this->params['controller'], 'changeCategoryId', ['id' => $value['id']]);
-        $dataUrl      = "data-url='$dataUrlLink'";
-        $categorySelect  = Form::select($this->categoryOptions, '', $value['category_id'] ?? '', 'btn-ajax-category-id', $dataUrl);
+        $dataUrlCategory  = 'data-url="' . URL::createLink($this->params['module'], $this->params['controller'], 'changeCategoryId', ['id' => $value['id']]) . '"';
+        $categorySelect  = Form::select($this->categoryOptions, '', $value['category_id'] ?? '', 'btn-ajax-category-id', $dataUrlCategory);
+
+        $dataUrlOrdering  = 'data-url="' . URL::createLink($this->params['module'], $this->params['controller'], 'changeOrdering', ['id' => $value['id']]) . '"';
+        $inputOrdering  = '<input type="number" value="' . $value['ordering'] . '" name="ordering" class="btn-ajax-ordering" style="width:50px;text-align:center" ' . $dataUrlOrdering . '>';
 
         $editLink     = URL::createLink($this->params['module'], $this->params['controller'], 'form', ['id' => $value['id']]);
         $btnEdit      = Helper::createButtonLink($editLink, '<i class="fas fa-pen"></i>', 'info', true, true);
@@ -64,14 +68,14 @@ if (!empty($this->items)) {
                         <td>' . $id . '</td>
                         <td class="text-left">
                             <p class="mb-0"><b>Name</b>: ' . $name . '</p>
-                            <p class="mb-0"><b>Price</b>: ' . $value['price'] . '</p>
-                            <p class="mb-0"><b>Sale Off</b>: ' . $value['sale_off'] . '</p>
-                        </td>
-                        <td class="position-relative"><img src="' . $picture . '" style="width:60px"></td>
+                            <p class="mb-0"><b>Price</b>: ' . $value['price'] . '</p>'
+            . $saleOff .
+            '</td>
+                        <td class="position-relative"><img src="' . $picture . '" style="width:70px"></td>
                         <td class="position-relative">' . $categorySelect . '</td>
                         <td class="position-relative">' . $showStatus . '</td>
                         <td class="position-relative">' . $showSpecial . '</td>
-                        <td class="position-relative">' . $value['ordering'] . '</td>
+                        <td class="position-relative">' . $inputOrdering . '</td>
                         <td>' . $btnEdit . $btnDelete . '
                         </td>
                     </tr>';
