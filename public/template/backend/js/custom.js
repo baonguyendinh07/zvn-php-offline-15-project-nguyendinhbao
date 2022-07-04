@@ -88,6 +88,32 @@ $(document).ready(function () {
         });
     });
 
+    activeMenu();
+
+    function activeMenu() {
+        let controller = getUrlParam('controller');
+        let action     = getUrlParam('action');
+
+        if (controller == 'user' && action == 'changeAccountPassword') controller = action;
+
+        let $currentMenuItemLevel1 = $('.nav-sidebar > .nav-item > [data-active="' + controller + '"]');
+        $currentMenuItemLevel1.addClass('active');
+
+        let $navTreeview = $currentMenuItemLevel1.next();
+        if ($navTreeview.length > 0) {
+            let $currentMenuItemLevel2 = $navTreeview.find('[data-active="' + action + '"]');
+            $currentMenuItemLevel2.addClass('active');
+            $currentMenuItemLevel1.parent().addClass('menu-open');
+        } else {
+            $('.nav-sidebar > .nav-item > [data-active="' + action + '"]').addClass('active');
+        }
+    }
+
+    function getUrlParam(key) {
+        let searchParams = new URLSearchParams(window.location.search);
+        return searchParams.get(key);
+    }
+
     $('.btn-delete').click(function (e) {
         e.preventDefault();
         let url = $(this).attr('href');

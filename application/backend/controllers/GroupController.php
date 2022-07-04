@@ -16,7 +16,7 @@ class GroupController extends Controller
 		$this->_view->setTitlePageHeader('Manager List');
 		$this->_view->setUserInfo(Session::get('user'));
 		$this->_view->arrCountItems = $this->_model->countItems();
-		$this->_view->items = $this->_model->listItems($this->_arrParam);
+		$this->_view->items = $this->_model->listItems();
 		$this->_view->render($this->_arrParam['controller'] . '/index');
 	}
 }

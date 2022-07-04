@@ -28,8 +28,8 @@ if (isset($this->params['special']))      $inputSpecial = Form::input('hidden', 
 
 $specialOptions = [
     'default' => ' - Select Special - ',
-    "0" => 'Inactive',
-    "1" => 'Active'
+    "0" => 'No',
+    "1" => 'Yes'
 ];
 
 $specialSelect  = Form::select($specialOptions, 'special', $this->params['special'] ?? '', 'filter-element');
@@ -68,7 +68,7 @@ if (!empty($this->items)) {
                         <td>' . $id . '</td>
                         <td class="text-left">
                             <p class="mb-0"><b>Name</b>: ' . $name . '</p>
-                            <p class="mb-0"><b>Price</b>: ' . $value['price'] . '</p>'
+                            <p class="mb-0"><b>Price</b>: ' . number_format($value['price']) . 'đ</p>'
             . $saleOff .
             '</td>
                         <td class="position-relative"><img src="' . $picture . '" style="width:70px"></td>

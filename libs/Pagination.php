@@ -36,20 +36,20 @@ class Pagination
 		// Pagination
 		$paginationHTML = '';
 		if ($this->totalPage > 1) {
-			$start 	= '<li class="page-item disabled"><a class="page-link"><i class="fas fa-angle-double-left"></i></a></li>';
-			$prev 	= '<li class="page-item disabled"><a class="page-link"><i class="fas fa-angle-left"></i></a></li>';
+			$start 	= '<li class="page-item disabled"><a class="page-link"><i class="fa fa-angle-double-left"></i></a></li>';
+			$prev 	= '<li class="page-item disabled"><a class="page-link"><i class="fa fa-angle-left"></i></a></li>';
 
 			if ($this->currentPage > 1) {
-				$start 	= '<li class="page-item"><a class="page-link" href="' . $this->path . '&page=1"><i class="fas fa-angle-double-left"></i></a></li>';
-				$prev 	= '<li class="page-item"><a class="page-link" href="' . $this->path . '&page=' . ($this->currentPage - 1) . '"><i class="fas fa-angle-left"></i></a></li>';
+				$start 	= '<li class="page-item"><a class="page-link" href="' . $this->path . '&page=1"><i class="fa fa-angle-double-left"></i></a></li>';
+				$prev 	= '<li class="page-item"><a class="page-link" href="' . $this->path . '&page=' . ($this->currentPage - 1) . '"><i class="fa fa-angle-left"></i></a></li>';
 			}
 
-			$next = '<li class="page-item disabled"><a class="page-link"><i class="fas fa-angle-right"></i></a></li></li>';
-			$end  = '<li class="page-item disabled"><a class="page-link"><i class="fas fa-angle-double-right"></i></a></li>';
+			$next = '<li class="page-item disabled"><a class="page-link"><i class="fa fa-angle-right"></i></a></li></li>';
+			$end  = '<li class="page-item disabled"><a class="page-link"><i class="fa fa-angle-double-right"></i></a></li>';
 
 			if ($this->currentPage < $this->totalPage) {
-				$next     = '<li class="page-item"><a class="page-link" href="' . $this->path . '&page=' . ($this->currentPage + 1) . '"><i class="fas fa-angle-right"></i></a></li>';
-				$end     = '<li class="page-item"><a class="page-link" href="' . $this->path . '&page=' . $this->totalPage . '"><i class="fas fa-angle-double-right"></i></a></li>';
+				$next     = '<li class="page-item"><a class="page-link" href="' . $this->path . '&page=' . ($this->currentPage + 1) . '"><i class="fa fa-angle-right"></i></a></li>';
+				$end     = '<li class="page-item"><a class="page-link" href="' . $this->path . '&page=' . $this->totalPage . '"><i class="fa fa-angle-double-right"></i></a></li>';
 			}
 
 			if ($this->pageRange < $this->totalPage) {

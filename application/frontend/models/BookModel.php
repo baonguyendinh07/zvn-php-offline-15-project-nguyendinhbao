@@ -1,44 +1,85 @@
 <?php
 class BookModel extends Model
 {
+	private $fromElement;
+	private $where = '';
+	private $arrSearch;
+
 	public function __construct()
 	{
 		parent::__construct();
 		$this->setTable('book');
 	}
 
-	public function saveItem($params, $options = null)
+	public function createWhereSearch($params)
 	{
-		if ($options == 'add') {
-			unset($params['token']);
-			unset($params['id']);
-			$params['register_date'] = date('Y-m-d H:i:s');
-			$params['register_ip'] = $_SERVER['REMOTE_ADDR'];
-			$params['status'] = 'inactive';
-			$params['group_id'] = '4';
-			$this->insert($params);
-			Session::set('notification', 'Bạn đã đăng ký tài khoảng thành công!');
-		} elseif ($options == 'edit') {
-			$id = $params['id'];
-			unset($params['id']);
-			unset($params['token']);
-			unset($params['username']);
-			unset($params['email']);
-			$params['modified'] = date('Y-m-d H:i:s');
-			$params['modified_by'] = Session::get('user')['userInfo']['id'];
-			$this->update($params, [['id', $id]]);
-			Session::set('notification', 'được chỉnh sửa thành công');
+		foreach ($params as $param => $value) {
+			$where[] = "AND $param LIKE '$value'";
+		}
+		$where = implode(' ', $where);
+		$where = 'WHERE ' . substr($where, 4);
+		return $this->where = $where;
+	}
+
+	public function countItems($params)
+	{
+		$query[] = "SELECT SUM(`status` = 'active') as `active` FROM `book`";
+
+		if (isset($params['search']) && !empty(trim($params['search']))) {
+			$this->arrSearch = [
+				'name' => '%' . $params['search'] . '%'
+			];
+		} elseif (isset($params['category_id']) && is_numeric($params['category_id'])) {
+			$this->arrSearch['category_id']	 = $params['category_id'] ?? 3;
+		}
+
+		if (isset($this->arrSearch)) $query[] = $this->createWhereSearch($this->arrSearch) ?? '';
+
+		$query = implode(' ', $query);
+		return $this->listRecord($query)[0];
+	}
+
+	public function listItems($params, $totalItems, $totalItemsPerPage = 12)
+	{
+		$query[] = "SELECT `id`, `name`, `picture`, `price`, `sale_off`, `short_description`";
+		$query[] = "FROM `$this->table`";
+		$query[] = "WHERE `status`='active'";
+
+		$totalPage			= ceil($totalItems / $totalItemsPerPage);
+		if (isset($params['page']) && $params['page'] >= 1 && $params['page'] <= $totalPage) {
+			$currentPage = $params['page'];
+		} else $currentPage = 1;
+
+		$query[] = (!empty($this->where)) ? 'AND' . substr($this->where, 5) : '';
+
+		$this->fromElement = ($currentPage - 1) * $totalItemsPerPage;
+		if ($this->fromElement >= 0) {
+			$query[] = 'LIMIT ' . $this->fromElement . ', ' . $totalItemsPerPage;
+			$query = implode(' ', $query);
+			return $this->listRecord($query);
 		}
 	}
 
-	public function getItem($id, $currentUser = false)
+	public function listSpecialBooks($where = "`status`='active' AND `special`='1'")
 	{
-		$query[] = "SELECT * FROM `$this->table`";
+		// id, name, price, sale off, picture,status = 1, special = 1
+		//`status`='active' AND `special`='1'
+		$query[] = "SELECT `id`, `name`, `picture`, `short_description`, `description`, `price`, `sale_off`, `category_id`";
+		$query[] = "FROM `$this->table`";
+		$query[] = "WHERE $where";
+		$query = implode(' ', $query);
+		return $this->listRecord($query);
+	}
+
+	public function getFromElement()
+	{
+		return $this->fromElement;
+	}
+
+	public function getItem($id)
+	{
+		$query[] = "SELECT `id`, `name`, `picture`, `price`, `sale_off`, `short_description`,  `description`, `category_id` FROM `$this->table`";
 		$query[] = "WHERE `id`='$id'";
-		$operater = '>';
-		if ($currentUser == true) $operater = '=';
-		$group_id = Session::get('user')['userInfo']['group_id'];
-		$query[] = "AND `$this->table`.`group_id`$operater'$group_id'";
 		$query = implode(' ', $query);
 		return $this->singleRecord($query);
 	}

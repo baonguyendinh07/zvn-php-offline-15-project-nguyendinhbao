@@ -38,13 +38,14 @@ class CategoryController extends Controller
 		$this->_arrParam['page'] = isset($this->_arrParam['page']) ? $this->_arrParam['page'] : 1;
 		$configPagination = [
 			'totalItemsPerPage' => 5,
-			'pageRange' => 3
+			'pageRange' => 3,
+			'page' => $this->_arrParam['page']
 		];
-		$this->setPagination($configPagination);
-		$this->_view->pagination = new Pagination($totalItems, $this->_pagination, $pageURL);
+
+		$this->_view->pagination = new Pagination($totalItems, $configPagination, $pageURL);
 
 		// Show list
-		$this->_view->items = $this->_model->listItems($this->_arrParam, $totalItems, $this->_pagination['totalItemsPerPage']);
+		$this->_view->items = $this->_model->listItems($this->_arrParam, $totalItems, $configPagination['totalItemsPerPage']);
 
 		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
 	}
@@ -64,7 +65,7 @@ class CategoryController extends Controller
 			$pictureImg			= '';
 			$hiddenPictureName 	= '';
 			if (!empty($this->_view->data['picture'])) {
-				$pictureImg = '<img src="' . FILES_URL . $this->_arrParam['controller'] . DS . $this->_view->data['picture'] . '" style="width: 60px">';
+				$pictureImg = '<img src="' . FILES_URL . $this->_arrParam['controller'] . DS . $this->_view->data['picture'] . '" style="width:120px">';
 
 				$hiddenPictureName = Form::input('hidden', 'form[hiddenPictureName]', $this->_view->data['picture']);
 			}

@@ -20,7 +20,7 @@ class UserModel extends Model
 	public function getUserInfo($params, $backend = false)
 	{
 		$username = $params['username'];
-		$password = md5($params['password']);
+		$password = $params['password'];
 		$query[] = "SELECT `$this->table`.`id`, `$this->table`.`username`, `$this->table`.`fullname`, `$this->table`.`email`, `$this->table`.`group_id`, `group`.`name`, `group`.`group_acp`";
 		$query[] = "FROM `$this->table` LEFT JOIN `group` ON `$this->table`.`group_id`=`group`.`id`";
 		$query[] = "WHERE (`$this->table`.`username`='$username' OR `$this->table`.`email`='$username') AND `$this->table`.`password`='$password'";

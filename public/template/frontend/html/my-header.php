@@ -71,8 +71,11 @@ if (isset($this->_userInfoParams['userInfo']['username'])) {
                                                     <div class="container">
                                                         <div class="row">
                                                             <div class="col-xl-12">
-                                                                <form action="" method="GET">
+                                                                <form method="GET">
                                                                     <div class="form-group">
+                                                                        <input type="hidden" name="module" value="frontend">
+                                                                        <input type="hidden" name="controller" value="book">
+                                                                        <input type="hidden" name="action" value="list">
                                                                         <input type="text" class="form-control" name="search" id="search-input" placeholder="Tìm kiếm sách...">
                                                                     </div>
                                                                     <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>

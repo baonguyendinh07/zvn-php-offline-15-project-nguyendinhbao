@@ -1,7 +1,7 @@
 <?php
 class BookModel extends Model
 {
-	private $_columns = ['id', 'name', 'short_description', 'price', 'sale_off', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'ordering', 'category_id'];
+	private $_columns = ['id', 'name', 'short_description', 'description', 'price', 'sale_off', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'ordering', 'category_id'];
 	private $where = '';
 	private $arrSearch;
 
@@ -100,7 +100,7 @@ class BookModel extends Model
 		return $this->listRecord($query);
 	}
 
-	public function getItem($id, $currentUser = false)
+	public function getItem($id)
 	{
 		$query[] = "SELECT `id`, `name`, `short_description`, `picture`, `price`, `sale_off`, `status`, `special`, `ordering`, `category_id` FROM `$this->table`";
 		$query[] = "WHERE `id`='$id'";
@@ -114,6 +114,7 @@ class BookModel extends Model
 			unset($params['token']);
 			$params['name'] 		= mysqli_real_escape_string($this->connect, $params['name']);
 			$params['short_description'] 	= mysqli_real_escape_string($this->connect, $params['short_description']);
+			$params['description'] = mysqli_real_escape_string($this->connect, $params['description']);
 			$params['created'] 	  	= date('Y-m-d H:i:s');
 			$params['created_by'] 	= Session::get('user')['userInfo']['username'];
 
@@ -131,7 +132,10 @@ class BookModel extends Model
 			unset($params['id']);
 			unset($params['token']);
 			$params['name'] 		= mysqli_real_escape_string($this->connect, $params['name']);
-			$params['short_description'] 	= mysqli_real_escape_string($this->connect,$params['short_description']);
+			$params['short_description'] 	= mysqli_real_escape_string($this->connect, $params['short_description']);
+
+			$params['description'] = mysqli_real_escape_string($this->connect, $params['description']);
+
 			$params['modified'] = date('Y-m-d H:i:s');
 			$params['modified_by'] = Session::get('user')['userInfo']['username'];
 
@@ -174,7 +178,7 @@ class BookModel extends Model
 			$dataUrlLink  = URL::createLink($params['module'], $params['controller'], 'changeCategoryId', ['id' => $params['id']]);
 			$dataUrl = "data-url='$dataUrlLink'";
 			$result = Form::select($categoryOptions, '', $status, 'btn-ajax-category-id', $dataUrl);
-		}elseif($value == 'ordering'){
+		} elseif ($value == 'ordering') {
 			$result = $status;
 		}
 		return $result;

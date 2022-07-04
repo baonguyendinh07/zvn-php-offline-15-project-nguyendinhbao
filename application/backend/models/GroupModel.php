@@ -12,7 +12,7 @@ class GroupModel extends Model
 		return $this->listRecord($query)[0];
 	}
 
-	public function listItems($params)
+	public function listItems()
 	{
 		$query = 'SELECT `id`, `name`, `group_acp`, `status` FROM `group`';	
 		return $this->listRecord($query);

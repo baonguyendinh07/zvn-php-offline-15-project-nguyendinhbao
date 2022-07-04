@@ -46,6 +46,7 @@ class UserController extends Controller
 
 			if ($validate->isValid()) {
 				$result = $validate->getResult();
+				$result['password'] = md5($result['password']);
 				$userInfo = $this->_model->getUserInfo($result);
 
 				$arrSessionUser = [
@@ -112,6 +113,17 @@ class UserController extends Controller
 				unset($results['password']);
 				$task = 'edit';
 				$this->_model->saveItem($results, $task);
+
+				$params['username'] = $this->_model->getItem($id, true)['username'];
+				$params['password'] = $this->_model->getItem($id, true)['password'];
+				$userInfo = $this->_model->getUserInfo($params, true);
+				$arrSessionUser = [
+					'userInfo' => $userInfo,
+					'group_acp' => $userInfo['group_acp'],
+					'login_time' => Session::get('user')['login_time']
+				];
+				Session::set('user', $arrSessionUser);
+
 				$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], $this->_arrParam['action']);
 				$this->redirect($returnLink);
 			} else {

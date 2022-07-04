@@ -21,19 +21,19 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-item">
-                    <a href="index.php?module=backend&controller=dashboard&action=index" class="nav-link active">
+                    <a href="index.php?module=backend&controller=dashboard&action=index" class="nav-link" data-active="dashboard">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="index.php?module=backend&controller=group&action=index" class="nav-link">
+                    <a href="index.php?module=backend&controller=group&action=index" class="nav-link" data-active="group">
                         <i class="nav-icon fas fa-users"></i>
                         <p>Group</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="" class="nav-link">
+                <li class="nav-item has-treeview">
+                    <a href="" class="nav-link" data-active="user">
                         <i class="nav-icon fas fa-user"></i>
                         <p>
                             User
@@ -42,21 +42,21 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="index.php?module=backend&controller=user&action=index" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                            <a href="index.php?module=backend&controller=user&action=index" class="nav-link" data-active="index">
+                                <i class="nav-icon fas fa-list-ul"></i>
                                 <p>List</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="index.php?module=backend&controller=user&action=form" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                            <a href="index.php?module=backend&controller=user&action=form" class="nav-link" data-active="form">
+                                <i class="nav-icon fas fa-edit"></i>
                                 <p>Add</p>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
+                <li class="nav-item has-treeview">
+                    <a href="" class="nav-link" data-active="category">
                         <i class="nav-icon fas fa-thumbtack"></i>
                         <p>
                             Category
@@ -65,21 +65,21 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="index.php?module=backend&controller=category&action=index" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                            <a href="index.php?module=backend&controller=category&action=index" class="nav-link" data-active="index">
+                                <i class="nav-icon fas fa-list-ul"></i>
                                 <p>List</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="index.php?module=backend&controller=category&action=form" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                            <a href="index.php?module=backend&controller=category&action=form" class="nav-link" data-active="form">
+                                <i class="nav-icon fas fa-edit"></i>
                                 <p>Add</p>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link" data-active="book">
                         <i class="nav-icon fas fa-book-open"></i>
                         <p>
                             Book
@@ -88,21 +88,21 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="index.php?module=backend&controller=book&action=index" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                            <a href="index.php?module=backend&controller=book&action=index" class="nav-link" data-active="index">
+                                <i class="nav-icon fas fa-list-ul"></i>
                                 <p>List</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="index.php?module=backend&controller=book&action=form" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                            <a href="index.php?module=backend&controller=book&action=form" class="nav-link" data-active="form">
+                                <i class="nav-icon fas fa-edit"></i>
                                 <p>Add</p>
                             </a>
                         </li>
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="index.php?module=backend&controller=user&action=changeAccountPassword" class="nav-link">
+                    <a href="index.php?module=backend&controller=user&action=changeAccountPassword" class="nav-link" data-active="changeAccountPassword">
                         <i class="nav-icon fas fa-key "></i>
                         <p>Change Password</p>
                     </a>

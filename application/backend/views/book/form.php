@@ -23,15 +23,19 @@ $lblStatus      = Form::label('Status', 'form-label fw-bold');
 $lblSpecial     = Form::label('Special', 'form-label fw-bold', false);
 $lblCategoryId  = Form::label('Category', 'form-label fw-bold');
 $lblOrdering    = Form::label('Ordering', 'form-label fw-bold', false);
-$lblDescription = Form::label('Short Description', 'form-label fw-bold', false);
+$lblShortDescription = Form::label('Short Description', 'form-label fw-bold', false);
+$lblDescription = Form::label('Description', 'form-label fw-bold', false);
 
 $inputName      = Form::input('text', 'form[name]', $this->data['name'] ?? '');
 $inputPicture   = Form::input('file', 'picture', '', '', '', 'style="width:220px; border:none"');
 $inputPrice     = Form::input('number', 'form[price]', $this->data['price'] ?? '');
 $inputSaleOff   = Form::input('number', 'form[sale_off]', $this->data['sale_off'] ?? '');
 $inputOrdering  = Form::input('number', 'form[ordering]', $this->data['ordering'] ?? 10);
-$shortDescription    = $this->data['short_description'] ?? '';
-$inputDescription = '<textarea name="form[short_description]" class="form-control" rows="5">' . $shortDescription . '</textarea>';
+$shortDescription       = $this->data['short_description'] ?? '';
+$inputShortDescription  = '<textarea name="form[short_description]" class="form-control" rows="5">' . $shortDescription . '</textarea>';
+
+$description       = $this->data['description'] ?? '';
+$inputDescription  = '<textarea name="form[description]" class="form-control" id="editor" rows="5">' . $description . "</textarea>";
 
 $statusSelect       = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'active');
 $categoryIdSelect   = Form::select($categoryOptionsDefault, 'form[category_id]', $this->data['category_id'] ?? 'default');
@@ -52,7 +56,10 @@ $inputToken = Form::input('hidden', 'form[token]', time());
                         <?= $lblName . $inputName ?>
                     </div>
                     <div class="form-group">
-                        <?= $lblPicture . $inputPicture . $this->pictureXHTML ?>
+                        <?= $lblShortDescription . $inputShortDescription ?>
+                    </div>
+                    <div class="form-group">
+                        <?= $lblDescription . $inputDescription ?>
                     </div>
                     <div class="form-group">
                         <?= $lblPrice . $inputPrice ?>
@@ -73,7 +80,7 @@ $inputToken = Form::input('hidden', 'form[token]', time());
                         <?= $lblOrdering . $inputOrdering ?>
                     </div>
                     <div class="form-group">
-                        <?= $lblDescription . $inputDescription ?>
+                        <?= $lblPicture . $inputPicture . $this->pictureXHTML ?>
                     </div>
                 </div>
                 <div class="card-footer">

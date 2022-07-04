@@ -77,4 +77,10 @@ class Helper
         }
         return $xhtml;
     }
+
+    public static function textCutting($text, $length){
+        $text = trim($text);
+        $result = strlen($text) > $length ? substr($text, 0, $length) . '...' : $text;
+        return $result;
+    }
 }

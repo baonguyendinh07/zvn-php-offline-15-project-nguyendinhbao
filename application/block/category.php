@@ -11,6 +11,7 @@ if (!empty($data)) {
 	$headerCatarogy 	= '';
 	$sidebarCategory 	= '';
 	$listCategory		= '';
+	$pageTitle 			= '';
 	foreach ($data as $key => $value) {
 		$id			= $value->id;
 		$name	 	= $value->name;
@@ -19,8 +20,9 @@ if (!empty($data)) {
 		$link	 	= URL::createLink('frontend', 'book', 'list', ['category_id' => $id], "$nameURL-$id.html");
 		$sidebarClass = 'text-dark';
 		if (isset($cateID) && $cateID == $value->id) {
-			$headerClass = ' class="active"';
-			$sidebarClass	 = 'my-text-primary';
+			$headerClass 	= ' class="active"';
+			$sidebarClass	= 'my-text-primary';
+			$pageTitle		= $name;
 		}
 		$headerCatarogy	.= sprintf('<li><a%s href="%s">%s</a></li>', $headerClass ?? '', $link, $name);
 		$sidebarCategory	.= '

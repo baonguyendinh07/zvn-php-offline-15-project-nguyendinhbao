@@ -1,7 +1,7 @@
 <?php
 class UserModel extends Model
 {
-	private $_columns = ['id', 'username', 'email', 'fullname', 'password','created', 'created_by', 'modified', 'modified_by', 'status', 'ordering', 'group_id'];
+	private $_columns = ['id', 'username', 'email', 'fullname', 'password', 'created', 'created_by', 'modified', 'modified_by', 'status', 'ordering', 'group_id'];
 	private $where = '';
 	private $arrSearch;
 
@@ -101,6 +101,8 @@ class UserModel extends Model
 	{
 		$query[] = "SELECT `id`, `name`";
 		$query[] = "FROM `group`";
+		$group_id = Session::get('user')['userInfo']['group_id'];
+		$query[] = $group_id > 1 ? "WHERE `id`>'$group_id'" : '';
 		$query = implode(' ', $query);
 		return $this->listRecord($query);
 	}
@@ -143,29 +145,36 @@ class UserModel extends Model
 	public function changeStatus($params, $value)
 	{
 		if ($value == 'status') 	$status = $params['status'] == 'active' ? 'inactive' : 'active';
-		elseif ($value == 'group_id') 	$status = $params['group_id'];
-		$updateParams = [
-			$value => $status,
-			'modified' => date('Y-m-d H:i:s'),
-			'modified_by' => Session::get('user')['userInfo']['username']
-		];
-
-		$this->update($updateParams, [['id', $params['id']]]);
-
-		if ($value == 'status') {
-			$linkParams = [
-				'id' => $params['id'],
-				'status' => $status
-			];
-			$link = URL::createLink($params['module'], $params['controller'], $params['action'], $linkParams);
-			$result = Helper::showStatus($status, $link);
-		} elseif ($value == 'group_id') {
-			$groupOptions = Helper::convertArrList($this->getListGroup());
-			$dataUrlLink  = URL::createLink($params['module'], $params['controller'], 'changeGroupId', ['id' => $params['id']]);
-			$dataUrl = "data-url='$dataUrlLink'";
-			$result = Form::select($groupOptions, '', $status, 'btn-ajax-group-id', $dataUrl);
+		elseif ($value == 'group_id') {
+			$group_id = Session::get('user')['userInfo']['group_id'];
+			if ($group_id == 1) 								  $status = $params['group_id'];
+			elseif ($group_id == 2 && $params['group_id'] > 2) $status = $params['group_id'];
 		}
-		return $result;
+
+		if (isset($status)) {
+			$updateParams = [
+				$value => $status,
+				'modified' => date('Y-m-d H:i:s'),
+				'modified_by' => Session::get('user')['userInfo']['username']
+			];
+
+			$this->update($updateParams, [['id', $params['id']]]);
+
+			if ($value == 'status') {
+				$linkParams = [
+					'id' => $params['id'],
+					'status' => $status
+				];
+				$link = URL::createLink($params['module'], $params['controller'], $params['action'], $linkParams);
+				$result = Helper::showStatus($status, $link);
+			} elseif ($value == 'group_id') {
+				$groupOptions = Helper::convertArrList($this->getListGroup());
+				$dataUrlLink  = URL::createLink($params['module'], $params['controller'], 'changeGroupId', ['id' => $params['id']]);
+				$dataUrl = "data-url='$dataUrlLink'";
+				$result = Form::select($groupOptions, '', $status, 'btn-ajax-group-id', $dataUrl);
+			}
+			return $result;
+		}
 	}
 
 	public function passwordQuery($username, $password, $backend = false)
@@ -181,7 +190,7 @@ class UserModel extends Model
 	public function getUserInfo($params, $backend = false)
 	{
 		$username = $params['username'];
-		$password = md5($params['password']);
+		$password = $params['password'];
 		$query[] = "SELECT `$this->table`.`id`, `$this->table`.`username`, `$this->table`.`fullname`, `$this->table`.`email`, `$this->table`.`group_id`, `group`.`name`, `group`.`group_acp`";
 		$query[] = "FROM `$this->table` LEFT JOIN `group` ON `$this->table`.`group_id`=`group`.`id`";
 		$query[] = "WHERE (`$this->table`.`username`='$username' OR `$this->table`.`email`='$username') AND `$this->table`.`password`='$password'";

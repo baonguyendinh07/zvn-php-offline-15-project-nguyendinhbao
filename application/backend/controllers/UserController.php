@@ -35,13 +35,14 @@ class UserController extends Controller
 		$this->_arrParam['page'] = isset($this->_arrParam['page']) ? $this->_arrParam['page'] : 1;
 		$configPagination = [
 			'totalItemsPerPage' => 3,
-			'pageRange' => 3
+			'pageRange' => 3,
+			'page' => $this->_arrParam['page']
 		];
-		$this->setPagination($configPagination);
-		$this->_view->pagination = new Pagination($totalItems, $this->_pagination, $pageURL);
+
+		$this->_view->pagination = new Pagination($totalItems, $configPagination, $pageURL);
 
 		// Show list
-		$this->_view->items = $this->_model->listItems($this->_arrParam, $totalItems, $this->_pagination['totalItemsPerPage']);
+		$this->_view->items = $this->_model->listItems($this->_arrParam, $totalItems, $configPagination['totalItemsPerPage']);
 		$this->_view->groupOptions = Helper::convertArrList($this->_model->getListGroup());
 
 		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
@@ -87,12 +88,8 @@ class UserController extends Controller
 				$groupOptions[$i] = $key;
 				$i++;
 			}
-
-			if (!empty($this->_arrParam['form']['id'])) {
-				if (!empty(trim($this->_arrParam['form']['password']))) {
-					$validate->addRule('password', 'password', $passwordOptions);
-				}
-			} else {
+			$groupOptions = $groupOptions + ['userGroupId' => Session::get('user')['userInfo']['group_id']];
+			if (empty($this->_arrParam['form']['id'])) {
 				$usernameOptions = ['min' => 12, 'max' => 24];
 				$validate->addRule('username', 'username', $usernameOptions)
 					->addRule('password', 'password', $passwordOptions)
@@ -217,6 +214,7 @@ class UserController extends Controller
 
 			if ($validate->isValid()) {
 				$result = $validate->getResult();
+				$result['password'] = md5($result['password']);
 				$userInfo = $this->_model->getUserInfo($result, true);
 				$arrSessionUser = [
 					'userInfo' => $userInfo,
@@ -279,6 +277,18 @@ class UserController extends Controller
 				unset($results['password']);
 				$task = 'edit';
 				$this->_model->saveItem($results, $task);
+
+				$params['username'] = $this->_model->getItem($id, true)['username'];
+				$params['password'] = $this->_model->getItem($id, true)['password'];
+				$userInfo = $this->_model->getUserInfo($params, true);
+				$arrSessionUser = [
+					'userInfo' => $userInfo,
+					'group_acp' => $userInfo['group_acp'],
+					'login_time' => Session::get('user')['login_time']
+				];
+				Session::set('user', $arrSessionUser);
+				$returnLink = URL::createLink($this->_arrParam['module'], 'user', 'profile');
+				$this->redirect($returnLink);
 			} else {
 				$this->_view->errors = $validate->showErrors();
 			}

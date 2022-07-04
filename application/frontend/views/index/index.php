@@ -1,9 +1,148 @@
 <?php
 include_once BLOCK_PATH . 'slider.php';
+
+$pathBookPicture = FILES_URL . 'book' . DS;
+$itemURL = URL::createLink($this->_arrParam['module'], 'book', 'item');
+$quickViewURL = URL::createLink($this->_arrParam['module'], 'book', 'quickView');
+
+$xhtmlSpecialBooks = '';
+if (!empty($this->listSpecialBooks)) {
+	foreach ($this->listSpecialBooks as $value) {
+		$id 		= $value['id'];
+		$name     	= Helper::textCutting($value['name'], 55);
+		$picture 	= !empty($value['picture']) ? $pathBookPicture . $value['picture'] : $pathBookPicture . 'default.jpg';
+		$saleOffXhtml = '';
+		if ($value['sale_off'] > 0) {
+			$saleOffXhtml = '
+			<div class="lable-block">
+				<span class="lable4 badge badge-danger"> -' . $value['sale_off'] . '%</span>
+			</div>';
+		}
+		if ($value['sale_off'] > 0) {
+			$price 	= number_format($value['price'] * (100 - $value['sale_off']) / 100) . 'đ <del>' . number_format($value['price']) . 'đ</del>';
+		} else {
+			$price	= number_format($value['price']) . 'đ';
+		}
+
+		$xhtmlSpecialBooks .= '
+		<div class="product-box">
+			<div class="img-wrapper">
+				' . $saleOffXhtml . '
+				<div class="front">
+					<a href="' . $itemURL . '&id=' . $id . '">
+						<img src="' . $picture . '" class="img-fluid blur-up lazyload bg-img" alt="product">
+					</a>
+				</div>
+				<div class="cart-info cart-wrap">
+					<a href="" title="Add to cart"><i class="ti-shopping-cart"></i></a>
+					<a href="' . $quickViewURL . '&id=' . $id . '" title="Quick View" class="btn-ajax-quick-view"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
+				</div>
+			</div>
+			<div class="product-detail">
+				<div class="rating">
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+				</div>
+				<a href="' . $itemURL . '&id=' . $id . '" title="' . $name . '" style="display:block;height:60px">
+					<h6>' . $name . '</h6>
+				</a>
+				<h4 class="text-lowercase">' . $price . '</h4>
+			</div>
+		</div>';
+	}
+}
+
+$xhtmlSpecialCategories = '';
+$xhtmlTypeBooks = '';
+$default = 'default';
+$classCurrent = ' class="current"';
+if (!empty($this->listSpecialCategories)) {
+	foreach ($this->listSpecialCategories as $value1) {
+		$categoryId = $value1['id'];
+		$name 		= $value1['name'];
+
+		$xhtmlSpecialCategories .= '
+		<li' . $classCurrent . '>
+			<a href="tab-category-' . $categoryId . '" class="my-product-tab" data-category="1">' . $name . '</a>
+		</li>
+		';
+
+		if (!empty($this->listTypeBooks[$categoryId])) {
+			$xhtmlTypeBooks .= '
+				<div id="tab-category-' . $categoryId . '" class="tab-content ' . $default . '">
+					<div class="no-slider row tab-content-inside">';
+			$default = '';
+			$classCurrent = '';
+			foreach ($this->listTypeBooks[$categoryId] as $value2) {
+				$id 		= $value2['id'];
+				$name     	= Helper::textCutting($value2['name'], 55);
+				$picture 	= !empty($value2['picture']) ? $pathBookPicture . $value2['picture'] : $pathBookPicture . 'default.jpg';
+				$saleOffXhtml = '';
+
+				if ($value2['sale_off'] > 0) {
+					$saleOffXhtml = '
+					<div class="lable-block">
+						<span class="lable4 badge badge-danger"> -' . $value2['sale_off'] . '%</span>
+					</div>';
+				}
+
+				if ($value2['sale_off'] > 0) {
+					$price 	= number_format($value2['price'] * (100 - $value2['sale_off']) / 100) . 'đ <del>' . number_format($value2['price']) . 'đ</del>';
+				} else {
+					$price	= number_format($value2['price']) . 'đ';
+				}
+
+				$xhtmlTypeBooks .= '
+					<div class="product-box">
+						<div class="img-wrapper">
+							' . $saleOffXhtml . '
+							<div class="front">
+								<a href="' . $itemURL . '&id=' . $id . '">
+									<img src="' . $picture . '" class="img-fluid blur-up lazyload bg-img" alt="product">
+								</a>
+							</div>
+							<div class="cart-info cart-wrap">
+								<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
+								<a href="' . $quickViewURL . '&id=' . $id . '" title="Quick View" class="btn-ajax-quick-view"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
+							</div>
+						</div>
+						<div class="product-detail">
+							<div class="rating">
+								<i class="fa fa-star"></i>
+								<i class="fa fa-star"></i>
+								<i class="fa fa-star"></i>
+								<i class="fa fa-star"></i>
+								<i class="fa fa-star"></i>
+							</div>
+							<a href="' . $itemURL . '&id=' . $id . '" title="' . $name . '" style="display:block;height:60px">
+								<h6>' . $name . '</h6>
+							</a>
+							<h4 class="text-lowercase">' . $price . '</h4>
+						</div>
+					</div>';
+			}
+
+			$xhtmlTypeBooks .= '
+					</div>';
+
+			if ($this->countTypeBooks[$categoryId]['all'] > 8) {
+				$categoryURL = URL::createLink($this->_arrParam['module'], 'book', 'list', ['category_id' => $categoryId]);
+				$xhtmlTypeBooks .= '
+						<div class="text-center"><a href="' . $categoryURL . '" class="btn btn-solid">Xem tất cả</a></div>';
+			}
+
+			$xhtmlTypeBooks .= '
+				</div>';
+		}
+	}
+}
 ?>
 <section class="p-0 my-home-slider">
 	<div class="slide-1 home-slider">
-	<?= $slider ?>
+		<?= $slider ?>
 	</div>
 </section>
 <div class="title1 section-t-space title5">
@@ -16,64 +155,9 @@ include_once BLOCK_PATH . 'slider.php';
 		<div class="row">
 			<div class="col">
 				<div class="product-4 product-m no-arrow">
-					<div class="product-box">
-						<div class="img-wrapper">
-							<div class="lable-block">
-								<span class="lable4 badge badge-danger"> -35%</span>
-							</div>
-							<div class="front">
-								<a href="item.html">
-									<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-								</a>
-							</div>
-							<div class="cart-info cart-wrap">
-								<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-								<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-							</div>
-						</div>
-						<div class="product-detail">
-							<div class="rating">
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-							</div>
-							<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-								<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius, quasi ...</h6>
-							</a>
-							<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-						</div>
-					</div>
-					<div class="product-box">
-						<div class="img-wrapper">
-							<div class="lable-block">
-								<span class="lable4 badge badge-danger"> -35%</span>
-							</div>
-							<div class="front">
-								<a href="item.html">
-									<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-								</a>
-							</div>
-							<div class="cart-info cart-wrap">
-								<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-								<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-							</div>
-						</div>
-						<div class="product-detail">
-							<div class="rating">
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-							</div>
-							<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-								<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius, quasi ...</h6>
-							</a>
-							<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-						</div>
-					</div>
+					<!-- content -->
+					<?= $xhtmlSpecialBooks ?>
+					<!-- end content -->
 				</div>
 			</div>
 		</div>
@@ -150,748 +234,12 @@ include_once BLOCK_PATH . 'slider.php';
 			<div class="col">
 				<div class="theme-tab">
 					<ul class="tabs tab-title">
-						<li class="current"><a href="tab-category-1" class="my-product-tab" data-category="1">Bà mẹ
-								- Em bé</a></li>
-						<li><a href="tab-category-5" class="my-product-tab" data-category="5">Học Ngoại Ngữ</a></li>
-						<li><a href="tab-category-3" class="my-product-tab" data-category="3">Công Nghệ Thông
-								Tin</a></li>
+						<?= $xhtmlSpecialCategories ?>
 					</ul>
 					<div class="tab-content-cls">
-						<div id="tab-category-1" class="tab-content active default">
-							<div class="no-slider row tab-content-inside">
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-							</div>
-							<div class="text-center"><a href="list.html" class="btn btn-solid">Xem tất cả</a></div>
-						</div>
-						<div id="tab-category-5" class="tab-content ">
-							<div class="no-slider row tab-content-inside">
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-							</div>
-							<div class="text-center"><a href="list.html" class="btn btn-solid">Xem tất cả</a></div>
-						</div>
-						<div id="tab-category-3" class="tab-content ">
-							<div class="no-slider row tab-content-inside">
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-								<div class="product-box">
-									<div class="img-wrapper">
-										<div class="lable-block">
-											<span class="lable4 badge badge-danger"> -35%</span>
-										</div>
-										<div class="front">
-											<a href="item.html">
-												<img src="<?= $this->_pathImg ?>product.jpg" class="img-fluid blur-up lazyload bg-img" alt="product">
-											</a>
-										</div>
-										<div class="cart-info cart-wrap">
-											<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-											<a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-										</div>
-									</div>
-									<div class="product-detail">
-										<div class="rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<a href="item.html" title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores reprehenderit incidunt vero aperiam, ipsum natus.">
-											<h6>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius,
-												quasi ...</h6>
-										</a>
-										<h4 class="text-lowercase">48,020 đ <del>98,000 đ</del></h4>
-									</div>
-								</div>
-							</div>
-							<div class="text-center"><a href="list.html" class="btn btn-solid">Xem tất cả</a></div>
-						</div>
+						<!-- content -->
+						<?= $xhtmlTypeBooks ?>
+						<!-- end content -->
 					</div>
 				</div>
 			</div>
@@ -905,45 +253,7 @@ include_once BLOCK_PATH . 'slider.php';
 		<div class="modal-content quick-view-modal">
 			<div class="modal-body">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
-				<div class="row">
-					<div class="col-lg-6 col-xs-12">
-						<div class="quick-view-img"><img src="<?= $this->_pathImg ?>quick-view-bg.jpg" alt="" class="w-100 img-fluid blur-up lazyload book-picture"></div>
-					</div>
-					<div class="col-lg-6 rtl-text">
-						<div class="product-right">
-							<h2 class="book-name">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores,
-								distinctio.</h2>
-							<h3 class="book-price">26.910 ₫ <del>39.000 ₫</del></h3>
-							<div class="border-product">
-								<div class="book-description">Lorem ipsum dolor sit amet consectetur, adipisicing
-									elit. Unde quae cupiditate delectus laudantium odio molestiae deleniti facilis
-									itaque ut vero architecto nulla officiis in nam qui, doloremque iste. Incidunt,
-									in?</div>
-							</div>
-							<div class="product-description border-product">
-								<h6 class="product-title">Số lượng</h6>
-								<div class="qty-box">
-									<div class="input-group">
-										<span class="input-group-prepend">
-											<button type="button" class="btn quantity-left-minus" data-type="minus" data-field="">
-												<i class="ti-angle-left"></i>
-											</button>
-										</span>
-										<input type="text" name="quantity" class="form-control input-number" value="1">
-										<span class="input-group-prepend">
-											<button type="button" class="btn quantity-right-plus" data-type="plus" data-field="">
-												<i class="ti-angle-right"></i>
-											</button>
-										</span>
-									</div>
-								</div>
-							</div>
-							<div class="product-buttons">
-								<a href="#" class="btn btn-solid mb-1 btn-add-to-cart">Chọn Mua</a>
-								<a href="item.html" class="btn btn-solid mb-1 btn-view-book-detail">Xem chi tiết</a>
-							</div>
-						</div>
-					</div>
+				<div class="row" id="quick-view-content">
 				</div>
 			</div>
 		</div>

@@ -39,13 +39,14 @@ class BookController extends Controller
 		$this->_arrParam['page'] = isset($this->_arrParam['page']) ? $this->_arrParam['page'] : 1;
 		$configPagination = [
 			'totalItemsPerPage' => 10,
-			'pageRange' => 3
+			'pageRange' => 3,
+			'page' => $this->_arrParam['page']
 		];
-		$this->setPagination($configPagination);
-		$this->_view->pagination = new Pagination($totalItems, $this->_pagination, $pageURL);
+
+		$this->_view->pagination = new Pagination($totalItems, $configPagination, $pageURL);
 
 		// Show list
-		$this->_view->items = $this->_model->listItems($this->_arrParam, $totalItems, $this->_pagination['totalItemsPerPage']);
+		$this->_view->items = $this->_model->listItems($this->_arrParam, $totalItems, $configPagination['totalItemsPerPage']);
 		$this->_view->categoryOptions = Helper::convertArrList($this->_model->getListCategory());
 
 		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
@@ -68,7 +69,7 @@ class BookController extends Controller
 			$pictureImg			= '';
 			$hiddenPictureName 	= '';
 			if (!empty($this->_view->data['picture'])) {
-				$pictureImg = '<img src="' . FILES_URL . $this->_arrParam['controller'] . DS . $this->_view->data['picture'] . '" style="width: 60px">';
+				$pictureImg = '<img src="' . FILES_URL . $this->_arrParam['controller'] . DS . $this->_view->data['picture'] . '" style="width:120px">';
 
 				$hiddenPictureName = Form::input('hidden', 'form[hiddenPictureName]', $this->_view->data['picture']);
 			}
@@ -123,6 +124,10 @@ class BookController extends Controller
 
 			if (!empty($this->_arrParam['form']['short_description'])) {
 				$validate->addRule('short_description', 'string', ['min' => 10, 'max' => 1000]);
+			}
+
+			if (!empty($this->_arrParam['form']['description'])) {
+				$validate->addRule('description', 'string', ['min' => 1000, 'max' => 5000]);
 			}
 
 			$validate->run();

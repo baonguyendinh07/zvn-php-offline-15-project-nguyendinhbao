@@ -184,6 +184,10 @@ class Validate
 		if (!in_array($this->source[$element], $options)) {
 			$this->setError($element, 'vui lòng chọn nhóm');
 		}
+
+		if(isset($options['userGroupId']) && $options['userGroupId'] > 1 && $this->source[$element] < 3){
+			$this->setError($element, 'nhóm đã chọn không hợp lệ');
+		}
 	}
 
 	//Validate Username
