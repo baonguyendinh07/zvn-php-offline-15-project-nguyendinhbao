@@ -1,19 +1,19 @@
 <?php
 $pathBookPicture = FILES_URL . 'book' . DS;
-$picture = $pathBookPicture . $this->data['picture'];
+$itemPicture = $pathBookPicture . $this->data['picture'];
 
-$price = $this->data['price'];
+$itemPrice = $this->data['price'];
 $saleOff = $this->data['sale_off'];
 $saleOffXhtml = '';
 
 if ($saleOff > 0) {
-    $price     = '
+    $itemPrice     = '
     <h4>
-    <del>' . number_format($price) . ' đ</del><span> -' . $saleOff . '%</span>
+    <del>' . number_format($itemPrice) . 'đ</del><span> -' . $saleOff . '%</span>
     </h4>
-    <h3>' . number_format($price * (100 - $saleOff) / 100) . ' đ</h3>';
+    <h3>' . number_format($itemPrice * (100 - $saleOff) / 100) . 'đ</h3>';
 } else {
-    $price    = '<h3>' . number_format($price) . ' đ</h3>';
+    $itemPrice    = '<h3>' . number_format($itemPrice) . 'đ</h3>';
 }
 
 $xhtmlSpecialBooks = '';
@@ -160,7 +160,7 @@ if (!empty($this->listTypeBooks)) {
         <div class="row">
             <div class="col-12">
                 <div class="page-title">
-                    <h2 class="py-2">Chờ đến mẫu giáo thì đã muộn</h2>
+                    <h2 class="py-2"><?= $this->_titlePageHeader ?></h2>
                 </div>
             </div>
         </div>
@@ -181,13 +181,13 @@ if (!empty($this->listTypeBooks)) {
                         <div class="row">
                             <div class="col-lg-4 col-xl-4">
                                 <div class="product-slick">
-                                    <div><img src="<?= $picture ?>" alt="" class="img-fluid w-100 blur-up lazyload image_zoom_cls-0"></div>
+                                    <div><img src="<?= $itemPicture ?>" alt="" class="img-fluid w-100 blur-up lazyload image_zoom_cls-0"></div>
                                 </div>
                             </div>
                             <div class="col-lg-8 col-xl-8 rtl-text">
                                 <div class="product-right">
                                     <h2 class="mb-2"><?= $this->data['name'] ?></h2>
-                                    <?= $price ?>
+                                    <?= $itemPrice ?>
                                     <div class="product-description border-product">
                                         <h6 class="product-title">Số lượng</h6>
                                         <div class="qty-box">

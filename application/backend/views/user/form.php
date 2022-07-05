@@ -14,8 +14,8 @@ $lblStatus   = Form::label('Status', 'form-label fw-bold');
 $lblGroup    = Form::label('Group', 'form-label fw-bold');
 
 $inputFullname   = Form::input('text', 'form[fullname]', $this->data['fullname'] ?? '');
-$statusSelect    = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'active');
-$groupIdSelect   = Form::select($this->groupOptions, 'form[group_id]', $this->data['group_id'] ?? '4');
+$statusSelect    = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'active', 'custom-select');
+$groupIdSelect   = Form::select($this->groupOptions, 'form[group_id]', $this->data['group_id'] ?? '4', 'custom-select');
 
 Session::set('token', time());
 $inputToken = Form::input('hidden', 'form[token]', time());

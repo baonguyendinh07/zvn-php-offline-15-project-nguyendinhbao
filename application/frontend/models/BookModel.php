@@ -45,12 +45,16 @@ class BookModel extends Model
 		$query[] = "FROM `$this->table`";
 		$query[] = "WHERE `status`='active'";
 
+		$query[] = (!empty($this->where)) ? 'AND' . substr($this->where, 5) : '';
+		if (isset($params['sort'])) {
+			$array = explode('_', $params['sort']);
+			$query[] = "ORDER BY `{$array[0]}` {$array[1]}";
+		}
+
 		$totalPage			= ceil($totalItems / $totalItemsPerPage);
 		if (isset($params['page']) && $params['page'] >= 1 && $params['page'] <= $totalPage) {
 			$currentPage = $params['page'];
 		} else $currentPage = 1;
-
-		$query[] = (!empty($this->where)) ? 'AND' . substr($this->where, 5) : '';
 
 		$this->fromElement = ($currentPage - 1) * $totalItemsPerPage;
 		if ($this->fromElement >= 0) {

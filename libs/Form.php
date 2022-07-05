@@ -19,6 +19,6 @@ class Form
             $selected = strval($key) == $selectResult ? 'selected' : '';
             $optionsXHTML .= sprintf('<option value="%s" %s>%s</option>', $key, $selected, $option);
         }
-        return sprintf('<select class="custom-select %s" name="%s" %s style="display:block;width:160px">%s</select>', $class, $name, $attr, $optionsXHTML);
+        return sprintf('<select class="%s" name="%s" %s style="display:block;width:160px">%s</select>', $class, $name, $attr, $optionsXHTML);
     }
 }

@@ -11,7 +11,7 @@ if (!empty($data)) {
 	$headerCatarogy 	= '';
 	$sidebarCategory 	= '';
 	$listCategory		= '';
-	$pageTitle 			= '';
+	$pageTitle 			= 'tất cả sách';
 	foreach ($data as $key => $value) {
 		$id			= $value->id;
 		$name	 	= $value->name;

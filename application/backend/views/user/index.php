@@ -4,7 +4,7 @@ $formActionLink = URL::createLink($this->params['module'], $this->params['contro
 $btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
 
 $groupOptionsDefault = ['default' => ' - Select Group - '] + $this->groupOptions;
-$groupSelectDefault  = Form::select($groupOptionsDefault, 'group_id', $this->params['group_id'] ?? 'default', 'filter-element');
+$groupSelectDefault  = Form::select($groupOptionsDefault, 'group_id', $this->params['group_id'] ?? 'default', 'custom-select filter-element');
 
 if (!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))) {
     $notification = Helper::showMessege(
@@ -42,7 +42,7 @@ if (!empty($this->items)) {
 
         $dataUrlLink  = URL::createLink($this->params['module'], $this->params['controller'], 'changeGroupId', ['id' => $value['id']]);
         $dataUrl      = "data-url='$dataUrlLink'";
-        $groupSelect  = Form::select($this->groupOptions, '', $value['group_id'] ?? '', 'btn-ajax-group-id', $dataUrl);
+        $groupSelect  = Form::select($this->groupOptions, '', $value['group_id'] ?? '', 'custom-select btn-ajax-group-id', $dataUrl);
 
         $resetPasswordLink     = URL::createLink($this->params['module'], $this->params['controller'], 'changePassword', ['id' => $value['id']]);
         $btnResetPassword      = Helper::createButtonLink($resetPasswordLink, '<i class="fas fa-key "></i>', 'secondary', true, true);

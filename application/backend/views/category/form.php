@@ -13,7 +13,7 @@ $lblOrdering     = Form::label('Ordering', 'form-label fw-bold', false);
 $lblPicture      = Form::label('Picture', 'form-label fw-bold', false);
 
 $inputName       = Form::input('text', 'form[name]', $this->data['name'] ?? '');
-$statusSelect    = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'active');
+$statusSelect    = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'active', 'custom-select');
 $inputOrdering   = Form::input('number', 'form[ordering]', $this->data['ordering'] ?? 10);
 $inputPicture    = Form::input('file', 'picture', '', '', '', 'style="width:220px; border:none"');
 

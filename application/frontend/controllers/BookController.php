@@ -16,12 +16,13 @@ class BookController extends Controller
 		$this->_view->setUserInfo(Session::get('user'));
 
 		$this->_view->listSpecialBooks = $this->_model->listSpecialBooks();
-
+		if(isset($this->_arrParam['sort']) && $this->_arrParam['sort'] == 'default') unset($this->_arrParam['sort']);
 		$this->_view->totalItems = $this->_model->countItems($this->_arrParam)['active'];
 
 		$linkParams = [];
-		if (isset($this->_arrParam['search'])) 	 $linkParams['search'] = $this->_arrParam['search'];
-		if (isset($this->_arrParam['category_id']))  $linkParams['category_id'] = $this->_arrParam['category_id'];
+		if (isset($this->_arrParam['search'])) 	 	$linkParams['search'] = $this->_arrParam['search'];
+		if (isset($this->_arrParam['category_id']))	$linkParams['category_id'] = $this->_arrParam['category_id'];
+		if (isset($this->_arrParam['sort']))  		$linkParams['sort'] = $this->_arrParam['sort'];
 
 		$pageURL = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], $this->_arrParam['action'], $linkParams);
 
@@ -40,7 +41,7 @@ class BookController extends Controller
 		$this->_view->listTypeBooks = $this->_model->listItems($this->_arrParam, $this->_view->totalItems, $configPagination['totalItemsPerPage']);
 
 		$this->_view->countResults = '<h5>0 of Result</h5>';
-		if(!empty($this->_view->totalItems)){
+		if (!empty($this->_view->totalItems)) {
 			$fromElement = $this->_model->getFromElement() + 1;
 			$toElement   = $this->_model->getFromElement() + count($this->_view->listTypeBooks);
 
@@ -55,6 +56,7 @@ class BookController extends Controller
 	{
 		$this->_view->setTitle('BOOKSTORE - ITEM');
 		$this->_view->setUserInfo(Session::get('user'));
+		$this->_view->setTitlePageHeader('Sản phẩm');
 
 		if (isset($this->_arrParam['id']) && !empty($this->_model->getItem($this->_arrParam['id']))) {
 			$id = $this->_arrParam['id'];
@@ -81,10 +83,10 @@ class BookController extends Controller
 
 	public function quickViewAction()
 	{
-
 		if (isset($this->_arrParam['id']) && !empty($this->_model->getItem($this->_arrParam['id']))) {
 			$id = $this->_arrParam['id'];
 			$this->_view->data = $this->_model->getItem($id);
+			$id = $this->_view->data['id'];
 			$name = $this->_view->data['name'];
 			$shortDescription = $this->_view->data['short_description'];
 
@@ -93,6 +95,7 @@ class BookController extends Controller
 
 			$price = $this->_view->data['price'];
 			$saleOff = $this->_view->data['sale_off'];
+			$itemLink = URL::createLink($this->_arrParam['module'], 'book', 'item', ['id' => $id]);
 
 			if ($saleOff > 0) {
 				$price     = '
@@ -115,7 +118,7 @@ class BookController extends Controller
 						<h2 class="book-name">' . $name . '</h2>
 						' . $price . '
 						<div class="border-product">
-							<div class="book-description">'.$shortDescription.'</div>
+							<div class="book-description">' . $shortDescription . '</div>
 						</div>
 						<div class="product-description border-product">
 							<h6 class="product-title">Số lượng</h6>
@@ -136,8 +139,8 @@ class BookController extends Controller
 							</div>
 						</div>
 						<div class="product-buttons">
-							<a href="#" class="btn btn-solid mb-1 btn-add-to-cart">Chọn Mua</a>
-							<a href="item.html" class="btn btn-solid mb-1 btn-view-book-detail">Xem chi tiết</a>
+							<a href="" class="btn btn-solid mb-1 btn-add-to-cart">Chọn Mua</a>
+							<a href="' . $itemLink . '" class="btn btn-solid mb-1 btn-view-book-detail">Xem chi tiết</a>
 						</div>
 					</div>
 				</div>';

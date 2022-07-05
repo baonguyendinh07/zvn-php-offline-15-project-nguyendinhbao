@@ -37,9 +37,9 @@ $inputShortDescription  = '<textarea name="form[short_description]" class="form-
 $description       = $this->data['description'] ?? '';
 $inputDescription  = '<textarea name="form[description]" class="form-control" id="editor" rows="5">' . $description . "</textarea>";
 
-$statusSelect       = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'active');
-$categoryIdSelect   = Form::select($categoryOptionsDefault, 'form[category_id]', $this->data['category_id'] ?? 'default');
-$specialSelect      = Form::select($specialOptions, 'form[special]', $this->data['special'] ?? 0);
+$statusSelect       = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'active', 'custom-select');
+$categoryIdSelect   = Form::select($categoryOptionsDefault, 'form[category_id]', $this->data['category_id'] ?? 'default', 'custom-select');
+$specialSelect      = Form::select($specialOptions, 'form[special]', $this->data['special'] ?? 0, 'custom-select');
 
 Session::set('token', time());
 $inputToken = Form::input('hidden', 'form[token]', time());

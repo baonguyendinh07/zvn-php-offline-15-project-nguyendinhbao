@@ -5,7 +5,7 @@ $formActionLink = URL::createLink($this->params['module'], $this->params['contro
 $btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
 
 $categoryOptionsDefault = ['default' => ' - Select Category - '] + $this->categoryOptions;
-$categorySelectDefault  = Form::select($categoryOptionsDefault, 'category_id', $this->params['category_id'] ?? 'default', 'filter-element');
+$categorySelectDefault  = Form::select($categoryOptionsDefault, 'category_id', $this->params['category_id'] ?? 'default', 'custom-select filter-element');
 
 if (!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))) {
     $notification = Helper::showMessege(
@@ -32,7 +32,7 @@ $specialOptions = [
     "1" => 'Yes'
 ];
 
-$specialSelect  = Form::select($specialOptions, 'special', $this->params['special'] ?? '', 'filter-element');
+$specialSelect  = Form::select($specialOptions, 'special', $this->params['special'] ?? '', 'custom-select filter-element');
 
 $searchValue = $this->params['search-key'] ?? '';
 
@@ -52,7 +52,7 @@ if (!empty($this->items)) {
         $showSpecial = Helper::showStatus($value['special'], $linkSpecial, 'special');
 
         $dataUrlCategory  = 'data-url="' . URL::createLink($this->params['module'], $this->params['controller'], 'changeCategoryId', ['id' => $value['id']]) . '"';
-        $categorySelect  = Form::select($this->categoryOptions, '', $value['category_id'] ?? '', 'btn-ajax-category-id', $dataUrlCategory);
+        $categorySelect  = Form::select($this->categoryOptions, '', $value['category_id'] ?? '', 'custom-select btn-ajax-category-id', $dataUrlCategory);
 
         $dataUrlOrdering  = 'data-url="' . URL::createLink($this->params['module'], $this->params['controller'], 'changeOrdering', ['id' => $value['id']]) . '"';
         $inputOrdering  = '<input type="number" value="' . $value['ordering'] . '" name="ordering" class="btn-ajax-ordering" style="width:50px;text-align:center" ' . $dataUrlOrdering . '>';
@@ -119,9 +119,9 @@ if (!empty($this->items)) {
                                 <?= $inputFilterStatus ?? '' ?>
                                 <?= $inputCategoryId ?? '' ?>
                                 <?= $inputSpecial ?? '' ?>
-                                <div class="input-category">
+                                <div class="input-group">
                                     <input type="text" class="form-control" name="search-key" value="<?= $searchValue ?>">
-                                    <span class="input-category-append">
+                                    <span class="input-group-append">
                                         <button type="submit" class="btn btn-info">Search</button>
                                         <a href="<?= $indexActionLink ?>" class="btn btn-danger">Clear</a>
                                     </span>
@@ -152,14 +152,14 @@ if (!empty($this->items)) {
                 <div class="container-fluid">
                     <div class="row align-items-center justify-content-between mb-2">
                         <div>
-                            <div class="input-category">
+                            <div class="input-group">
                                 <select class="form-control custom-select">
                                     <option>Bulk Action</option>
                                     <option>Delete</option>
                                     <option>Active</option>
                                     <option>Inactive</option>
                                 </select>
-                                <span class="input-category-append">
+                                <span class="input-group-append">
                                     <button type="button" class="btn btn-info">Apply</button>
                                 </span>
                             </div>

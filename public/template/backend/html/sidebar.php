@@ -2,7 +2,7 @@
     <!-- Brand Logo -->
     <a href="index.php" class="brand-link">
         <img src="<?= $this->_pathImg; ?>/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: 0.8" />
-        <span class="brand-text font-weight-light">Admin Control Panel</span>
+        <span class="brand-text font-weight-light"><b>Book Store Admin</b></span>
     </a>
 
     <!-- Sidebar -->
@@ -79,7 +79,7 @@
                     </ul>
                 </li>
                 <li class="nav-item has-treeview">
-                    <a href="#" class="nav-link" data-active="book">
+                    <a href="" class="nav-link" data-active="book">
                         <i class="nav-icon fas fa-book-open"></i>
                         <p>
                             Book
@@ -101,9 +101,38 @@
                         </li>
                     </ul>
                 </li>
+                <li class="nav-item has-treeview">
+                    <a href="" class="nav-link" data-active="slider">
+                        <i class="nav-icon fas fa-sliders-h"></i>
+                        <p>
+                            Slider
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="index.php?module=backend&controller=slider&action=index" class="nav-link" data-active="index">
+                                <i class="nav-icon fas fa-list-ul"></i>
+                                <p>List</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.php?module=backend&controller=slider&action=form" class="nav-link" data-active="form">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>Add</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="index.php?module=backend&controller=cart&action=index" class="nav-link" data-active="cart">
+                        <i class="nav-icon fas fa-shopping-cart"></i>
+                        <p>Cart</p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="index.php?module=backend&controller=user&action=changeAccountPassword" class="nav-link" data-active="changeAccountPassword">
-                        <i class="nav-icon fas fa-key "></i>
+                        <i class="nav-icon fas fa-key"></i>
                         <p>Change Password</p>
                     </a>
                 </li>

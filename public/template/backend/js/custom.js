@@ -114,6 +114,11 @@ $(document).ready(function () {
         return searchParams.get(key);
     }
 
+    //sort-form
+    $('.filter-element').on('change', function () {
+        $('#sort-form').submit();
+    });
+
     $('.btn-delete').click(function (e) {
         e.preventDefault();
         let url = $(this).attr('href');

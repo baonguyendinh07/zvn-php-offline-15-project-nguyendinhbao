@@ -14,7 +14,7 @@ if (!empty($this->listSpecialBooks)) {
         $saleOffXhtml = '';
         $price    = number_format($value['price']) . 'đ';
         if ($value['sale_off'] > 0) {
-            $price = number_format($value['price'] * (100 - $value['sale_off']) / 100) .'đ';
+            $price = number_format($value['price'] * (100 - $value['sale_off']) / 100) . 'đ';
         }
 
         if ($key % 5 == 0) $xhtmlSpecialBooks .= '<div>';
@@ -48,11 +48,12 @@ if (!empty($this->listSpecialBooks)) {
 
 $xhtmlTypeBooks = '';
 if (!empty($this->listTypeBooks)) {
+    $searchValue = $this->_arrParam['search'] ?? '';
     $quickViewURL = URL::createLink($this->_arrParam['module'], 'book', 'quickView');
     foreach ($this->listTypeBooks as $key => $value) {
         $index      = $key;
         $id         = $value['id'];
-        $name     = Helper::textCutting($value['name'], 55);
+        $name       = Helper::highlight($searchValue, Helper::textCutting($value['name'], 55));
         $picture    = !empty($value['picture']) ? $pathBookPicture . $value['picture'] : $pathBookPicture . 'default.jpg';
         $saleOffXhtml = '';
         if ($value['sale_off'] > 0) {
@@ -102,6 +103,17 @@ if (!empty($this->listTypeBooks)) {
         </div>';
     }
 }
+
+if(isset($this->_arrParam['category_id']))  $inputCategoryId    = Form::input('hidden', 'category_id', $this->_arrParam['category_id']);
+
+$orderBySelectOptions = [
+    'default' => ' - Sắp xếp - ',
+    'price_asc' => 'Giá tăng dần',
+    'price_desc' => 'Giá giảm dần',
+    'id_desc' => 'Mới nhất'
+];
+
+$selectOrderBy = Form::select($orderBySelectOptions, 'sort', $this->_arrParam['sort'] ?? '');
 
 ?>
 <div class="breadcrumb-section">
@@ -178,13 +190,12 @@ if (!empty($this->listTypeBooks)) {
                                                         </ul>
                                                     </div>
                                                     <div class="product-page-filter">
-                                                        <form action="" id="sort-form" method="GET">
-                                                            <select id="sort" name="sort">
-                                                                <option value="default" selected> - Sắp xếp - </option>
-                                                                <option value="price_asc">Giá tăng dần</option>
-                                                                <option value="price_desc">Giá giảm dần</option>
-                                                                <option value="latest">Mới nhất</option>
-                                                            </select>
+                                                        <form action="" id="sort-form" method="GET" class="filter-element">
+                                                            <?= Form::input('hidden', 'module', $this->_arrParam['module']) ?>
+                                                            <?= Form::input('hidden', 'controller', $this->_arrParam['controller']) ?>
+                                                            <?= Form::input('hidden', 'action', $this->_arrParam['action']) ?>
+                                                            <?= $inputCategoryId ?? '' ?>
+                                                            <?= $selectOrderBy ?>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -234,7 +245,7 @@ if (!empty($this->listTypeBooks)) {
         <div class="modal-content quick-view-modal">
             <div class="modal-body">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
-                <div class="row"  id="quick-view-content">
+                <div class="row" id="quick-view-content">
                 </div>
             </div>
         </div>
