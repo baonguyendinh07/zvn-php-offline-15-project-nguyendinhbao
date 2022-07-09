@@ -6,19 +6,18 @@ $pathBookPicture = FILES_URL . 'book' . DS;
 $itemURL = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'item');
 
 $xhtmlSpecialBooks = '';
-if (!empty($this->listSpecialBooks)) {
-    foreach ($this->listSpecialBooks as $key => $value) {
-        $id       = $value['id'];
-        $name     = Helper::textCutting($value['name'], 35);
-        $picture  = !empty($value['picture']) ? $pathBookPicture . $value['picture'] : $pathBookPicture . 'default.jpg';
-        $saleOffXhtml = '';
-        $price    = number_format($value['price']) . 'đ';
-        if ($value['sale_off'] > 0) {
-            $price = number_format($value['price'] * (100 - $value['sale_off']) / 100) . 'đ';
-        }
+foreach ($this->listSpecialBooks as $key => $value) {
+    $id       = $value['id'];
+    $name     = Helper::textCutting($value['name'], 35);
+    $picture  = !empty($value['picture']) ? $pathBookPicture . $value['picture'] : $pathBookPicture . 'default.jpg';
+    $saleOffXhtml = '';
+    $price    = number_format($value['price']) . 'đ';
+    if ($value['sale_off'] > 0) {
+        $price = number_format($value['price'] * (100 - $value['sale_off']) / 100) . 'đ';
+    }
 
-        if ($key % 5 == 0) $xhtmlSpecialBooks .= '<div>';
-        $xhtmlSpecialBooks .= '
+    if ($key % 5 == 0) $xhtmlSpecialBooks .= '<div>';
+    $xhtmlSpecialBooks .= '
                 <div class="media">
                     <a href="' . $itemURL . '&id=' . $id . '">
                         <img class="img-fluid blur-up lazyload" src="' . $picture . '" alt="' . $name . '" style="width: 110px">
@@ -37,74 +36,18 @@ if (!empty($this->listSpecialBooks)) {
                         <h4 class="text-lowercase">' . $price . '</h4>
                     </div>
                 </div>';
-        if ($key % 5 == 4) {
-            $xhtmlSpecialBooks .= '</div>';
-        }
-    }
-    if ($key % 5 != 4 && $key % 5 != 0) {
-        $xhtmlSpecialBooks .= "</div>";
-    }
+    if ($key % 5 == 4) $xhtmlSpecialBooks .= '</div>';
 }
 
-$xhtmlTypeBooks = '';
-if (!empty($this->listTypeBooks)) {
-    $searchValue = $this->_arrParam['search'] ?? '';
-    $quickViewURL = URL::createLink($this->_arrParam['module'], 'book', 'quickView');
-    foreach ($this->listTypeBooks as $key => $value) {
-        $index      = $key;
-        $id         = $value['id'];
-        $name       = Helper::highlight($searchValue, Helper::textCutting($value['name'], 55));
-        $picture    = !empty($value['picture']) ? $pathBookPicture . $value['picture'] : $pathBookPicture . 'default.jpg';
-        $saleOffXhtml = '';
-        if ($value['sale_off'] > 0) {
-            $saleOffXhtml = '
-			<div class="lable-block">
-				<span class="lable4 badge badge-danger"> -' . $value['sale_off'] . '%</span>
-			</div>';
-        }
-        if ($value['sale_off'] > 0) {
-            $price     = number_format($value['price'] * (100 - $value['sale_off']) / 100) . 'đ <del>' . number_format($value['price']) . 'đ</del>';
-        } else {
-            $price    = number_format($value['price']) . 'đ';
-        }
+if ($key % 5 != 4) $xhtmlSpecialBooks .= "</div>";
 
-        $xhtmlTypeBooks .= '
-        <div class="col-xl-3 col-6 col-grid-box">
-            <div class="product-box" style="height:380px">
-                <div class="img-wrapper">
-                    <div class="lable-block">
-                        ' . $saleOffXhtml . '
-                    </div>
-                    <div class="front">
-                        <a href="' . $itemURL . '&id=' . $id . '">
-                            <img src="' . $picture . '" class="img-fluid blur-up lazyload bg-img" alt="">
-                        </a>
-                    </div>
-                    <div class="cart-info cart-wrap">
-                        <a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-                        <a href="' . $quickViewURL . '&id=' . $id . '" title="Quick View" class="btn-ajax-quick-view"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-                    </div>
-                </div>
-                <div class="product-detail">
-                    <div class="rating">
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                    </div>
-                    <a href="' . $itemURL . '&id=' . $id . '" title="' . $name . '" style="display:block; height:75px">
-                        <h6>' . $name . '</h6>
-                    </a>
-                    <p>' . $value['short_description'] . '</p>
-                    <h4 class="text-lowercase">' . $price . '</h4>
-                </div>
-            </div>
-        </div>';
-    }
-}
+$openDiv = '<div class="col-xl-3 col-6 col-grid-box">';
+$closeDiv = '</div>';
 
-if(isset($this->_arrParam['category_id']))  $inputCategoryId    = Form::input('hidden', 'category_id', $this->_arrParam['category_id']);
+$quickViewURL = URL::createLink($this->_arrParam['module'], 'book', 'quickView');
+$xhtmlTypeBooks = Helper::showProductBox($this->listTypeBooks, $this->_arrParam, $pathBookPicture, $itemURL, $quickViewURL, 55, 'style="height:370px"', '70px', $openDiv, $closeDiv);
+
+if (isset($this->_arrParam['category_id']))  $inputCategoryId    = Form::input('hidden', 'category_id', $this->_arrParam['category_id']);
 
 $orderBySelectOptions = [
     'default' => ' - Sắp xếp - ',

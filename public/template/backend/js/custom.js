@@ -42,8 +42,7 @@ $(document).ready(function () {
         $.ajax({
             type: "GET",
             url: url,
-            success: function (response) {
-                console.log(response);
+            success: function () {
                 ele.notify("Success", { className: 'success', position: 'top-center' });
             }
         });
@@ -114,7 +113,6 @@ $(document).ready(function () {
         return searchParams.get(key);
     }
 
-    //sort-form
     $('.filter-element').on('change', function () {
         $('#sort-form').submit();
     });
@@ -134,5 +132,25 @@ $(document).ready(function () {
                 window.location.href = url;
             }
         })
+    });
+
+    $('#checkAll').click(function(){
+        $('input:checkbox').not(this).prop('checked', this.checked);
+    });
+
+    $('#submit-main-form').click(function(){
+        Swal.fire({
+            title: 'Xác nhận?',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Xóa'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('#main-form').submit();
+            }
+        })
+        
     });
 });

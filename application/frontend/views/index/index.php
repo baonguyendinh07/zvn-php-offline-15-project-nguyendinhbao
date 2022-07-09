@@ -1,59 +1,25 @@
 <?php
-include_once BLOCK_PATH . 'slider.php';
-
 $pathBookPicture = FILES_URL . 'book' . DS;
 $itemURL = URL::createLink($this->_arrParam['module'], 'book', 'item');
 $quickViewURL = URL::createLink($this->_arrParam['module'], 'book', 'quickView');
 
-$xhtmlSpecialBooks = '';
-if (!empty($this->listSpecialBooks)) {
-	foreach ($this->listSpecialBooks as $value) {
-		$id 		= $value['id'];
-		$name     	= Helper::textCutting($value['name'], 55);
-		$picture 	= !empty($value['picture']) ? $pathBookPicture . $value['picture'] : $pathBookPicture . 'default.jpg';
-		$saleOffXhtml = '';
-		if ($value['sale_off'] > 0) {
-			$saleOffXhtml = '
-			<div class="lable-block">
-				<span class="lable4 badge badge-danger"> -' . $value['sale_off'] . '%</span>
-			</div>';
-		}
-		if ($value['sale_off'] > 0) {
-			$price 	= number_format($value['price'] * (100 - $value['sale_off']) / 100) . 'đ <del>' . number_format($value['price']) . 'đ</del>';
-		} else {
-			$price	= number_format($value['price']) . 'đ';
-		}
-
-		$xhtmlSpecialBooks .= '
-		<div class="product-box">
-			<div class="img-wrapper">
-				' . $saleOffXhtml . '
-				<div class="front">
-					<a href="' . $itemURL . '&id=' . $id . '">
-						<img src="' . $picture . '" class="img-fluid blur-up lazyload bg-img" alt="product">
-					</a>
-				</div>
-				<div class="cart-info cart-wrap">
-					<a href="" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-					<a href="' . $quickViewURL . '&id=' . $id . '" title="Quick View" class="btn-ajax-quick-view"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-				</div>
-			</div>
-			<div class="product-detail">
-				<div class="rating">
-					<i class="fa fa-star"></i>
-					<i class="fa fa-star"></i>
-					<i class="fa fa-star"></i>
-					<i class="fa fa-star"></i>
-					<i class="fa fa-star"></i>
-				</div>
-				<a href="' . $itemURL . '&id=' . $id . '" title="' . $name . '" style="display:block;height:60px">
-					<h6>' . $name . '</h6>
-				</a>
-				<h4 class="text-lowercase">' . $price . '</h4>
-			</div>
-		</div>';
+$pathSliderImg = FILES_URL . 'slider' . DS;
+$picture = $pathSliderImg . 'default.jpg';
+if (!empty($this->listSliders)) {
+	$slider     = '';
+	foreach ($this->listSliders as $value) {
+		$link       = $value['link'];
+		$picture    = $pathSliderImg . $value['picture'];
+		$slider    .= '
+        <div>
+            <a href="' . $link . '" class="home text-center">
+                <img src="' . $picture . '" alt="" class="bg-img blur-up lazyload">
+            </a>
+        </div>';
 	}
 }
+
+$xhtmlSpecialBooks = Helper::showProductBox($this->listSpecialBooks, $this->_arrParam, $pathBookPicture, $itemURL, $quickViewURL, 90, '', '60px');
 
 $xhtmlSpecialCategories = '';
 $xhtmlTypeBooks = '';
@@ -70,73 +36,21 @@ if (!empty($this->listSpecialCategories)) {
 		</li>
 		';
 
-		if (!empty($this->listTypeBooks[$categoryId])) {
-			$xhtmlTypeBooks .= '
-				<div id="tab-category-' . $categoryId . '" class="tab-content ' . $default . '">
-					<div class="no-slider row tab-content-inside">';
-			$default = '';
-			$classCurrent = '';
-			foreach ($this->listTypeBooks[$categoryId] as $value2) {
-				$id 		= $value2['id'];
-				$name     	= Helper::textCutting($value2['name'], 55);
-				$picture 	= !empty($value2['picture']) ? $pathBookPicture . $value2['picture'] : $pathBookPicture . 'default.jpg';
-				$saleOffXhtml = '';
+		$xtmlBook = Helper::showProductBox($this->listTypeBooks[$categoryId], $this->_arrParam, $pathBookPicture, $itemURL, $quickViewURL, 90, '', '60px');
 
-				if ($value2['sale_off'] > 0) {
-					$saleOffXhtml = '
-					<div class="lable-block">
-						<span class="lable4 badge badge-danger"> -' . $value2['sale_off'] . '%</span>
-					</div>';
-				}
-
-				if ($value2['sale_off'] > 0) {
-					$price 	= number_format($value2['price'] * (100 - $value2['sale_off']) / 100) . 'đ <del>' . number_format($value2['price']) . 'đ</del>';
-				} else {
-					$price	= number_format($value2['price']) . 'đ';
-				}
-
-				$xhtmlTypeBooks .= '
-					<div class="product-box">
-						<div class="img-wrapper">
-							' . $saleOffXhtml . '
-							<div class="front">
-								<a href="' . $itemURL . '&id=' . $id . '">
-									<img src="' . $picture . '" class="img-fluid blur-up lazyload bg-img" alt="product">
-								</a>
-							</div>
-							<div class="cart-info cart-wrap">
-								<a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-								<a href="' . $quickViewURL . '&id=' . $id . '" title="Quick View" class="btn-ajax-quick-view"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-							</div>
-						</div>
-						<div class="product-detail">
-							<div class="rating">
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-							</div>
-							<a href="' . $itemURL . '&id=' . $id . '" title="' . $name . '" style="display:block;height:60px">
-								<h6>' . $name . '</h6>
-							</a>
-							<h4 class="text-lowercase">' . $price . '</h4>
-						</div>
-					</div>';
-			}
-
-			$xhtmlTypeBooks .= '
-					</div>';
-
-			if ($this->countTypeBooks[$categoryId]['all'] > 8) {
-				$categoryURL = URL::createLink($this->_arrParam['module'], 'book', 'list', ['category_id' => $categoryId]);
-				$xhtmlTypeBooks .= '
-						<div class="text-center"><a href="' . $categoryURL . '" class="btn btn-solid">Xem tất cả</a></div>';
-			}
-
-			$xhtmlTypeBooks .= '
-				</div>';
+		$xhtmlViewMore = '';
+		if ($this->countTypeBooks[$categoryId]['all'] > 8) {
+			$categoryURL = URL::createLink($this->_arrParam['module'], 'book', 'list', ['category_id' => $categoryId]);
+			$xhtmlViewMore .= '<div class="text-center"><a href="' . $categoryURL . '" class="btn btn-solid">Xem tất cả</a></div>';
 		}
+
+		$xhtmlTypeBooks .= sprintf('
+				<div id="tab-category-%s" class="tab-content %s">
+					<div class="no-slider row tab-content-inside">%s</div>
+					%s
+				</div>', $categoryId, $default, $xtmlBook, $xhtmlViewMore);
+		$default = '';
+		$classCurrent = '';
 	}
 }
 ?>

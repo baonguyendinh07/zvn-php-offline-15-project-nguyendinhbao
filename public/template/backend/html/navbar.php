@@ -10,7 +10,7 @@
     <ul class="navbar-nav ml-auto">
 
         <li class="nav-item">
-            <a class="nav-link" href="index.php?module=frontend&controller=index&action=index" role="button">
+            <a class="nav-link" href="index.html" role="button">
                 <i class="fas fa-eye"></i> View Site
             </a>
         </li>
@@ -31,8 +31,8 @@
                 </li>
                 <!-- Menu Footer-->
                 <li class="user-footer">
-                    <a href="index.php?module=backend&controller=user&action=profile" class="btn btn-default btn-flat">Profile</a>
-                    <a href="index.php?module=backend&controller=user&action=logout" class="btn btn-default btn-flat float-right">Sign out</a>
+                    <a href="admin-profile.html" class="btn btn-default btn-flat">Profile</a>
+                    <a href="admin-signout" class="btn btn-default btn-flat float-right">Sign out</a>
                 </li>
             </ul>
         </li>

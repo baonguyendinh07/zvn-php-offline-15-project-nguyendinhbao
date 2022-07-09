@@ -1,7 +1,7 @@
 <?php
 class CategoryModel extends Model
 {
-	private $_columns = ['id', 'name', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'ordering'];
+	private $_columns = ['id', 'name', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'special', 'ordering'];
 	private $where = '';
 	private $arrSearch;
 
@@ -62,7 +62,7 @@ class CategoryModel extends Model
 
 	public function listItems($params, $totalItems, $totalItemsPerPage)
 	{
-		$query[] = "SELECT `id`, `name`, `picture`, `created`, `created_by`, `modified`, `modified_by`, `status`, `ordering`";
+		$query[] = "SELECT `id`, `name`, `picture`, `created`, `created_by`, `modified`, `modified_by`, `status`, `special`, `ordering`";
 		$query[] = "FROM `$this->table`";
 
 		if (isset($params['filterStatus']) && ($params['filterStatus'] == 'active' || $params['filterStatus'] == 'inactive')) {
@@ -71,6 +71,7 @@ class CategoryModel extends Model
 		}
 
 		$query[] = $this->where;
+		$query[] = "ORDER BY `id` DESC";
 
 		$totalPage			= ceil($totalItems / $totalItemsPerPage);
 		if ($params['page'] >= 1 && $params['page'] <= $totalPage) $currentPage = $params['page'];
@@ -134,6 +135,7 @@ class CategoryModel extends Model
 	public function changeStatus($params, $value)
 	{
 		if ($value == 'status') 	$status = $params['status'] == 'active' ? 'inactive' : 'active';
+		if ($value == 'special') 	 $status = $params['special'] == 1 ? 0 : 1;
 		if ($value == 'ordering') 	$status = $params['ordering'] ;
 		$updateParams = [
 			$value => $status,
@@ -143,7 +145,7 @@ class CategoryModel extends Model
 
 		$this->update($updateParams, [['id', $params['id']]]);
 
-		if ($value == 'status') {
+		if ($value == 'status' || $value == 'special') {
 			$linkParams = [
 				'id' => $params['id'],
 				$value => $status

@@ -16,7 +16,7 @@
                 <div class="error-section">
                     <h1>404</h1>
                     <h2>Đường dẫn không hợp lệ</h2>
-                    <a href="index.php?module=frontend&controller=index&action=index" class="btn btn-solid">Quay lại trang chủ</a>
+                    <a href="index.html" class="btn btn-solid">Quay lại trang chủ</a>
                 </div>
             </div>
         </div>

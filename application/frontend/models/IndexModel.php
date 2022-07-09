@@ -15,7 +15,7 @@ class IndexModel extends Model
 		return $this->listRecord($query)[0];
 	}
 
-	public function listItems($table, $where = "WHERE `status`='active' AND `special`='1'")
+	public function listItems($table, $where = "WHERE `status`='active' AND `special`='1' ORDER BY `ordering` ASC")
 	{
 		// id, name, price, sale off, picture,status = 1, special = 1
 		$query[] = "SELECT *";
@@ -27,6 +27,18 @@ class IndexModel extends Model
 
 	public function getItem($id)
 	{
+		$query[] = "SELECT `id`, `name`, `picture`, `price`, `sale_off`, `short_description`,  `description`, `category_id` FROM `book`";
+		$query[] = "WHERE `id`='$id'";
+		$query = implode(' ', $query);
+		return $this->singleRecord($query);
+	}
+
+	public function getItemQuickView($params)
+	{
+		$id = @$params['id'];
+		if (empty($id)) return null;
+
+		
 		$query[] = "SELECT `id`, `name`, `picture`, `price`, `sale_off`, `short_description`,  `description`, `category_id` FROM `book`";
 		$query[] = "WHERE `id`='$id'";
 		$query = implode(' ', $query);

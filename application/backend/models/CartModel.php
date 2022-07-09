@@ -72,7 +72,6 @@ class CartModel extends Model
 		}
 
 		$query[] = (!empty($this->where)) ? 'AND' . substr($this->where, 5) : '';
-
 		$query[] = "ORDER BY `date` DESC";
 
 		$totalPage			= ceil($totalItems / $totalItemsPerPage);

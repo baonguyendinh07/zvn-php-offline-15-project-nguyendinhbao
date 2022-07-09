@@ -11,7 +11,7 @@ class UserModel extends Model
 	{
 		$query[] = "SELECT `$this->table`.`id`";
 		$query[] = "FROM `$this->table` LEFT JOIN `group` ON `$this->table`.`group_id`=`group`.`id`";
-		$query[] = "WHERE (`$this->table`.`username`='$username' OR `$this->table`.`email`='$username') AND `$this->table`.`password`='$password' AND `$this->table`.`status`='active'";
+		$query[] = "WHERE (`$this->table`.`username`='$username' OR `$this->table`.`email`='$username') AND `$this->table`.`password`='$password' AND `$this->table`.`status`='active' AND `$this->table`.`group_id`<'4'";
 		if ($backend == true) $query[] = "AND `group`.`group_acp`='1'";
 
 		return implode(' ', $query);
@@ -29,6 +29,24 @@ class UserModel extends Model
 		$query = implode(' ', $query);
 		$result = $this->singleRecord($query);
 		return $result;
+	}
+
+	public function listCart($arrCart = [])
+	{
+		$query[] = "SELECT `id`, `name`, `picture`, `price`, `sale_off`";
+		$query[] = "FROM `book`";
+		$query[] = "WHERE `status`='active'";
+
+		if (!empty($arrCart)) {
+			$listItems = '';
+			foreach ($arrCart as $key => $value) {
+				$listItems .= " OR `id`='$key'";
+			}
+			$query[] = 'AND (' . substr($listItems, 4) . ')';
+		}
+
+		$query = implode(' ', $query);
+		return $this->listRecord($query);
 	}
 
 	public function registerQuery($key, $value)
@@ -64,6 +82,17 @@ class UserModel extends Model
 		}
 	}
 
+	public function saveCart($params, $options = null)
+	{
+		if ($options == 'add') {
+			unset($params['token']);
+			$params['status'] = 'inactive';
+			$params['date'] = date('Y-m-d H:i:s');
+			$this->setTable('cart');
+			$this->insert($params);
+		}
+	}
+
 	public function getItem($id, $currentUser = false)
 	{
 		$query[] = "SELECT * FROM `$this->table`";
@@ -72,6 +101,24 @@ class UserModel extends Model
 		if ($currentUser == true) $operater = '=';
 		$group_id = Session::get('user')['userInfo']['group_id'];
 		$query[] = "AND `$this->table`.`group_id`$operater'$group_id'";
+		$query = implode(' ', $query);
+		return $this->singleRecord($query);
+	}
+
+	public function orderHistories($username)
+	{
+		$query[] = "SELECT `id`, `username`, `books`, `pictures`, `names`, `quantities`, `prices`, `date`";
+		$query[] = "FROM `cart`";
+		$query[] = "WHERE `status`='active' && `username`='$username'";
+		$query[] = "ORDER BY `date` DESC";
+		$query = implode(' ', $query);
+		return $this->listRecord($query);
+	}
+
+	public function getBook($id)
+	{
+		$query[] = "SELECT `id`, `name`, `picture`, `price`, `sale_off`, `short_description`,  `description`, `category_id` FROM `book`";
+		$query[] = "WHERE `id`='$id' AND `status`='active'";
 		$query = implode(' ', $query);
 		return $this->singleRecord($query);
 	}

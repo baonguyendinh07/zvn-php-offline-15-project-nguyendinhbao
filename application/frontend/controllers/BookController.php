@@ -16,7 +16,6 @@ class BookController extends Controller
 		$this->_view->setUserInfo(Session::get('user'));
 
 		$this->_view->listSpecialBooks = $this->_model->listSpecialBooks();
-		if(isset($this->_arrParam['sort']) && $this->_arrParam['sort'] == 'default') unset($this->_arrParam['sort']);
 		$this->_view->totalItems = $this->_model->countItems($this->_arrParam)['active'];
 
 		$linkParams = [];
@@ -30,7 +29,7 @@ class BookController extends Controller
 		$this->_arrParam['page'] = isset($this->_arrParam['page']) ? $this->_arrParam['page'] : 1;
 
 		$configPagination = [
-			'totalItemsPerPage' => 6,
+			'totalItemsPerPage' => 12,
 			'pageRange' => 5,
 			'page' => $this->_arrParam['page']
 		];
@@ -61,7 +60,7 @@ class BookController extends Controller
 		if (isset($this->_arrParam['id']) && !empty($this->_model->getItem($this->_arrParam['id']))) {
 			$id = $this->_arrParam['id'];
 			$this->_view->data = $this->_model->getItem($id);
-			$whereSpecialBooks = "`status`='active' AND `special`='1' AND `id`!='$id'";
+			$whereSpecialBooks = "`status`='active' AND `special`='1' AND `id`!='$id' ORDER BY `ordering` ASC";
 			$this->_view->listSpecialBooks = $this->_model->listSpecialBooks($whereSpecialBooks);
 
 			$whereNewBooks = "`status`='active' AND `id`!='$id' ORDER BY `id` DESC LIMIT 6";
@@ -83,18 +82,17 @@ class BookController extends Controller
 
 	public function quickViewAction()
 	{
-		if (isset($this->_arrParam['id']) && !empty($this->_model->getItem($this->_arrParam['id']))) {
-			$id = $this->_arrParam['id'];
-			$this->_view->data = $this->_model->getItem($id);
-			$id = $this->_view->data['id'];
-			$name = $this->_view->data['name'];
-			$shortDescription = $this->_view->data['short_description'];
+		$item = $this->_model->getItemQuickView($this->_arrParam);
+		if (!empty($item)) {
+			$id = $item['id'];
+			$name = $item['name'];
+			$shortDescription = $item['short_description'];
 
 			$pathBookPicture = FILES_URL . 'book' . DS;
-			$picture = $pathBookPicture . $this->_view->data['picture'];
+			$picture = $pathBookPicture . $item['picture'];
 
-			$price = $this->_view->data['price'];
-			$saleOff = $this->_view->data['sale_off'];
+			$price = $item['price'];
+			$saleOff = $item['sale_off'];
 			$itemLink = URL::createLink($this->_arrParam['module'], 'book', 'item', ['id' => $id]);
 
 			if ($saleOff > 0) {
@@ -124,31 +122,19 @@ class BookController extends Controller
 							<h6 class="product-title">Số lượng</h6>
 							<div class="qty-box">
 								<div class="input-group">
-									<span class="input-group-prepend">
-										<button type="button" class="btn quantity-left-minus" data-type="minus" data-field="">
-											<i class="ti-angle-left"></i>
-										</button>
-									</span>
-									<input type="text" name="quantity" class="form-control input-number" value="1">
-									<span class="input-group-prepend">
-										<button type="button" class="btn quantity-right-plus" data-type="plus" data-field="">
-											<i class="ti-angle-right"></i>
-										</button>
-									</span>
+									<input type="text" name="quantity" class="form-control input-number quantities" value="1">
 								</div>
 							</div>
 						</div>
 						<div class="product-buttons">
-							<a href="" class="btn btn-solid mb-1 btn-add-to-cart">Chọn Mua</a>
+							<a href="index.php?module=frontend&controller=user&action=tempCart&id=' . $id . '&quantities=" class="continue btn btn-solid mb-1"  id="btn-ajax-addManyToCart" data-dismiss="modal">Chọn Mua</a>
 							<a href="' . $itemLink . '" class="btn btn-solid mb-1 btn-view-book-detail">Xem chi tiết</a>
 						</div>
 					</div>
 				</div>';
 			echo $result;
-		} elseif (isset($this->_arrParam['id']) && empty($this->_model->getItem($this->_arrParam['id']))) {
-			require_once APPLICATION_PATH . $this->_arrParam['module'] . DS . 'controllers' . DS . 'ErrorController.php';
-			$this->error = new ErrorController($this->_arrParam);
-			$this->error->errorAction();
+		} else {
+			echo '';
 		}
 	}
 

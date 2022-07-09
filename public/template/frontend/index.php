@@ -15,8 +15,6 @@
     <!-- Content -->
 
     <?php
-    include_once BLOCK_PATH . 'user.php';
-    echo $breadcrumb ?? '';
     require_once APPLICATION_PATH . $this->_moduleName . DS . 'views' . DS . $this->_fileView . '.php';
     ?>
 

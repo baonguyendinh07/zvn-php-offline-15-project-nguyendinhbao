@@ -21,7 +21,7 @@ class DashboardController extends Controller
 		$this->_view->sum['user'] 		= $this->_model->countItems('user')['all'];
 		$this->_view->sum['category'] 	= $this->_model->countItems('category')['all'];
 		$this->_view->sum['book'] 		= $this->_model->countItems('book')['all'];
-		$this->_view->sum['slider'] 	= count(XML::getContentXML('sliders.xml'));
+		$this->_view->sum['slider'] 	= $this->_model->countItems('slider')['all'];
 
 		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
 	}

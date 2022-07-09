@@ -5625,7 +5625,7 @@ input[type=submit].btn-block {
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
     min-height: 1px;
-    padding: 1.25rem
+    padding: 0.75rem
 }
 
 .card-title {

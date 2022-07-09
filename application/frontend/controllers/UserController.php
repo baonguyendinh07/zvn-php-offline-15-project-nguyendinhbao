@@ -33,12 +33,13 @@ class UserController extends Controller
 				$username = $this->_arrParam['form']['username'];
 				$password = md5($this->_arrParam['form']['password']);
 
-				$query = $this->_model->passwordQuery($username, $password, true);
-				
+				$query = $this->_model->passwordQuery($username, $password);
+
 				$validateOptions = [
 					'database' => $this->_model,
 					'query'    => $query
 				];
+
 				$validate->addRule('username', 'existRecord', $validateOptions);
 
 				$validate->run();
@@ -54,7 +55,7 @@ class UserController extends Controller
 					'group_acp' => $userInfo['group_acp'],
 					'login_time' => time() + LOGIN_TIME
 				];
-
+				Session::unset('notification');
 				Session::set('user', $arrSessionUser);
 				$returnLink = URL::createLink($this->_arrParam['module'], 'index', 'index');
 				$this->redirect($returnLink);
@@ -69,9 +70,8 @@ class UserController extends Controller
 
 	public function logoutAction()
 	{
-		Session::unset('user');
-		$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'login');
-		$this->redirect($returnLink);
+		Session::destroy();
+		$this->redirect('login.html');
 	}
 
 	public function profileAction()
@@ -124,8 +124,7 @@ class UserController extends Controller
 				];
 				Session::set('user', $arrSessionUser);
 
-				$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], $this->_arrParam['action']);
-				$this->redirect($returnLink);
+				$this->redirect('index.html');
 			} else {
 				$this->_view->errors = $validate->showErrors();
 			}
@@ -137,10 +136,61 @@ class UserController extends Controller
 
 	public function orderHistoryAction()
 	{
+		$this->_view->setTitle('LỊCH SỬ MUA HÀNG');
+		$this->_view->setUserInfo(Session::get('user'));
+
+		$this->_view->items = $this->_model->orderHistories(Session::get('user')['userInfo']['username']);
+
+		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
+	}
+
+	public function cartAction()
+	{
 		$this->_view->setTitle(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
 		$this->_view->setTitlePageHeader(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
 		$this->_view->setUserInfo(Session::get('user'));
 
+		$this->_view->listCart = !empty(Session::get('cart')) ? $this->_model->listCart(Session::get('cart')) : [];
+
+		if (isset($this->_arrParam['form']) && Session::get('token') == $this->_arrParam['token']) {
+			$listCart = !empty($this->_arrParam['form']) ? $this->_model->listCart($this->_arrParam['form']) : [];
+
+			foreach ($listCart as $value) {
+				$bookId[]		= $value['id'];
+				$prices[]       = $value['price'] * (1 - $value['sale_off'] / 100) . '';
+				$quantities[]   = Session::get('cart')[$value['id']] . '';
+				$names[]        = $value['name'];
+				$pictures[]     = $value['picture'];
+			}
+
+			$id             = Helper::randomString(7);
+			$username		= Session::get('user')['userInfo']['username'];
+
+			$results = [
+				'id' 		=> $id,
+				'username' 	=> $username,
+				'books'		=> json_encode($bookId),
+				'prices'	=> json_encode($prices),
+				'quantities' => json_encode($quantities),
+				'names'		=> '["' . implode('","', $names) . '"]',
+				'pictures'	=> json_encode($pictures)
+			];
+
+			$this->_model->saveCart($results, 'add');
+			Session::unset('cart');
+			Session::set('order', $id);
+			$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'orderSuccess');
+			$this->redirect($returnLink);
+		}
+		$this->_view->_arrParam = $this->_arrParam;
+
+		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
+	}
+
+	public function orderSuccessAction()
+	{
+		$this->_view->setTitle('BOOKSTORE');
+		$this->_view->setUserInfo(Session::get('user'));
 		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
 	}
 
@@ -149,7 +199,7 @@ class UserController extends Controller
 		$this->_view->setTitle(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
 		$this->_view->setTitlePageHeader(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
 		$this->_view->setUserInfo(Session::get('user'));
-		
+
 		if (isset($this->_arrParam['form']) && !empty($this->_arrParam['form']) && Session::get('token') == $this->_arrParam['form']['token']) {
 
 			$id = Session::get('user')['userInfo']['group_id'];
@@ -226,7 +276,7 @@ class UserController extends Controller
 			}
 		}
 
-		$this->_view->data = $this->_arrParam['form'];
+		$this->_view->data = $this->_arrParam['form'] ?? '';
 		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
 	}
 
@@ -235,5 +285,31 @@ class UserController extends Controller
 		$this->_view->setTitle('BOOKSTORE');
 		Session::unset('register');
 		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
+	}
+
+	public function tempCartAction()
+	{
+		if (isset($this->_arrParam['id']) && !empty($this->_model->getBook($this->_arrParam['id']))) {
+			$cart = Session::get('cart') ?? [];
+			$id   = $this->_arrParam['id'];
+			$quantities = $this->_arrParam['quantities'] ?? 1;
+			$cart[$id] = $cart[$id] ?? 0;
+			$cart[$id] += $quantities;
+			if ($cart[$id] < 1) unset($cart[$id]);
+			Session::set('cart', $cart);
+			$totalQuantities = array_sum(Session::get('cart'));
+			echo $totalQuantities;
+		}
+	}
+
+	public function deleteItemCartAction()
+	{
+		if (isset($this->_arrParam['id']) && !empty($this->_model->getBook($this->_arrParam['id']))) {
+			$cart = Session::get('cart');
+			unset($cart[$this->_arrParam['id']]);
+			Session::set('cart', $cart);
+			$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'cart');
+			$this->redirect($returnLink);
+		}
 	}
 }

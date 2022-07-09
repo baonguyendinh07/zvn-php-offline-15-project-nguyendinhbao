@@ -94,7 +94,7 @@ class BookController extends Controller
 				$i++;
 			}
 
-			$validate->addRule('name', 'string', ['min' => 10, 'max' => 100])
+			$validate->addRule('name', 'string', ['min' => 10, 'max' => 150])
 				->addRule('status', 'status', ['active', 'inactive'])
 				->addRule('price', 'int', ['min' => 1, 'max' => 100000000])
 				->addRule('category_id', 'group', $categoryOptions);
@@ -104,7 +104,7 @@ class BookController extends Controller
 					[
 						'min' => 100,
 						'max' => 1000000,
-						'extension' => ['jpg', 'jpeg', 'png'],
+						'extension' => ['jpg', 'jpeg', 'png', 'webp'],
 						'fileType'	=> 'image'
 					];
 				$validate->addRule('picture', 'file', $pictureOptions, false);
@@ -123,11 +123,11 @@ class BookController extends Controller
 			}
 
 			if (!empty($this->_arrParam['form']['short_description'])) {
-				$validate->addRule('short_description', 'string', ['min' => 10, 'max' => 1000]);
+				$validate->addRule('short_description', 'string', ['min' => 10, 'max' => 1500]);
 			}
 
 			if (!empty($this->_arrParam['form']['description'])) {
-				$validate->addRule('description', 'string', ['min' => 1000, 'max' => 5000]);
+				$validate->addRule('description', 'string', ['min' => 1000, 'max' => 10000]);
 			}
 
 			$validate->run();
@@ -145,6 +145,7 @@ class BookController extends Controller
 				$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'index');
 				$this->redirect($returnLink);
 				$this->_view->data = [];
+				$this->_view->pictureXHTML = '';
 			} else {
 				$this->_view->errors = $validate->showErrors();
 			}
@@ -171,6 +172,25 @@ class BookController extends Controller
 	public function changeOrderingAction()
 	{
 		if (!empty($this->_arrParam['ordering'])) echo $this->_model->changeStatus($this->_arrParam, 'ordering');
+	}
+
+	public function multiDeleteAction(){
+		if(isset($this->_arrParam['form']['id'])){
+			foreach($this->_arrParam['form']['id'] as $value){
+				$item = $this->_model->getItem($value);
+				if(!empty($item)){
+					if (isset($item['id'])) $this->_model->delete([$item['id']]);
+		
+					if (isset($item['picture']) && !empty($item['picture'])) {
+						Upload::removeFile($this->_arrParam['controller'], $item['picture']);
+					}
+				}
+			}
+	
+			Session::set('notification', 'đã được xóa thành công!');
+			$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'index');
+			$this->redirect($returnLink);
+		}
 	}
 
 	public function deleteAction()

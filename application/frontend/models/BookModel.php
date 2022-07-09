@@ -46,9 +46,11 @@ class BookModel extends Model
 		$query[] = "WHERE `status`='active'";
 
 		$query[] = (!empty($this->where)) ? 'AND' . substr($this->where, 5) : '';
-		if (isset($params['sort'])) {
+		if (isset($params['sort']) && $params['sort'] != 'default') {
 			$array = explode('_', $params['sort']);
-			$query[] = "ORDER BY `{$array[0]}` {$array[1]}";
+			$query[] = "ORDER BY (`{$array[0]}`*(1-`sale_off`/100)) {$array[1]}";
+		} else {
+			$query[] = "ORDER BY `ordering` ASC";
 		}
 
 		$totalPage			= ceil($totalItems / $totalItemsPerPage);
@@ -64,10 +66,8 @@ class BookModel extends Model
 		}
 	}
 
-	public function listSpecialBooks($where = "`status`='active' AND `special`='1'")
+	public function listSpecialBooks($where = "`status`='active' AND `special`='1' ORDER BY `ordering` ASC")
 	{
-		// id, name, price, sale off, picture,status = 1, special = 1
-		//`status`='active' AND `special`='1'
 		$query[] = "SELECT `id`, `name`, `picture`, `short_description`, `description`, `price`, `sale_off`, `category_id`";
 		$query[] = "FROM `$this->table`";
 		$query[] = "WHERE $where";
@@ -83,6 +83,18 @@ class BookModel extends Model
 	public function getItem($id)
 	{
 		$query[] = "SELECT `id`, `name`, `picture`, `price`, `sale_off`, `short_description`,  `description`, `category_id` FROM `$this->table`";
+		$query[] = "WHERE `id`='$id'";
+		$query = implode(' ', $query);
+		return $this->singleRecord($query);
+	}
+
+	public function getItemQuickView($params)
+	{
+		$id = @$params['id'];
+		if (empty($id)) return null;
+
+
+		$query[] = "SELECT `id`, `name`, `picture`, `price`, `sale_off`, `short_description`,  `description`, `category_id` FROM `book`";
 		$query[] = "WHERE `id`='$id'";
 		$query = implode(' ', $query);
 		return $this->singleRecord($query);

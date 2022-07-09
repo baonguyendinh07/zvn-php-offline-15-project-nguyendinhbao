@@ -234,9 +234,8 @@ class UserController extends Controller
 
 	public function logoutAction()
 	{
-		Session::unset('user');
-		$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'login');
-		$this->redirect($returnLink);
+		Session::destroy();
+		$this->redirect('admin.html');
 	}
 
 	public function profileAction()
@@ -345,6 +344,25 @@ class UserController extends Controller
 		$this->_view->params = $this->_arrParam;
 
 		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
+	}
+
+	public function multiDeleteAction(){
+		if(isset($this->_arrParam['form']['id'])){
+			foreach($this->_arrParam['form']['id'] as $value){
+				$item = $this->_model->getItem($value);
+				if(!empty($item)){
+					if (isset($item['id'])) $this->_model->delete([$item['id']]);
+		
+					if (isset($item['picture']) && !empty($item['picture'])) {
+						Upload::removeFile($this->_arrParam['controller'], $item['picture']);
+					}
+				}
+			}
+	
+			Session::set('notification', 'đã được xóa thành công!');
+			$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'index');
+			$this->redirect($returnLink);
+		}
 	}
 
 	public function deleteAction()

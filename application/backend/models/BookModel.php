@@ -1,7 +1,7 @@
 <?php
 class BookModel extends Model
 {
-	private $_columns = ['id', 'name', 'short_description', 'description', 'price', 'sale_off', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'ordering', 'category_id'];
+	private $_columns = ['id', 'name', 'short_description', 'description', 'price', 'sale_off', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'special', 'ordering', 'category_id'];
 	private $where = '';
 	private $arrSearch;
 
@@ -80,6 +80,7 @@ class BookModel extends Model
 		}
 
 		$query[] = (!empty($this->where)) ? 'AND' . substr($this->where, 5) : '';
+		$query[] = "ORDER BY `id` DESC";
 
 		$totalPage			= ceil($totalItems / $totalItemsPerPage);
 		if ($params['page'] >= 1 && $params['page'] <= $totalPage) $currentPage = $params['page'];
@@ -102,7 +103,7 @@ class BookModel extends Model
 
 	public function getItem($id)
 	{
-		$query[] = "SELECT `id`, `name`, `short_description`, `picture`, `price`, `sale_off`, `status`, `special`, `ordering`, `category_id` FROM `$this->table`";
+		$query[] = "SELECT `id`, `name`, `short_description`, `description`, `picture`, `price`, `sale_off`, `status`, `special`, `ordering`, `category_id` FROM `$this->table`";
 		$query[] = "WHERE `id`='$id'";
 		$query = implode(' ', $query);
 		return $this->singleRecord($query);
@@ -142,7 +143,9 @@ class BookModel extends Model
 			if (empty($params['picture']['name'])) {
 				unset($params['picture']);
 			} else {
-				Upload::removeFile('book', $params['hiddenPictureName']);
+				if (isset($params['hiddenPictureName'])) {
+					Upload::removeFile('book', $params['hiddenPictureName']);
+				}
 				$params['picture'] = Upload::uploadFile($params['picture'], 'book');
 			}
 

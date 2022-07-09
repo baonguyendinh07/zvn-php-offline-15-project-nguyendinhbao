@@ -1,6 +1,7 @@
 <?php
 $indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], $this->params['action']);
 $pathImg = FILES_URL . $this->params['controller'] . DS;
+$multiDeleteURL = URL::createLink($this->params['module'], $this->params['controller'], 'multiDelete');
 $formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
 $btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
 
@@ -55,7 +56,7 @@ if (!empty($this->items)) {
         $categorySelect  = Form::select($this->categoryOptions, '', $value['category_id'] ?? '', 'custom-select btn-ajax-category-id', $dataUrlCategory);
 
         $dataUrlOrdering  = 'data-url="' . URL::createLink($this->params['module'], $this->params['controller'], 'changeOrdering', ['id' => $value['id']]) . '"';
-        $inputOrdering  = '<input type="number" value="' . $value['ordering'] . '" name="ordering" class="btn-ajax-ordering" style="width:50px;text-align:center" ' . $dataUrlOrdering . '>';
+        $inputOrdering  = '<input type="number" value="' . $value['ordering'] . '" name="ordering" class="btn-ajax-ordering form-control" style="width:70px;text-align:center" ' . $dataUrlOrdering . '>';
 
         $editLink     = URL::createLink($this->params['module'], $this->params['controller'], 'form', ['id' => $value['id']]);
         $btnEdit      = Helper::createButtonLink($editLink, '<i class="fas fa-pen"></i>', 'info', true, true);
@@ -64,14 +65,14 @@ if (!empty($this->items)) {
         $btnDelete    = Helper::createButtonLink($pathDelete, '<i class="fas fa-trash "></i>', 'danger btn-delete', true, true);
 
         $xhtml .= '<tr>
-                        <td><input type="checkbox"></td>
+                        <td><input type="checkbox" name="form[id][]" value="'.$id.'"></td>
                         <td>' . $id . '</td>
                         <td class="text-left">
                             <p class="mb-0"><b>Name</b>: ' . $name . '</p>
                             <p class="mb-0"><b>Price</b>: ' . number_format($value['price']) . 'đ</p>'
             . $saleOff .
             '</td>
-                        <td class="position-relative"><img src="' . $picture . '" style="width:70px"></td>
+                        <td><img src="' . $picture . '" style="width:70px"></td>
                         <td class="position-relative">' . $categorySelect . '</td>
                         <td class="position-relative">' . $showStatus . '</td>
                         <td class="position-relative">' . $showSpecial . '</td>
@@ -147,20 +148,15 @@ if (!empty($this->items)) {
                     </button>
                 </div>
             </div>
+
             <div class="card-body">
                 <?= $notification ?? '' ?>
                 <div class="container-fluid">
                     <div class="row align-items-center justify-content-between mb-2">
                         <div>
                             <div class="input-group">
-                                <select class="form-control custom-select">
-                                    <option>Bulk Action</option>
-                                    <option>Delete</option>
-                                    <option>Active</option>
-                                    <option>Inactive</option>
-                                </select>
                                 <span class="input-group-append">
-                                    <button type="button" class="btn btn-info">Apply</button>
+                                    <button type="button" class="btn btn-danger" id="submit-main-form">Multi Delete</button>
                                 </span>
                             </div>
                         </div>
@@ -171,7 +167,7 @@ if (!empty($this->items)) {
                     <table class="table align-middle text-center table-bordered">
                         <thead>
                             <tr>
-                                <th style="width: 30px"><input type="checkbox"></th>
+                                <th style="width: 30px"><input type="checkbox" id="checkAll"></th>
                                 <th style="width: 30px">ID</th>
                                 <th class="text-left">Info</th>
                                 <th>Picture</th>
@@ -184,11 +180,12 @@ if (!empty($this->items)) {
                         </thead>
                         <tbody>
                             <!-- content here -->
-                            <?= $xhtml; ?>
+                            <form action="<?= $multiDeleteURL ?>" method="post" name="main-form" id="main-form"><?= $xhtml; ?></form>
                         </tbody>
                     </table>
                 </div>
             </div>
+
             <div class="card-footer clearfix">
                 <?= $this->pagination->showPagination() ?? '' ?>
             </div>

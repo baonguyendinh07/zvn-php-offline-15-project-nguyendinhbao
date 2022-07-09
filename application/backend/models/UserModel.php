@@ -85,6 +85,7 @@ class UserModel extends Model
 		}
 
 		$query[] = (!empty($this->where)) ? 'AND' . substr($this->where, 5) : '';
+		$query[] = "ORDER BY `id` DESC";
 
 		$totalPage			= ceil($totalItems / $totalItemsPerPage);
 		if ($params['page'] >= 1 && $params['page'] <= $totalPage) $currentPage = $params['page'];

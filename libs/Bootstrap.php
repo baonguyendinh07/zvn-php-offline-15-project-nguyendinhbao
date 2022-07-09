@@ -31,7 +31,11 @@ class Bootstrap
 		$logged = false;
 		if (!empty($userInfo)) {
 			if ($userInfo['login_time'] >= time()) $logged = true;
-			if ($logged == false) Session::unset('user');
+			if ($logged == false){
+				Session::destroy();
+				$returnLink = URL::createLink($this->_params['module'], 'user', 'login');
+				$this->_controllerObject->redirect($returnLink);
+			}
 		}
 
 		if ($logged == true && $userInfo['group_acp'] == 0) {
@@ -43,6 +47,10 @@ class Bootstrap
 			if (!method_exists($this->_controllerObject, $actionName) || $action == 'register' || $action == 'notice') {
 				$this->_error();
 			}
+
+			if ($action == 'orderSuccess' && empty(Session::get('order'))) {
+				$this->_error();
+			}
 		} else {
 			if ($module == 'backend' && ($controller != 'user' || $action != 'login')) {
 				$this->_params['module'] = 'frontend';
@@ -50,7 +58,7 @@ class Bootstrap
 			} elseif (!file_exists($this->filePath) || !method_exists($this->_controllerObject, $actionName)) {
 				$this->_error();
 			} elseif ($controller == 'user') {
-				if ($action != 'login' && $action != 'register') {
+				if ($action != 'login' && $action != 'register' && $action != 'tempCart') {
 					if ($action != 'notice' || empty(Session::get('register'))) {
 						$this->_error();
 					}

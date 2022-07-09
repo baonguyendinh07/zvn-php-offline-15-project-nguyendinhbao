@@ -260,7 +260,7 @@ class Validate
 		}
 
 		$ext = pathinfo($this->source[$element]['name'], PATHINFO_EXTENSION);
-		if (in_array($ext, $options['extension']) == false) {
+		if (in_array(strtolower($ext), $options['extension']) == false) {
 			$this->setError($element, 'phần mở rộng không phù hợp');
 		}
 

@@ -34,8 +34,11 @@ if (!empty($this->items)) {
         $linkStatus   = URL::createLink($this->params['module'], $this->params['controller'], 'changeStatus', ['id' => $id, 'status' => $value['status']]);
         $showStatus   = Helper::showStatus($value['status'], $linkStatus);
 
+        $linkSpecial = URL::createLink($this->params['module'], $this->params['controller'], 'changeSpecial', ['id' => $id, 'special' => $value['special']]);
+        $showSpecial = Helper::showStatus($value['special'], $linkSpecial, 'special');
+
         $dataUrlOrdering  = 'data-url="' . URL::createLink($this->params['module'], $this->params['controller'], 'changeOrdering', ['id' => $value['id']]) . '"';
-        $inputOrdering  = '<input type="number" value="' . $value['ordering'] . '" name="ordering" class="btn-ajax-ordering" style="width:50px;text-align:center" ' . $dataUrlOrdering . '>';
+        $inputOrdering  = '<input type="number" value="' . $value['ordering'] . '" name="ordering" class="btn-ajax-ordering form-control" style="width:70px;text-align:center" ' . $dataUrlOrdering . '>';
 
         $editLink     = URL::createLink($this->params['module'], $this->params['controller'], 'form', ['id' => $value['id']]);
         $btnEdit      = Helper::createButtonLink($editLink, '<i class="fas fa-pen"></i>', 'info', true, true);
@@ -44,11 +47,11 @@ if (!empty($this->items)) {
         $btnDelete    = Helper::createButtonLink($pathDelete, '<i class="fas fa-trash "></i>', 'danger btn-delete', true, true);
 
         $xhtml .= '<tr>
-                        <td><input type="checkbox"></td>
                         <td>' . $id . '</td>
                         <td class="text-left"><p class="mb-0">' . $name . '</p></td>
                         <td class="position-relative"><img src="' . $picture . '" style="width:70px"></td>
                         <td class="position-relative">' . $showStatus . '</td>
+                        <td class="position-relative">' . $showSpecial . '</td>
                         <td class="position-relative">' . $inputOrdering . '</td>
                         <td>
                             <p class="mb-0"><i class="far fa-user"></i>' . $value['created_by'] . '</p>
@@ -117,32 +120,17 @@ if (!empty($this->items)) {
             <div class="card-body">
                 <?= $notification ?? '' ?>
                 <div class="container-fluid">
-                    <div class="row align-items-center justify-content-between mb-2">
-                        <div>
-                            <div class="input-group">
-                                <select class="form-control custom-select">
-                                    <option>Bulk Action</option>
-                                    <option>Delete</option>
-                                    <option>Active</option>
-                                    <option>Inactive</option>
-                                </select>
-                                <span class="input-group-append">
-                                    <button type="button" class="btn btn-info">Apply</button>
-                                </span>
-                            </div>
-                        </div>
-                        <div><?= $btnAddNew ?></div>
-                    </div>
+                    <div style="float: right; margin-bottom:7px;margin-right:-8px"><?= $btnAddNew ?></div>
                 </div>
                 <div class="table-responsive">
                     <table class="table align-middle text-center table-bordered">
                         <thead>
                             <tr>
-                                <th><input type="checkbox"></th>
                                 <th>ID</th>
                                 <th class="text-left">Name</th>
                                 <th>Picture</th>
                                 <th style="width: 30px">Status</th>
+                                <th style="width: 30px">Special</th>
                                 <th style="width: 50px">Ordering</th>
                                 <th style="width: 120px">Created</th>
                                 <th style="width: 120px">Modified</th>

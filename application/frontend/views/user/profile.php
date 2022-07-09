@@ -28,6 +28,17 @@ $inputAddress      = Form::input('text', 'form[address]', $this->data['address']
 Session::set('token', time());
 $inputToken = Form::input('hidden', 'form[token]', time());
 ?>
+<div class="breadcrumb-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title">
+                    <h2 class="py-2">Thông tin tài khoản</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <section class="faq-section section-b-space">
     <div class="container">
         <div class="row">

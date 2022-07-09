@@ -1,5 +1,6 @@
 <?php
 $indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], $this->params['action']);
+$multiDeleteURL = URL::createLink($this->params['module'], $this->params['controller'], 'multiDelete');
 $formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
 $btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
 
@@ -54,12 +55,12 @@ if (!empty($this->items)) {
         $btnDelete    = Helper::createButtonLink($pathDelete, '<i class="fas fa-trash "></i>', 'danger btn-delete', true, true);
 
         $xhtml .= '<tr>
-                        <td><input type="checkbox"></td>
+        <td><input type="checkbox" name="form[id][]" value="'.$id.'"></td>
                         <td>' . $id . '</td>
                         <td class="text-left">
-                            <p class="mb-0">Username: ' . $userName . '</p>
-                            <p class="mb-0">FullName: ' . $fullName . '</p>
-                            <p class="mb-0">Email: ' . $email . '</p>
+                            <p class="mb-0"><b>Username</b>: ' . $userName . '</p>
+                            <p class="mb-0"><b>FullName</b>: ' . $fullName . '</p>
+                            <p class="mb-0"><b>Email</b>: ' . $email . '</p>
                         </td>
                         <td class="position-relative">' . $groupSelect . '</td>
                         <td class="position-relative">' . $showStatus . '</td>
@@ -147,14 +148,8 @@ if (!empty($this->items)) {
                     <div class="row align-items-center justify-content-between mb-2">
                         <div>
                             <div class="input-group">
-                                <select class="form-control custom-select">
-                                    <option>Bulk Action</option>
-                                    <option>Delete</option>
-                                    <option>Active</option>
-                                    <option>Inactive</option>
-                                </select>
                                 <span class="input-group-append">
-                                    <button type="button" class="btn btn-info">Apply</button>
+                                    <button type="button" class="btn btn-danger" id="submit-main-form">Multi Delete</button>
                                 </span>
                             </div>
                         </div>
@@ -165,7 +160,7 @@ if (!empty($this->items)) {
                     <table class="table align-middle text-center table-bordered">
                         <thead>
                             <tr>
-                                <th><input type="checkbox"></th>
+                                <th><input type="checkbox" id="checkAll"></th>
                                 <th>ID</th>
                                 <th class="text-left">Info</th>
                                 <th>Group</th>
@@ -177,7 +172,7 @@ if (!empty($this->items)) {
                         </thead>
                         <tbody>
                             <!-- content here -->
-                            <?= $xhtml; ?>
+                            <form action="<?= $multiDeleteURL ?>" method="post" name="main-form" id="main-form"><?= $xhtml ?></form>
                         </tbody>
                     </table>
                 </div>

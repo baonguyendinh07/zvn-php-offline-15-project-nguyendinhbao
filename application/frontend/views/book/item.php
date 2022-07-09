@@ -1,6 +1,8 @@
 <?php
 $pathBookPicture = FILES_URL . 'book' . DS;
 $itemPicture = $pathBookPicture . $this->data['picture'];
+$quickViewURL = URL::createLink($this->_arrParam['module'], 'book', 'quickView');
+$addToCartURL = URL::createLink($this->_arrParam['module'], 'user', 'tempCart');
 
 $itemPrice = $this->data['price'];
 $saleOff = $this->data['sale_off'];
@@ -99,61 +101,10 @@ if (!empty($this->listNewBooks)) {
         $xhtmlNewBooks .= "</div>";
     }
 }
+$openDiv = '<div class="col-xl-2 col-md-4 col-sm-6">';
+$closeDiv = '</div>';
+$xhtmlTypeBooks = Helper::showProductBox($this->listTypeBooks, $this->_arrParam, $pathBookPicture, $itemURL, $quickViewURL, 50, 'style="height:360px"', '70px',$openDiv, $closeDiv);
 
-
-$xhtmlTypeBooks = '';
-if (!empty($this->listTypeBooks)) {
-    foreach ($this->listTypeBooks as $key => $value) {
-        $id         = $value['id'];
-        $name     = Helper::textCutting($value['name'], 50);
-        $picture    = !empty($value['picture']) ? $pathBookPicture . $value['picture'] : $pathBookPicture . 'default.jpg';
-        $saleOffXhtml = '';
-        if ($value['sale_off'] > 0) {
-            $saleOffXhtml = '
-			<div class="lable-block">
-				<span class="lable4 badge badge-danger"> -' . $value['sale_off'] . '%</span>
-			</div>';
-        }
-        if ($value['sale_off'] > 0) {
-            $price     = number_format($value['price'] * (100 - $value['sale_off']) / 100) . ' đ <del>' . number_format($value['price']) . 'đ</del>';
-        } else {
-            $price    = number_format($value['price']) . 'đ';
-        }
-
-        $xhtmlTypeBooks .= '
-        <div class="col-xl-2 col-md-4 col-sm-6">
-            <div class="product-box" style="height:360px">
-                <div class="img-wrapper">
-                    <div class="lable-block">
-                        ' . $saleOffXhtml . '
-                    </div>
-                    <div class="front">
-                        <a href="' . $itemURL . '&id=' . $id . '">
-                            <img src="' . $picture . '" class="img-fluid blur-up lazyload bg-img" alt="">
-                        </a>
-                    </div>
-                    <div class="cart-info cart-wrap">
-                        <a href="#" title="Add to cart"><i class="ti-shopping-cart"></i></a>
-                        <a href="#" title="Quick View"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
-                    </div>
-                </div>
-                <div class="product-detail">
-                    <div class="rating">
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                    </div>
-                    <a href="' . $itemURL . '&id=' . $id . '" title="' . $name . '" style="display:block;height:75px">
-                        <h6>' . $name . '</h6>
-                    </a>
-                    <h4 class="text-lowercase" style="">' . $price . '</h4>
-                </div>
-            </div>
-        </div>';
-    }
-}
 ?>
 <div class="breadcrumb-section">
     <div class="container">
@@ -197,7 +148,7 @@ if (!empty($this->listTypeBooks)) {
                                                         <i class="ti-angle-left"></i>
                                                     </button>
                                                 </span>
-                                                <input type="text" name="quantity" class="form-control input-number" value="1">
+                                                <input type="text" name="quantity" class="form-control input-number" id="quantities" value="1">
                                                 <span class="input-group-prepend">
                                                     <button type="button" class="btn quantity-right-plus" data-type="plus" data-field="">
                                                         <i class="ti-angle-right"></i>
@@ -207,7 +158,7 @@ if (!empty($this->listTypeBooks)) {
                                         </div>
                                     </div>
                                     <div class="product-buttons">
-                                        <a href="#" class="btn btn-solid ml-0"><i class="fa fa-cart-plus"></i> Chọn mua</a>
+                                        <a href="<?= $addToCartURL . '&id=' . $this->data['id'] . '&quantities=' ?>" class="btn btn-solid ml-0" id="btn-ajax-addItemToCart"><i class="fa fa-cart-plus"></i> Chọn mua</a>
                                     </div>
                                     <!-- short descriotion -->
                                     <div class="border-product"><?= $this->data['short_description'] ?></div>
@@ -337,33 +288,39 @@ if (!empty($this->listTypeBooks)) {
                         </div>
                     </div>
                 </section>
-                <div class="modal fade bd-example-modal-lg theme-modal cart-modal" id="addtocart" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-body modal1">
-                                <div class="container-fluid p-0">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="modal-bg addtocart">
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                                <div class="media">
-                                                    <a href="#">
-                                                        <img class="img-fluid blur-up lazyload pro-img" src="/public/files/book/5rf49ech.jpg" alt="">
-                                                    </a>
-                                                    <div class="media-body align-self-center text-center">
+                <div class="modal fade bd-example-modal-lg theme-modal cart-modal" id="addtocart" tabindex="-1"
+                        role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-body modal1">
+                                    <div class="container-fluid p-0">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="modal-bg addtocart">
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    <div class="media">
                                                         <a href="#">
-                                                            <h6>
-                                                                <i class="fa fa-check"></i>Sản phẩm
-                                                                <span class="font-weight-bold">Chờ Đến Mẫu Giáo Thì
-                                                                    Đã Muộn</span>
-                                                                <span> đã được thêm vào giỏ hàng!</span>
-                                                            </h6>
+                                                            <img class="img-fluid blur-up lazyload pro-img"
+                                                                src="/public/files/book/5rf49ech.jpg" alt="">
                                                         </a>
-                                                        <div class="buttons">
-                                                            <a href="../gio-hang.html" class="view-cart btn btn-solid">Xem giỏ hàng</a>
-                                                            <a href="#" class="continue btn btn-solid" data-dismiss="modal">Tiếp tục mua sắm</a>
+                                                        <div class="media-body align-self-center text-center">
+                                                            <a href="#">
+                                                                <h6>
+                                                                    <i class="fa fa-check"></i>Sản phẩm
+                                                                    <span class="font-weight-bold">Chờ Đến Mẫu Giáo Thì
+                                                                        Đã Muộn</span>
+                                                                    <span> đã được thêm vào giỏ hàng!</span>
+                                                                </h6>
+                                                            </a>
+                                                            <div class="buttons">
+                                                                <a href="index.php?module=frontend&controller=user&action=cart"
+                                                                    class="view-cart btn btn-solid">Xem giỏ hàng</a>
+                                                                <a href="" class="continue btn btn-solid"
+                                                                    data-dismiss="modal">Tiếp tục mua sắm</a>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -374,7 +331,6 @@ if (!empty($this->listTypeBooks)) {
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>
@@ -385,46 +341,7 @@ if (!empty($this->listTypeBooks)) {
         <div class="modal-content quick-view-modal">
             <div class="modal-body">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
-                <div class="row">
-                    <div class="col-lg-6 col-xs-12">
-                        <div class="quick-view-img"><img src="images/quick-view-bg.jpg" alt="" class="w-100 img-fluid blur-up lazyload book-picture"></div>
-                    </div>
-                    <div class="col-lg-6 rtl-text">
-                        <div class="product-right">
-                            <h2 class="book-name">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores,
-                                distinctio.</h2>
-                            <h3 class="book-price">26.910 ₫ <del>39.000 ₫</del></h3>
-                            <div class="border-product">
-                                <div class="book-description">Lorem ipsum dolor sit amet consectetur, adipisicing
-                                    elit. Unde quae cupiditate delectus laudantium odio molestiae deleniti facilis
-                                    itaque ut vero architecto nulla officiis in nam qui, doloremque iste. Incidunt,
-                                    in?</div>
-                            </div>
-                            <div class="product-description border-product">
-                                <h6 class="product-title">Số lượng</h6>
-                                <div class="qty-box">
-                                    <div class="input-group">
-                                        <span class="input-group-prepend">
-                                            <button type="button" class="btn quantity-left-minus" data-type="minus" data-field="">
-                                                <i class="ti-angle-left"></i>
-                                            </button>
-                                        </span>
-                                        <input type="text" name="quantity" class="form-control input-number" value="1">
-                                        <span class="input-group-prepend">
-                                            <button type="button" class="btn quantity-right-plus" data-type="plus" data-field="">
-                                                <i class="ti-angle-right"></i>
-                                            </button>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="product-buttons">
-                                <a href="#" class="btn btn-solid mb-1 btn-add-to-cart">Chọn Mua</a>
-                                <a href="item.html" class="btn btn-solid mb-1 btn-view-book-detail">Xem chi tiết</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="row" id="quick-view-content"></div>
             </div>
         </div>
     </div>

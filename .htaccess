@@ -1,2 +1,30 @@
 RewriteEngine On
-RewriteRule     index.html      index.php?module=frontend&controller=index&action=index
+RewriteRule     index.html              index.php?module=frontend&controller=index&action=index
+RewriteRule     book.html               index.php?module=frontend&controller=book&action=list
+RewriteRule     category.html           index.php?module=frontend&controller=book&action=category
+RewriteRule     login.html              index.php?module=frontend&controller=user&action=login
+RewriteRule     register.html           index.php?module=frontend&controller=user&action=register
+RewriteRule     cart.html               index.php?module=frontend&controller=user&action=cart
+RewriteRule     profile.html            index.php?module=frontend&controller=user&action=profile
+RewriteRule     change-password.html    index.php?module=frontend&controller=user&action=changePassword
+RewriteRule     order-history.html      index.php?module=frontend&controller=user&action=orderHistory
+RewriteRule     logout.html             index.php?module=frontend&controller=user&action=logout
+RewriteRule     notice.html             index.php?module=frontend&controller=user&action=notice
+RewriteRule     order-success.html      index.php?module=frontend&controller=user&action=orderSuccess
+
+
+RewriteRule     admin.html              index.php?module=backend&controller=user&action=login
+RewriteRule     dashboard.html          index.php?module=backend&controller=dashboard&action=index
+RewriteRule     group.html              index.php?module=backend&controller=group&action=index
+RewriteRule     user-index         index.php?module=backend&controller=user&action=index
+RewriteRule     user-form               index.php?module=backend&controller=user&action=form
+RewriteRule     category-index      index.php?module=backend&controller=category&action=index
+RewriteRule     category-form       index.php?module=backend&controller=category&action=form
+RewriteRule     book=index          index.php?module=backend&controller=book&action=index
+RewriteRule     book=form           index.php?module=backend&controller=book&action=form
+RewriteRule     slider-index       index.php?module=backend&controller=slider&action=index
+RewriteRule     slider-form         index.php?module=backend&controller=slider&action=form
+RewriteRule     cart-management    index.php?module=backend&controller=cartd&action=index
+RewriteRule     change-account-password    index.php?module=backend&controller=user&action=changeAccountPassword
+RewriteRule     admin-profile      index.php?module=backend&controller=user&action=profile
+RewriteRule     admin-signout           index.php?module=backend&controller=user&action=logout
