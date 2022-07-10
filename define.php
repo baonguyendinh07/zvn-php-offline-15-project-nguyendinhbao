@@ -25,9 +25,12 @@
 	define	('DEFAULT_ACTION'		, 'index');
 
 	// ====================== DATABASE ===========================
-	define ('DB_HOST'			, 'localhost');
-	define ('DB_USER'			, 'root');						
-	define ('DB_PASS'			, '');						
-	define ('DB_NAME'			, 'bookstore_php_off');						
+	define ('DB_HOST'			, 'us-cdbr-east-06.cleardb.net');
+	define ('DB_USER'			, 'bf69243b301d28');						
+	define ('DB_PASS'			, 'f5d01478');						
+	define ('DB_NAME'			, 'heroku_933e030ef249a56');						
 	define ('DB_TABLE'			, 'group');
 	define ('LOGIN_TIME'		, '3600');								
+
+
+	//mysql://bf69243b301d28:f5d01478@us-cdbr-east-06.cleardb.net/heroku_933e030ef249a56?reconnect=true
