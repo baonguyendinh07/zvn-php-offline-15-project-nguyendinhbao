@@ -13,7 +13,7 @@
 
 
 	
-	define	('ROOT_URL'			, DS . 'zvn-php-offline-15-project-nguyendinhbao' . DS);
+	define	('ROOT_URL'			, DS);
 	define	('APPLICATION_URL'	, ROOT_URL . 'application' . DS);
 	define	('PUBLIC_URL'		, ROOT_URL . 'public' . DS);
 	define	('TEMPLATE_URL'		, PUBLIC_URL . 'template' . DS);
