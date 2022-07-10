@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Ho_Chi_Minh');
 class CategoryModel extends Model
 {
 	private $_columns = ['id', 'name', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'special', 'ordering'];
@@ -86,7 +87,7 @@ class CategoryModel extends Model
 
 	public function getItem($id)
 	{
-		$query[] = "SELECT `id`, `name`, `picture`, `status`, `ordering` FROM `$this->table`";
+		$query[] = "SELECT `id`, `name`, `picture`, `status`, `special`, `ordering` FROM `$this->table`";
 		$query[] = "WHERE `id`='$id'";
 		$query = implode(' ', $query);
 		return $this->singleRecord($query);

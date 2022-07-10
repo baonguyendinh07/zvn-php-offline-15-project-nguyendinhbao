@@ -79,8 +79,8 @@ class UserController extends Controller
 		$this->_view->setTitle(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
 		$this->_view->setTitlePageHeader(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
 		$this->_view->setUserInfo(Session::get('user'));
-
-		$id = Session::get('user')['userInfo']['group_id'];
+		
+		$id = Session::get('user')['userInfo']['id'];
 		$this->_view->data = $this->_model->getItem($id, true);
 
 		$this->_view->inputUsername = '<p class="form-control btn-blue">' . $this->_view->data['username'] . '</p>';
@@ -88,9 +88,10 @@ class UserController extends Controller
 
 		if (isset($this->_arrParam['form']) && Session::get('token') == $this->_arrParam['form']['token']) {
 			$this->_view->data = $this->_arrParam['form'];
+
 			$validate = new Validate($this->_view->data);
 			$fullNameOptions = ['min' => 3, 'max' => 50];
-			$birthdayOptions = ['start' => '1900-01-01', 'end' => '2015-01-01'];
+			$birthdayOptions = ['start' => '1940-01-01', 'end' => '2010-01-01'];
 			$phoneNumberOptions  = ['min' => 9, 'max' => 15];
 			$addressOptions  = ['min' => 10, 'max' => 500];
 
@@ -124,7 +125,7 @@ class UserController extends Controller
 				];
 				Session::set('user', $arrSessionUser);
 
-				$this->redirect('index.html');
+				$this->redirect('profile.html');
 			} else {
 				$this->_view->errors = $validate->showErrors();
 			}

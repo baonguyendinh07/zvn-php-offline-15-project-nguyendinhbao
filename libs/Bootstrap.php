@@ -58,6 +58,9 @@ class Bootstrap
 			} elseif (!file_exists($this->filePath) || !method_exists($this->_controllerObject, $actionName)) {
 				$this->_error();
 			} elseif ($controller == 'user') {
+				if($action == 'cart'){
+					URL::redirect('login.html');
+				}
 				if ($action != 'login' && $action != 'register' && $action != 'tempCart') {
 					if ($action != 'notice' || empty(Session::get('register'))) {
 						$this->_error();

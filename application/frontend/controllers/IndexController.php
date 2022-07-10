@@ -17,7 +17,7 @@ class IndexController extends Controller
 		$this->_view->listSliders 				= $this->_model->listItems('slider', "WHERE 
 		`status`='active' ORDER BY `ordering` ASC");
 		$this->_view->listSpecialBooks 			= $this->_model->listItems('book');
-		$this->_view->listSpecialCategories 	= $this->_model->listItems('category');
+		$this->_view->listSpecialCategories 	= $this->_model->listItems('category', "WHERE `status`='active' AND `special`='1' ORDER BY `ordering` ASC LIMIT 0,3");
 		// $this->_view->categorySpecial = $this->model->getCategorySpecial($this->_arrParam);
 
 		if (!empty($this->_view->listSpecialCategories)) {

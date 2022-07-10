@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    activeMenu();
+/*     activeMenu();
 
     function activeMenu() {
         let action = getUrlParam('action');
@@ -15,7 +15,7 @@ $(document).ready(function () {
     function getUrlParam(key) {
         let searchParams = new URLSearchParams(window.location.search);
         return searchParams.get(key);
-    }
+    } */
 
     $(document).on('click', '.btn-ajax-quick-view', function (e) {
         e.preventDefault();

@@ -100,8 +100,7 @@ class SliderController extends Controller
 				}
 
 				$this->_model->saveItem($results, $task);
-				$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'index');
-				$this->redirect($returnLink);
+				$this->redirect('slider-index');
 				$this->_view->data = [];
 			} else {
 				$this->_view->errors = $validate->showErrors();

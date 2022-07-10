@@ -53,7 +53,7 @@ $inputToken = Form::input('hidden', 'form[token]', time());
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-success">Save</button>
-                    <a href="<?= $indexActionLink ?>" class="btn btn-danger">Cancel</a>
+                    <a href="slider-index" class="btn btn-danger">Cancel</a>
                 </div>
             </div>
         </form>

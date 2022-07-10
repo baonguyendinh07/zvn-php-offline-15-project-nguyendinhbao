@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Ho_Chi_Minh');
 class SliderModel extends Model
 {
 	private $_columns = ['id', 'name', 'description', 'link', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'ordering'];

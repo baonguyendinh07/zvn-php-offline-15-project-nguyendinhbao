@@ -1,7 +1,8 @@
 <?php
+date_default_timezone_set('Asia/Ho_Chi_Minh');
 class UserModel extends Model
 {
-	private $_columns = ['id', 'username', 'email', 'fullname', 'password', 'created', 'created_by', 'modified', 'modified_by', 'status', 'ordering', 'group_id'];
+	private $_columns = ['id', 'username', 'email', 'fullname', 'birthday', 'password', 'created', 'created_by', 'modified', 'modified_by', 'status', 'ordering', 'group_id'];
 	private $where = '';
 	private $arrSearch;
 
@@ -151,7 +152,7 @@ class UserModel extends Model
 			if ($group_id == 1) 								  $status = $params['group_id'];
 			elseif ($group_id == 2 && $params['group_id'] > 2) $status = $params['group_id'];
 		}
-
+		
 		if (isset($status)) {
 			$updateParams = [
 				$value => $status,

@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Ho_Chi_Minh');
 class BookModel extends Model
 {
 	private $_columns = ['id', 'name', 'short_description', 'description', 'price', 'sale_off', 'picture', 'created', 'created_by', 'modified', 'modified_by', 'status', 'special', 'ordering', 'category_id'];

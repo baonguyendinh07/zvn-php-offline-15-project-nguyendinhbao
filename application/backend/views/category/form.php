@@ -7,13 +7,20 @@ $statusOptions = [
     'active' => 'Active'
 ];
 
+$specialOptions = [
+    '0' => 'No',
+    '1' => 'Yes'
+];
+
 $lblName         = Form::label('Name', 'form-label fw-bold');
-$lblStatus       = Form::label('Status', 'form-label fw-bold');
+$lblStatus       = Form::label('Status', 'form-label fw-bold', false);
+$lblSpecial      = Form::label('Special', 'form-label fw-bold', false);
 $lblOrdering     = Form::label('Ordering', 'form-label fw-bold', false);
 $lblPicture      = Form::label('Picture', 'form-label fw-bold', false);
 
 $inputName       = Form::input('text', 'form[name]', $this->data['name'] ?? '');
 $statusSelect    = Form::select($statusOptions, 'form[status]', $this->data['status'] ?? 'active', 'custom-select');
+$specialSelect    = Form::select($specialOptions, 'form[special]', $this->data['special'] ?? 'no', 'custom-select');
 $inputOrdering   = Form::input('number', 'form[ordering]', $this->data['ordering'] ?? 10);
 $inputPicture    = Form::input('file', 'picture', '', '', '', 'style="width:220px; border:none"');
 
@@ -35,6 +42,9 @@ $inputToken = Form::input('hidden', 'form[token]', time());
                         <?= $lblStatus . $statusSelect ?>
                     </div>
                     <div class="form-group">
+                        <?= $lblSpecial . $specialSelect ?>
+                    </div>
+                    <div class="form-group">
                         <?= $lblOrdering . $inputOrdering ?>
                     </div>
                     <div class="form-group">
@@ -43,7 +53,7 @@ $inputToken = Form::input('hidden', 'form[token]', time());
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-success">Save</button>
-                    <a href="<?= $indexActionLink ?>" class="btn btn-danger">Cancel</a>
+                    <a href="category-index" class="btn btn-danger">Cancel</a>
                 </div>
             </div>
         </form>

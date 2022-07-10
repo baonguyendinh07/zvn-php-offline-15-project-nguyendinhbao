@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Ho_Chi_Minh');
 class UserModel extends Model
 {
 	public function __construct()
@@ -75,6 +76,7 @@ class UserModel extends Model
 			unset($params['token']);
 			unset($params['username']);
 			unset($params['email']);
+			unset($params['group_id']);
 			$params['modified'] = date('Y-m-d H:i:s');
 			$params['modified_by'] = Session::get('user')['userInfo']['id'];
 			$this->update($params, [['id', $id]]);

@@ -2,7 +2,7 @@
 $indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], $this->params['action']);
 $multiDeleteURL = URL::createLink($this->params['module'], $this->params['controller'], 'multiDelete');
 $formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
-$btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
+$btnAddNew = Helper::createButtonLink('user-form', '<i class="fas fa-plus"></i> Add New', 'info');
 
 $groupOptionsDefault = ['default' => ' - Select Group - '] + $this->groupOptions;
 $groupSelectDefault  = Form::select($groupOptionsDefault, 'group_id', $this->params['group_id'] ?? 'default', 'custom-select filter-element');

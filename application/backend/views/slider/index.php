@@ -2,7 +2,7 @@
 $indexActionLink = URL::createLink($this->params['module'], $this->params['controller'], $this->params['action']);
 $pathImg = FILES_URL . $this->params['controller'] . DS;
 $formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
-$btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
+$btnAddNew = Helper::createButtonLink('slider-form', '<i class="fas fa-plus"></i> Add New', 'info');
 
 if (!empty(Session::get('notificationElement')) || !empty(Session::get('notification'))) {
     $notification = Helper::showMessege(

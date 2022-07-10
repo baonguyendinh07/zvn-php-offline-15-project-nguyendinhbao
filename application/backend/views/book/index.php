@@ -3,7 +3,7 @@ $indexActionLink = URL::createLink($this->params['module'], $this->params['contr
 $pathImg = FILES_URL . $this->params['controller'] . DS;
 $multiDeleteURL = URL::createLink($this->params['module'], $this->params['controller'], 'multiDelete');
 $formActionLink = URL::createLink($this->params['module'], $this->params['controller'], 'form');
-$btnAddNew = Helper::createButtonLink($formActionLink, '<i class="fas fa-plus"></i> Add New', 'info');
+$btnAddNew = Helper::createButtonLink('book-form', '<i class="fas fa-plus"></i> Add New', 'info');
 
 $categoryOptionsDefault = ['default' => ' - Select Category - '] + $this->categoryOptions;
 $categorySelectDefault  = Form::select($categoryOptionsDefault, 'category_id', $this->params['category_id'] ?? 'default', 'custom-select filter-element');
@@ -124,7 +124,7 @@ if (!empty($this->items)) {
                                     <input type="text" class="form-control" name="search-key" value="<?= $searchValue ?>">
                                     <span class="input-group-append">
                                         <button type="submit" class="btn btn-info">Search</button>
-                                        <a href="<?= $indexActionLink ?>" class="btn btn-danger">Clear</a>
+                                        <a href="book-index" class="btn btn-danger">Clear</a>
                                     </span>
                                 </div>
                             </form>

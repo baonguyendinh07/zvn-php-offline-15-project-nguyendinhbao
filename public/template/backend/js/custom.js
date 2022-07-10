@@ -87,7 +87,7 @@ $(document).ready(function () {
         });
     });
 
-    activeMenu();
+/*     activeMenu();
 
     function activeMenu() {
         let controller = getUrlParam('controller');
@@ -111,7 +111,7 @@ $(document).ready(function () {
     function getUrlParam(key) {
         let searchParams = new URLSearchParams(window.location.search);
         return searchParams.get(key);
-    }
+    } */
 
     $('.filter-element').on('change', function () {
         $('#sort-form').submit();

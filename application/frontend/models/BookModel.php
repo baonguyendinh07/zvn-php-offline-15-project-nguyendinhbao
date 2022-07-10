@@ -90,7 +90,7 @@ class BookModel extends Model
 
 	public function getItemQuickView($params)
 	{
-		$id = @$params['id'];
+		$id = $params['id'] ?? '';
 		if (empty($id)) return null;
 
 

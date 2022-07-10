@@ -112,8 +112,7 @@ class UserController extends Controller
 				}
 
 				$this->_model->saveItem($results, $task);
-				$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'index');
-				$this->redirect($returnLink);
+				$this->redirect('user-index');
 				$this->_view->data = [];
 			} else {
 				$this->_view->errors = $validate->showErrors();
@@ -148,8 +147,7 @@ class UserController extends Controller
 					$results['password'] = md5($results['password']);
 					$task = 'edit';
 					$this->_model->saveItem($results, $task);
-					$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'index');
-					$this->redirect($returnLink);
+					$this->redirect('user-index');
 				} else {
 					$this->_view->errors = $validate->showErrors();
 				}
@@ -222,8 +220,7 @@ class UserController extends Controller
 					'login_time' => time() + LOGIN_TIME
 				];
 				Session::set('user', $arrSessionUser);
-				$returnLink = URL::createLink($this->_arrParam['module'], 'dashboard', 'index');
-				$this->redirect($returnLink);
+				$this->redirect('dashboard.html');
 			} else {
 				$this->_view->errors = $validate->showErrors(false);
 			}
@@ -244,16 +241,17 @@ class UserController extends Controller
 		$this->_view->setTitlePageHeader(ucfirst($this->_arrParam['controller']) . ' - ' . ucfirst($this->_arrParam['action']));
 		$this->_view->setUserInfo(Session::get('user'));
 
-		$id = Session::get('user')['userInfo']['group_id'];
+		$id = Session::get('user')['userInfo']['id'];
 		$this->_view->data = $this->_model->getItem($id, true);
 		$this->_view->inputUsername = '<p class="form-control btn-blue">' . $this->_view->data['username'] . '</p>';
 		$this->_view->inputEmail 	= '<p class="form-control btn-blue">' . $this->_view->data['email'] . '</p>';
 
 		if (isset($this->_arrParam['form']) && Session::get('token') == $this->_arrParam['form']['token']) {
 			$this->_view->data = $this->_arrParam['form'];
+
 			$validate = new Validate($this->_view->data);
 			$fullNameOptions = ['min' => 3, 'max' => 50];
-			$birthdayOptions = ['start' => '1900-01-01', 'end' => '2015-01-01'];
+			$birthdayOptions = ['start' => '1940-01-01', 'end' => '2010-01-01'];
 			$phoneNumberOptions  = ['min' => 9, 'max' => 15];
 			$addressOptions  = ['min' => 10, 'max' => 500];
 
@@ -261,9 +259,11 @@ class UserController extends Controller
 			if (!empty(trim($this->_arrParam['form']['birthday']))) {
 				$validate->addRule('birthday', 'date', $birthdayOptions);
 			}
+
 			if (!empty(trim($this->_arrParam['form']['phone_number']))) {
 				$validate->addRule('phone_number', 'string', $phoneNumberOptions);
 			}
+
 			if (!empty(trim($this->_arrParam['form']['address']))) {
 				$validate->addRule('address', 'string', $addressOptions);
 			}
@@ -274,8 +274,7 @@ class UserController extends Controller
 				$results = $validate->getResult();
 				$results['id'] = $id;
 				unset($results['password']);
-				$task = 'edit';
-				$this->_model->saveItem($results, $task);
+				$this->_model->saveItem($results, 'edit');
 
 				$params['username'] = $this->_model->getItem($id, true)['username'];
 				$params['password'] = $this->_model->getItem($id, true)['password'];
@@ -286,8 +285,7 @@ class UserController extends Controller
 					'login_time' => Session::get('user')['login_time']
 				];
 				Session::set('user', $arrSessionUser);
-				$returnLink = URL::createLink($this->_arrParam['module'], 'user', 'profile');
-				$this->redirect($returnLink);
+				$this->redirect('admin-profile');
 			} else {
 				$this->_view->errors = $validate->showErrors();
 			}
@@ -334,9 +332,7 @@ class UserController extends Controller
 				$results['id'] = $id;
 				$task = 'edit';
 				$this->_model->saveItem($results, $task);
-				Session::set('notificationElement', 'Mật khẩu của bạn');
-				$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'profile');
-				$this->redirect($returnLink);
+				$this->redirect('change-account-password');
 			} else {
 				$this->_view->errors = $validate->showErrors();
 			}

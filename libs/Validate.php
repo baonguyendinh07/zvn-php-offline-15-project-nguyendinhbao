@@ -53,7 +53,7 @@ class Validate
 
 	// Run
 	public function run()
-	{
+	{	
 		foreach ($this->rules as $element => $value) {
 			if ($value['required'] == true && trim($this->source[$element]) == null) {
 				$this->setError($element, 'không được bỏ trống');
@@ -214,15 +214,15 @@ class Validate
 	private function validateDate($element, $start, $end)
 	{
 		// Start
-		$arrDateStart 	= date_parse_from_format('d/m/Y', $start);
+		$arrDateStart 	= date_parse_from_format('Y/m/d', $start);
 		$tsStart		= mktime(0, 0, 0, $arrDateStart['month'], $arrDateStart['day'], $arrDateStart['year']);
 
 		// End
-		$arrDateEnd 	= date_parse_from_format('d/m/Y', $end);
+		$arrDateEnd 	= date_parse_from_format('Y/m/d', $end);
 		$tsEnd			= mktime(0, 0, 0, $arrDateEnd['month'], $arrDateEnd['day'], $arrDateEnd['year']);
 
 		// Current
-		$arrDateCurrent	= date_parse_from_format('d/m/Y', $this->source[$element]);
+		$arrDateCurrent	= date_parse_from_format('Y/m/d', $this->source[$element]);
 		$tsCurrent		= mktime(0, 0, 0, $arrDateCurrent['month'], $arrDateCurrent['day'], $arrDateCurrent['year']);
 
 		if ($tsCurrent < $tsStart || $tsCurrent > $tsEnd) {

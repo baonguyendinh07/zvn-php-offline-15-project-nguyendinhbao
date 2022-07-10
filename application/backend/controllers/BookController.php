@@ -142,8 +142,7 @@ class BookController extends Controller
 				}
 
 				$this->_model->saveItem($results, $task);
-				$returnLink = URL::createLink($this->_arrParam['module'], $this->_arrParam['controller'], 'index');
-				$this->redirect($returnLink);
+				$this->redirect('book-index');
 				$this->_view->data = [];
 				$this->_view->pictureXHTML = '';
 			} else {

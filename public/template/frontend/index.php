@@ -34,6 +34,16 @@
     </div>
     <!-- tap to top end -->
     <?php require_once 'html/script.php'; ?>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var action      = '<?= $_GET['action'] ?>';
+        var category_id = '<?= $_GET['category_id'] ?? '' ?>';
+        if (category_id != '') action = 'category';
+
+        let $currentMenuItem = $('.my-menu-link[data-active="' + action + '"]');
+        $currentMenuItem.addClass('active');
+    });
+</script>
 </body>
 
 </html>
