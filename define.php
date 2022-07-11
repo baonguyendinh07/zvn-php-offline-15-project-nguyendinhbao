@@ -20,7 +20,7 @@
 	define	('FILES_URL'		, PUBLIC_URL . 'files' . DS);
 
 
-	define	('DEFAULT_MODULE'		, 'default');
+	define	('DEFAULT_MODULE'		, 'frontend');
 	define	('DEFAULT_CONTROLLER'	, 'index');
 	define	('DEFAULT_ACTION'		, 'index');
 
