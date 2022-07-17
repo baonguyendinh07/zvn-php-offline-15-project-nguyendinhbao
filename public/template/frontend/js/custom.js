@@ -1,21 +1,21 @@
 $(document).ready(function () {
 
-/*     activeMenu();
-
-    function activeMenu() {
-        let action = getUrlParam('action');
-        let category_id = getUrlParam('category_id');
-
-        if (category_id != null) action = 'category';
-
-        let $currentMenuItem = $('.my-menu-link[data-active="' + action + '"]');
-        $currentMenuItem.addClass('active');
-    }
-
-    function getUrlParam(key) {
-        let searchParams = new URLSearchParams(window.location.search);
-        return searchParams.get(key);
-    } */
+    /*     activeMenu();
+    
+        function activeMenu() {
+            let action = getUrlParam('action');
+            let category_id = getUrlParam('category_id');
+    
+            if (category_id != null) action = 'category';
+    
+            let $currentMenuItem = $('.my-menu-link[data-active="' + action + '"]');
+            $currentMenuItem.addClass('active');
+        }
+    
+        function getUrlParam(key) {
+            let searchParams = new URLSearchParams(window.location.search);
+            return searchParams.get(key);
+        } */
 
     $(document).on('click', '.btn-ajax-quick-view', function (e) {
         e.preventDefault();
@@ -23,6 +23,9 @@ $(document).ready(function () {
         $.ajax({
             type: "GET",
             url: url,
+            beforeSend: function () {
+                $('#quick-view-content').html('<div class="fa-5x d-flex justify-center align-items-center"><i class="fas fa-spinner fa-spin"></i></div>');
+            },
             success: function (response) {
                 $('#quick-view-content').html(response);
             }
@@ -71,7 +74,7 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on('change', '.change-quantities', function () {
+    $('.change-quantities').change(function () {
         let ele = $(this);
         var quantities = ele.val() - ele.data('quantities-saved');
         var url = ele.data('url') + '&quantities=' + quantities;

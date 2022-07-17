@@ -5,8 +5,9 @@ RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
 
+
 RewriteRule     index.html              index.php?module=frontend&controller=index&action=index
-RewriteRule     book.html               index.php?module=frontend&controller=book&action=list
+RewriteRule     book.html(.*)           index.php?module=frontend&controller=book&action=list$1 [QSA]
 RewriteRule     category.html           index.php?module=frontend&controller=book&action=category
 RewriteRule     login.html              index.php?module=frontend&controller=user&action=login
 RewriteRule     register.html           index.php?module=frontend&controller=user&action=register
@@ -35,4 +36,5 @@ RewriteRule     change-account-password index.php?module=backend&controller=user
 RewriteRule     admin-profile           index.php?module=backend&controller=user&action=profile
 RewriteRule     admin-signout           index.php?module=backend&controller=user&action=logout
 
-RewriteRule		([A-Za-z0-9_-]+)-([0-9]+)\.html 		index.php?module=frontend&controller=book&action=list&category_id=$2
+RewriteRule		([A-Za-z0-9_-]+)-c([0-9]+)\.html 		index.php?module=frontend&controller=book&action=list&category_id=$2
+RewriteRule		([A-Za-z0-9_-]+)/([A-Za-z0-9_-]+)-b([0-9]+)\.html 		index.php?module=frontend&controller=book&action=item&id=$3

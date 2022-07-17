@@ -98,7 +98,7 @@ if (!empty($this->items)) {
                             <?= Helper::areaFilterStatus($this->arrCountItems, $this->params) ?>
                         </div>
                         <div class="area-filter-attribute mb-2">
-                            <form action="" method="GET" id="filter-form">
+                            <form action="index.php" method="GET" id="filter-form">
                                 <?= Form::input('hidden', 'module', $this->params['module']) ?>
                                 <?= Form::input('hidden', 'controller', $this->params['controller']) ?>
                                 <?= Form::input('hidden', 'action', $this->params['action']) ?>
@@ -108,7 +108,7 @@ if (!empty($this->items)) {
                             </form>
                         </div>
                         <div class="area-search mb-2">
-                            <form action="" method="GET">
+                            <form action="index.php" method="GET">
                                 <?= Form::input('hidden', 'module', $this->params['module']) ?>
                                 <?= Form::input('hidden', 'controller', $this->params['controller']) ?>
                                 <?= Form::input('hidden', 'action', $this->params['action']) ?>

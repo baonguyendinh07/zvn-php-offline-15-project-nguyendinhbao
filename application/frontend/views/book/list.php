@@ -134,9 +134,6 @@ $selectOrderBy = Form::select($orderBySelectOptions, 'sort', $this->_arrParam['s
                                                     </div>
                                                     <div class="product-page-filter">
                                                         <form action="" id="sort-form" method="GET" class="filter-element">
-                                                            <?= Form::input('hidden', 'module', $this->_arrParam['module']) ?>
-                                                            <?= Form::input('hidden', 'controller', $this->_arrParam['controller']) ?>
-                                                            <?= Form::input('hidden', 'action', $this->_arrParam['action']) ?>
                                                             <?= $inputCategoryId ?? '' ?>
                                                             <?= $selectOrderBy ?>
                                                         </form>

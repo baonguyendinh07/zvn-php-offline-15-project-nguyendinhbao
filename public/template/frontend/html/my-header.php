@@ -84,11 +84,8 @@ if (!empty(Session::get('cart'))) $totalQuantities = array_sum(Session::get('car
                                                     <div class="container">
                                                         <div class="row">
                                                             <div class="col-xl-12">
-                                                                <form method="GET">
+                                                                <form action="book.html" method="GET">
                                                                     <div class="form-group">
-                                                                        <input type="hidden" name="module" value="frontend">
-                                                                        <input type="hidden" name="controller" value="book">
-                                                                        <input type="hidden" name="action" value="list">
                                                                         <input type="text" class="form-control" name="search" id="search-input" placeholder="Tìm kiếm sách...">
                                                                     </div>
                                                                     <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>

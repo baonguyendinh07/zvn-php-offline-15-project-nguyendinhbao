@@ -37,12 +37,12 @@ if (!empty($this->items)) {
             $sum = 0;
             $detail = '';
             foreach ($value['books'] as $key1 => $value1) {
-                $bookName   = Helper::textCutting($value['names'][$key1], 30);
+                $bookName   = Helper::textCutting($value['names'][$key1], 23);
                 $price      = $value['prices'][$key1];
                 $quantities = $value['quantities'][$key1];
                 $total      = $price * $quantities;
                 $sum        += $total;
-                $detail     .= sprintf('<p>- %s x <span class="badge badge-info badge-pill">%s</span> = %sđ</p>', $bookName, $quantities, number_format($total));
+                $detail     .= sprintf('<p><span style="display: inline-block;width:200px">- %s</span> x <span class="badge badge-info badge-pill">%s</span> = %sđ</p>', $bookName, $quantities, number_format($total));
             }
         }
 
@@ -124,12 +124,12 @@ if (!empty($this->items)) {
                     <table class="table align-middle text-center table-bordered">
                         <thead>
                             <tr>
-                                <th style="width: 30px">ID</th>
+                                <th style="width: 20px">ID</th>
                                 <th class="text-left">Thông tin</th>
                                 <th style="width: 45px">Trang thái</th>
                                 <th>Chi tiết</th>
-                                <th style="width: 45px">Tổng tiền</th>
-                                <th style="width: 120px">Ngày đặt</th>
+                                <th style="width: 35px">Tổng tiền</th>
+                                <th style="width: 100px">Ngày đặt</th>
                                 <th style="width: 30px"></th>
                             </tr>
                         </thead>

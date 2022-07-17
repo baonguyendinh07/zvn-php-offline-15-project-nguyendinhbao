@@ -173,7 +173,7 @@ class UserModel extends Model
 				$groupOptions = Helper::convertArrList($this->getListGroup());
 				$dataUrlLink  = URL::createLink($params['module'], $params['controller'], 'changeGroupId', ['id' => $params['id']]);
 				$dataUrl = "data-url='$dataUrlLink'";
-				$result = Form::select($groupOptions, '', $status, 'btn-ajax-group-id', $dataUrl);
+				$result = Form::select($groupOptions, '', $status, 'custom-select btn-ajax-group-id', $dataUrl);
 			}
 			return $result;
 		}

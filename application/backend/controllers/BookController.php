@@ -20,6 +20,7 @@ class BookController extends Controller
 
 		$this->_view->arrCountItems = $this->_model->countItems($this->_arrParam);
 		$this->_view->params = $this->_arrParam;
+		
 		$linkParams = [];
 		if (isset($this->_arrParam['search-key'])) 	 $linkParams['search-key'] = $this->_arrParam['search-key'];
 		if (isset($this->_arrParam['filterStatus'])) $linkParams['filterStatus'] = $this->_arrParam['filterStatus'];

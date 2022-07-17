@@ -80,63 +80,63 @@ class BookController extends Controller
 		$this->_view->render($this->_arrParam['controller'] . '/' . $this->_arrParam['action']);
 	}
 
-	public function quickViewAction()
-	{
-		$item = $this->_model->getItemQuickView($this->_arrParam);
-		if (!empty($item)) {
-			$id = $item['id'];
-			$name = $item['name'];
-			$shortDescription = $item['short_description'];
+		public function quickViewAction()
+		{
+			$item = $this->_model->getItemQuickView($this->_arrParam);
+			if (!empty($item)) {
+				$id = $item['id'];
+				$name = $item['name'];
+				$shortDescription = $item['short_description'];
 
-			$pathBookPicture = FILES_URL . 'book' . DS;
-			$picture = $pathBookPicture . $item['picture'];
+				$pathBookPicture = FILES_URL . 'book' . DS;
+				$picture = $pathBookPicture . $item['picture'];
 
-			$price = $item['price'];
-			$saleOff = $item['sale_off'];
-			$itemLink = URL::createLink($this->_arrParam['module'], 'book', 'item', ['id' => $id]);
+				$price = $item['price'];
+				$saleOff = $item['sale_off'];
+				$itemLink = URL::createLink($this->_arrParam['module'], 'book', 'item', ['id' => $id]);
 
-			if ($saleOff > 0) {
-				$price     = '
-				<h3 class="book-price">
-				' . number_format($price * (100 - $saleOff) / 100) . ' ₫ 
-				<del>' . number_format($price) . ' ₫</del>
-				</h3>
-				';
-			} else {
-				$price    = '<h3 class="book-price">' . number_format($price) . ' đ</h3>';
-			}
+				if ($saleOff > 0) {
+					$price     = '
+					<h3 class="book-price">
+					' . number_format($price * (100 - $saleOff) / 100) . ' ₫ 
+					<del>' . number_format($price) . ' ₫</del>
+					</h3>
+					';
+				} else {
+					$price    = '<h3 class="book-price">' . number_format($price) . ' đ</h3>';
+				}
 
-			$result = '
-				<div class="col-lg-6 col-xs-12">
-					<div class="quick-view-img"><img src="' . $picture . '" alt="" class="w-100 img-fluid blur-up lazyload book-picture">
-					</div>
-				</div>
-				<div class="col-lg-6 rtl-text">
-					<div class="product-right">
-						<h2 class="book-name">' . $name . '</h2>
-						' . $price . '
-						<div class="border-product">
-							<div class="book-description">' . $shortDescription . '</div>
+				$result = '
+					<div class="col-lg-6 col-xs-12">
+						<div class="quick-view-img"><img src="' . $picture . '" alt="" class="w-100 img-fluid blur-up lazyload book-picture">
 						</div>
-						<div class="product-description border-product">
-							<h6 class="product-title">Số lượng</h6>
-							<div class="qty-box">
-								<div class="input-group">
-									<input type="text" name="quantity" class="form-control input-number quantities" value="1">
+					</div>
+					<div class="col-lg-6 rtl-text">
+						<div class="product-right">
+							<h2 class="book-name">' . $name . '</h2>
+							' . $price . '
+							<div class="border-product">
+								<div class="book-description">' . $shortDescription . '</div>
+							</div>
+							<div class="product-description border-product">
+								<h6 class="product-title">Số lượng</h6>
+								<div class="qty-box">
+									<div class="input-group">
+										<input type="text" name="quantity" class="form-control input-number quantities" value="1">
+									</div>
 								</div>
 							</div>
+							<div class="product-buttons">
+								<a href="index.php?module=frontend&controller=user&action=tempCart&id=' . $id . '&quantities=" class="continue btn btn-solid mb-1"  id="btn-ajax-addManyToCart" data-dismiss="modal">Chọn Mua</a>
+								<a href="' . $itemLink . '" class="btn btn-solid mb-1 btn-view-book-detail">Xem chi tiết</a>
+							</div>
 						</div>
-						<div class="product-buttons">
-							<a href="index.php?module=frontend&controller=user&action=tempCart&id=' . $id . '&quantities=" class="continue btn btn-solid mb-1"  id="btn-ajax-addManyToCart" data-dismiss="modal">Chọn Mua</a>
-							<a href="' . $itemLink . '" class="btn btn-solid mb-1 btn-view-book-detail">Xem chi tiết</a>
-						</div>
-					</div>
-				</div>';
-			echo $result;
-		} else {
-			echo '';
+					</div>';
+				echo $result;
+			} else {
+				echo '';
+			}
 		}
-	}
 
 	public function categoryAction()
 	{

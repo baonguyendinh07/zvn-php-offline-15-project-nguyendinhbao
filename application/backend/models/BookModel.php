@@ -56,11 +56,11 @@ class BookModel extends Model
 		}
 
 		if (isset($params['category_id']) && is_numeric($params['category_id'])) {
-			$this->arrSearch['category_id']	 = $params['category_id'];
+			$this->arrSearch['category_id']	= $params['category_id'];
 		}
 
 		if (isset($params['special']) && is_numeric($params['special'])) {
-			$this->arrSearch['special']	 = $params['special'];
+			$this->arrSearch['special']	= $params['special'];
 		}
 
 		if (isset($this->arrSearch)) $query[] = $this->createWhereSearch($this->arrSearch) ?? '';
@@ -181,7 +181,7 @@ class BookModel extends Model
 			$categoryOptions = Helper::convertArrList($this->getListCategory());
 			$dataUrlLink  = URL::createLink($params['module'], $params['controller'], 'changeCategoryId', ['id' => $params['id']]);
 			$dataUrl = "data-url='$dataUrlLink'";
-			$result = Form::select($categoryOptions, '', $status, 'btn-ajax-category-id', $dataUrl);
+			$result = Form::select($categoryOptions, '', $status, 'custom-select btn-ajax-category-id', $dataUrl);
 		} elseif ($value == 'ordering') {
 			$result = $status;
 		}
