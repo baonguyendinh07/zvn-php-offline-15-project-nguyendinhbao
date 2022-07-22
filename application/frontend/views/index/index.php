@@ -1,7 +1,5 @@
 <?php
 $pathBookPicture = FILES_URL . 'book' . DS;
-$itemURL = URL::createLink($this->_arrParam['module'], 'book', 'item');
-$quickViewURL = URL::createLink($this->_arrParam['module'], 'book', 'quickView');
 
 $pathSliderImg = FILES_URL . 'slider' . DS;
 $picture = $pathSliderImg . 'default.jpg';
@@ -19,7 +17,7 @@ if (!empty($this->listSliders)) {
 	}
 }
 
-$xhtmlSpecialBooks = Helper::showProductBox($this->listSpecialBooks, $this->_arrParam, $pathBookPicture, $itemURL, $quickViewURL, 90, '', '60px');
+$xhtmlSpecialBooks = Helper::showProductBox($this->listSpecialBooks, $this->_arrParam, $pathBookPicture, 90, '', '60px');
 
 $xhtmlSpecialCategories = '';
 $xhtmlTypeBooks = '';
@@ -36,7 +34,7 @@ if (!empty($this->listSpecialCategories)) {
 		</li>
 		';
 
-		$xtmlBook = Helper::showProductBox($this->listTypeBooks[$categoryId], $this->_arrParam, $pathBookPicture, $itemURL, $quickViewURL, 90, '', '60px');
+		$xtmlBook = Helper::showProductBox($this->listTypeBooks[$categoryId], $this->_arrParam, $pathBookPicture, 90, '', '60px');
 
 		$xhtmlViewMore = '';
 		if ($this->countTypeBooks[$categoryId]['all'] > 8) {

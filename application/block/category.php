@@ -17,7 +17,7 @@ if (!empty($data)) {
 		$name	 	= $value->name;
 		$nameURL	= URL::filterURL($name);
 		$picture 	= !empty($value->picture) ? $pathCategoryImg . $value->picture : $pathCategoryImg . 'default.jpg';
-		$link	 	= URL::createLink('frontend', 'book', 'list', ['category_id' => $id], "$nameURL-$id.html");
+		$link	 	= $nameURL . '-c' . $id;
 		$sidebarClass = 'text-dark';
 		if (isset($cateID) && $cateID == $value->id) {
 			$headerClass 	= ' class="active"';

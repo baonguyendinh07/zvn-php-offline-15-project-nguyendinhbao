@@ -85,7 +85,7 @@ class Helper
         return $result;
     }
 
-    public static function showProductBox($arrData, $arrParam, $pathPicture, $itemURL, $quickViewURL, $strlen, $boxHeight = '', $heightTextBox = '', $openDiv = '', $closeDiv = '')
+    public static function showProductBox($arrData, $arrParam, $pathPicture, $strlen, $boxHeight = '', $heightTextBox = '', $openDiv = '', $closeDiv = '')
     {
         $xhtmlTypeBooks = '';
         $searchValue = $arrParam['search'] ?? '';
@@ -93,6 +93,8 @@ class Helper
             $id         = $value['id'];
             $name       = Helper::highlight($searchValue, Helper::textCutting($value['name'], $strlen));
             $picture    = !empty($value['picture']) ? $pathPicture . $value['picture'] : $pathPicture . 'default.jpg';
+            $itemURL      = URL::filterURL($value['name']) . '-b' . $id;
+            $quickViewURL = URL::filterURL($value['name']) . '-qv' . $id;
             $saleOffXhtml = '';
 
             if ($value['sale_off'] > 0) {
@@ -115,13 +117,13 @@ class Helper
                             ' . $saleOffXhtml . '
                         </div>
                         <div class="front">
-                            <a href="' . $itemURL . '&id=' . $id . '">
+                            <a href="' . $itemURL . '">
                                 <img src="' . $picture . '" class="img-fluid blur-up lazyload bg-img" alt="">
                             </a>
                         </div>
                         <div class="cart-info cart-wrap">
-                            <a href="index.php?module=frontend&controller=user&action=tempCart&id='.$id.'&quantities=1" title="Add to cart" class="btn-ajax-addOneToCart"><i class="ti-shopping-cart"></i></a>
-                            <a href="' . $quickViewURL . '&id=' . $id . '" title="Quick View" class="btn-ajax-quick-view"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
+                            <a href="index.php?module=frontend&controller=user&action=tempCart&id=' . $id . '&quantities=1" title="Add to cart" class="btn-ajax-addOneToCart"><i class="ti-shopping-cart"></i></a>
+                            <a href="' . $quickViewURL . '" title="Quick View" class="btn-ajax-quick-view"><i class="ti-search" data-toggle="modal" data-target="#quick-view"></i></a>
                         </div>
                     </div>
                     <div class="product-detail">
@@ -132,7 +134,7 @@ class Helper
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                         </div>
-                        <a href="' . $itemURL . '&id=' . $id . '" title="' . $value['name'] . '" style="display:block;height:' . $heightTextBox . '">
+                        <a href="' . $itemURL . '" title="' . $value['name'] . '" style="display:block;height:' . $heightTextBox . '">
                             <h6>' . $name . '</h6>
                         </a>
                         <h4 class="text-lowercase" style="">' . $price . '</h4>

@@ -13,7 +13,7 @@ class XML{
 		if($option == null){
 			$strXML  = '<?xml version="1.0" encoding="UTF-8"?>';
 			$strXML .= '<book_store>';
-			foreach($arrData as $key => $value){
+			foreach($arrData as $value){
 				$strXML .= '<category>
 								<id>'.$value['id'].'</id>
 								<name>'.$value['name'].'</name>

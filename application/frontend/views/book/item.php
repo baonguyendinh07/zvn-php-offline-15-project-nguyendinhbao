@@ -1,7 +1,6 @@
 <?php
 $pathBookPicture = FILES_URL . 'book' . DS;
 $itemPicture = $pathBookPicture . $this->data['picture'];
-$quickViewURL = URL::createLink($this->_arrParam['module'], 'book', 'quickView');
 $addToCartURL = URL::createLink($this->_arrParam['module'], 'user', 'tempCart');
 
 $itemPrice = $this->data['price'];
@@ -103,7 +102,7 @@ if (!empty($this->listNewBooks)) {
 }
 $openDiv = '<div class="col-xl-2 col-md-4 col-sm-6">';
 $closeDiv = '</div>';
-$xhtmlTypeBooks = Helper::showProductBox($this->listTypeBooks, $this->_arrParam, $pathBookPicture, $itemURL, $quickViewURL, 50, 'style="height:360px"', '70px',$openDiv, $closeDiv);
+$xhtmlTypeBooks = Helper::showProductBox($this->listTypeBooks, $this->_arrParam, $pathBookPicture, 50, 'style="height:360px"', '70px',$openDiv, $closeDiv);
 
 ?>
 <div class="breadcrumb-section">

@@ -44,8 +44,7 @@ if ($key % 5 != 4) $xhtmlSpecialBooks .= "</div>";
 $openDiv = '<div class="col-xl-3 col-6 col-grid-box">';
 $closeDiv = '</div>';
 
-$quickViewURL = URL::createLink($this->_arrParam['module'], 'book', 'quickView');
-$xhtmlTypeBooks = Helper::showProductBox($this->listTypeBooks, $this->_arrParam, $pathBookPicture, $itemURL, $quickViewURL, 55, 'style="height:370px"', '70px', $openDiv, $closeDiv);
+$xhtmlTypeBooks = Helper::showProductBox($this->listTypeBooks, $this->_arrParam, $pathBookPicture, 55, 'style="height:370px"', '70px', $openDiv, $closeDiv);
 
 if (isset($this->_arrParam['category_id']))  $inputCategoryId    = Form::input('hidden', 'category_id', $this->_arrParam['category_id']);
 

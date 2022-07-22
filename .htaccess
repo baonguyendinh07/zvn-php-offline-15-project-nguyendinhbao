@@ -36,5 +36,6 @@ RewriteRule     change-account-password index.php?module=backend&controller=user
 RewriteRule     admin-profile           index.php?module=backend&controller=user&action=profile
 RewriteRule     admin-signout           index.php?module=backend&controller=user&action=logout
 
-RewriteRule		([A-Za-z0-9_-]+)-c([0-9]+)\.html 		index.php?module=frontend&controller=book&action=list&category_id=$2
-RewriteRule		([A-Za-z0-9_-]+)/([A-Za-z0-9_-]+)-b([0-9]+)\.html 		index.php?module=frontend&controller=book&action=item&id=$3
+RewriteRule		([A-Za-z0-9_-]+)-c([0-9]+) 		index.php?module=frontend&controller=book&action=list&category_id=$2
+RewriteRule		([A-Za-z0-9_-]+)-b([0-9]+) 		index.php?module=frontend&controller=book&action=item&id=$2
+RewriteRule		([A-Za-z0-9_-]+)-qv([0-9]+) 	index.php?module=frontend&controller=book&action=quickView&id=$2
