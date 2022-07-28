@@ -52,7 +52,7 @@ class URL
 			$str = str_replace($arr, $khongdau, $str);
 		}
 
-		$charaterSpecial = '#(,|$|\(|\))#imsU';
+		$charaterSpecial = '#(,|$|\(|\|\?))#imsU';
 		$replaceSpecial = '';
 		$value = preg_replace($charaterSpecial, $replaceSpecial, $str);
 		$value = strtolower($value);
