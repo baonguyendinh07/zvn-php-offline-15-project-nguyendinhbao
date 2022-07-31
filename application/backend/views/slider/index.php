@@ -46,7 +46,6 @@ if (!empty($this->items)) {
                         <td class="text-left">
                         <p class="mb-0"><b>Name</b>: ' . $name . '</p>
                         <p class="mb-0"><b>Description</b>: ' . $description . '</p>
-                        <p class="mb-0"><b>Link</b>: ' . $link . '</p>
                         <img src="' . $picture . '" style="width:350px">
                     </td>
                         <td class="position-relative">' . $showStatus . '</td>

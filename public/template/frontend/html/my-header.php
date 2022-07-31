@@ -62,7 +62,7 @@ if (!empty(Session::get('cart'))) $totalQuantities = array_sum(Session::get('car
                         <div class="top-header">
                             <ul class="header-dropdown">
                                 <li class="onhover-dropdown mobile-account">
-                                    <img src="<?= $avatarLink ?>" alt="avatar" style="width:39px; height:39px;">
+                                    <img src="<?= $avatarLink ?>" alt="avatar" style="width:35px; height:35px;">
                                     <ul class="onhover-show-div">
                                         <?= $userActionButton ?>
                                     </ul>
